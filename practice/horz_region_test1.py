@@ -64,17 +64,18 @@ o = OceanDrift(loglevel=20)  # Set loglevel to 0 for debug information
 o.add_reader(roms_his_reader)
 
 
-
+out_file = 'test1_output.nc'
 #o.seed_elements(lon_use,lat_use, radius=0, number=, z=np.linspace(0, -150, 10), time=roms_his_reader.start_time)
 o.seed_elements(lon_use,lat_use, radius=0, z=z_use, time=roms_his_reader.start_time)
 
 
-o.run(time_step=3600)
+o.run(time_step=3600, outfile=out_file)
 
 print(o)
 
 o.plot(linecolor='z', fast=True)
 
+#o.animation(color='z', buffer=.1, fast=True)
 
 
 
