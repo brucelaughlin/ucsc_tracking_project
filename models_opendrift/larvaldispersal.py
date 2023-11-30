@@ -4,6 +4,24 @@
 # Trying custom module, based on "Oceandrift"
 
 
+
+# Note on turbulence, from the OceanDrift model
+# https://opendrift.github.io/autoapi/opendrift/models/oceandrift/index.html#module-opendrift.models.oceandrift
+#
+# vertical_mixing(store_depths=False)
+#
+# Mix particles vertically according to eddy diffusivity and buoyancy
+#
+# Buoyancy is expressed as terminal velocity, which is the steady-state 
+# vertical velocity due to positive or negative buoyant behaviour. It is 
+# usually a function of particle density, diameter, and shape.
+#
+# Vertical particle displacemend du to turbulent mixing is calculated using 
+# a random walk scheme” (Visser et al. 1996)
+#
+
+
+
 import sys
 from datetime import datetime, timedelta
 import numpy as np
@@ -101,6 +119,9 @@ class LarvalDispersal(OpenDriftSimulation):
         # Calling general constructor of parent class
         super(LarvalDispersal, self).__init__(*args, **kwargs)
 
+
+        # Note: added "'IBM:fraction_of_timestep_swimming'" at bottom, taken from
+        # 'LarvalFish' model
         self._add_config({
             'drift:vertical_advection': {'type': 'bool', 'default': True, 'description':
                 'Advect elements with vertical component of ocean current.',
@@ -152,6 +173,11 @@ class LarvalDispersal(OpenDriftSimulation):
             'seed:seafloor': {'type': 'bool', 'default': False,
                 'description': 'Elements are seeded at seafloor, and seeding depth (z) is neglected.',
                 'level': self.CONFIG_LEVEL_ESSENTIAL},
+            'IBM:fraction_of_timestep_swimming':
+                {'type': 'float', 'default': 0.15,
+                 'min': 0.0, 'max': 1.0, 'units': 'fraction',
+                 'description': 'Fraction of timestep swimming',
+                 'level': self.CONFIG_LEVEL_ADVANCED},
             })
 
     def update(self):
@@ -160,21 +186,43 @@ class LarvalDispersal(OpenDriftSimulation):
         # Simply move particles with ambient current
         self.advect_ocean_current()
         
+        
         # ----------------------------------------------------------
         # ----------------------------------------------------------
-        # Try adding constant swimming
+        # These are my additions to OpenDrift
+        # ----------------------------------------------------------
+        # ----------------------------------------------------------
+        # ROUGH DRAFTS:  THESE SHOULD PROBABLY NOT BE HARDCODED!?!?!?
+        # ----------------------------------------------------------
+        
+
+        # Disable vertical motion
+        #self.disable_vertical_motion()
+
+
+        # Make the larvae swim vertically
+        #self.larvae_vertical_migration()
+
+
+
+        
+        # Note: we are NOT doing horizontal swimming on this project!
+        # Try adding constant horizontal swimming
         # Note: should try adding switch to config/seed file, to turn on/off or select speed/type of swimming...?
         
         # testing
-        x_vel = np.ones(12)*.05
-        y_vel = np.ones(12)*.05
-
-        
+        #x_vel = np.ones(12)*.01
+        #y_vel = np.ones(12)*.01
         #self.update_positions(10, 10)
-        self.update_positions(x_vel, y_vel)
+        #self.update_positions(x_vel, y_vel)
 
         # ----------------------------------------------------------
         # ----------------------------------------------------------
+
+
+
+
+
 
 
         # Advect particles due to surface wind drag,
@@ -791,3 +839,69 @@ class LarvalDispersal(OpenDriftSimulation):
                      '   Mean windspeed: %.1f m/s' % windspeed)
         if show is True:
             pyplot.show()
+        
+    # Taken fromm "LarvalMigration
+    def larvae_vertical_migration(self):
+
+        #larvae = np.where(self.elements.hatched==1)[0]
+        #if len(larvae) == 0:
+        #    return
+
+        # Vertical migration of Larvae
+        # Swim function from Peck et al. 2006
+        #L = self.elements.length[larvae]
+        
+        # Note
+        # hardcoding an estimated "Length" of the larvae; is this how we want
+        # to do things?
+        
+        # Note: length IS in mm (see the following, where it's defined in 
+        # "LarvalFish" model, where this function I'm using comes from)
+        
+        # https://opendrift.github.io/_modules/opendrift/models/larvalfish.html#LarvalFish.larvae_vertical_migration
+        
+        # class LarvalFishElement(Lagrangian3DArray):
+        #     """
+        #     Extending Lagrangian3DArray with specific properties for larval and juvenile stages of fish
+        #     """
+        
+        #     variables = Lagrangian3DArray.add_variables([
+        #         ...
+        #         ('length', {'dtype': np.float32,
+        #             'units': 'mm',
+        #             'default': 0})
+                
+                
+        
+        # start testing by setting lenth = 1mm
+        larvae_length = 1
+
+        
+        L = np.ones(len(self.elements))*larvae_length
+        
+        
+        # Set swim speed (copied)
+        # See the paper they take this from.  I should investigate the min/max
+        # that this prescribes - we should talk about this
+        
+        swim_speed = (0.261*(L**(1.552*L**(-0.08))) - 5.289/L) / 1000
+        f = self.get_config('IBM:fraction_of_timestep_swimming')
+        max_migration_per_timestep = f*swim_speed*self.time_step.total_seconds()
+
+
+
+        # This is a rough implementation of DVM, correct?  Do we want to be
+        # more detailed in how we do DVM?
+        # Furthermore, we'll also want other bio behavior schemes.
+
+
+        # Using here UTC hours. Should be changed to local solar time,
+        # although a phase shift of some hours should not make much difference
+        if self.time.hour < 12:
+            direction = -1  # Swimming down when light is increasing
+        else:
+            direction = 1  # Swimming up when light is decreasing
+
+        #self.elements.z[larvae] = np.minimum(0, self.elements.z[larvae] + direction*max_migration_per_timestep)
+        self.elements.z = np.minimum(0, self.elements.z + direction*max_migration_per_timestep)
+
