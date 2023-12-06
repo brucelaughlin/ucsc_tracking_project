@@ -1,15 +1,16 @@
 
 
+# Need to remove the coastal points
+
+
 import netCDF4
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.path as plt_path
 from scipy.interpolate import interp1d
 from geopy.distance import great_circle
 import scipy.interpolate as spint
-
-import itertools
-from itertools import permutations 
 
 #-------------------- EDIT THESE -------------------------------------
 #---------------------------------------------------------------------
@@ -27,12 +28,19 @@ grid_file_in = 'wc15_grd_no_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
+lon_grid = dset['lon_{}'.format(points_type)]
+
+dset.close
+
 bounding_boxes_file_in = 'bounding_boxes_ij_coords_{}_coastline_wc15_continental.p'.format(points_type)
 points_in_boxes_ij_file_out = 'points_in_boxes_ij_{}.p'.format(points_type)
     
+bounding_boxes_dir = 'practice/bounding_boxes/create_boxes/'
+bounding_boxes_path = base_path + bounding_boxes_dir + bounding_boxes_file_in
+
+coastline_coords_file_in = bounding_boxes_dir + 'coastline_coords_{}_file_wc15_continent.p'.format(points_type_line)
 
 
-lon_grid = dset['lon_{}'.format(points_type)]
 
 # check that these dimensions shouldn't be switched
 n_i = np.shape(lon_grid)[0]    
@@ -48,7 +56,7 @@ n_j = np.shape(lon_grid)[1]
 
 
 # Load the boxes
-file = open(bounding_boxes_file_in,'rb')
+file = open(bounding_boxes_path,'rb')
 boxes_ij = pickle.load(file)
 file.close
 
@@ -56,39 +64,39 @@ points_in_boxes_ij = []
 
 # each "box" is a 2 by n array, with the first column being "i" coordinates, 2nd being "j"
 
-list_i = range(n_i)
-list_j = range(n_j)
 
-# Getting all permutations of list_i
-# with length of list_j
-permut = itertools.permutations(list_i, len(list_j))
- 
+# create empty list to store the combinations
+points_ij = []
 
-# ----- FINISH -------
+for ii in range(n_i):
+    for jj in range(n_j):
+        points_ij.append((ii,jj))
 
-# https://www.geeksforgeeks.org/python-program-to-get-all-unique-combinations-of-two-lists/
-
-# zip() is called to pair each permutation
-# and shorter list element into combination
-for comb in permut:
-    zipped = zip(comb, list_2)
-    unique_combinations.append(list(zipped))
-
-
+points_ij=np.array(points_ij)
 
 # Matplotlib mplPath
-path = mpltPath.Path(polygon)
-inside2 = path.contains_points(points)
+
 
 
 for box in boxes_ij:
     if box is not None:
-        for ii in range(n_i):    
-            for jj in range(n_j):    
-                if 
-                
+        path = plt_path.Path(np.transpose(box))
+        points_inside_flags = path.contains_points(points_ij) 
+        points_inside = points_ij[points_inside_flags]
+        #points_inside = np.concatenate(points_ij[points_inside_flags], axis=0)
+        #print(len(points_inside))
+        
+        points_box_i = []
+        points_box_j = []
+        for point in points_inside:
+            points_box_i.append(point[0])
+            points_box_j.append(point[1])
+        
+        points_box_ij = np.array([points_box_i,points_box_j])
 
-        ax.plot(box[1],box[0])
+        points_in_boxes_ij.append(points_inside)
+        
+        
 
 
 
@@ -97,7 +105,8 @@ for box in boxes_ij:
 
 
 
-file = open(bounding_boxes_file_out,'wb')
+
+file = open(points_in_boxes_ij_file_out,'wb')
 pickle.dump(points_in_boxes_ij,file)
 file.close()
 
