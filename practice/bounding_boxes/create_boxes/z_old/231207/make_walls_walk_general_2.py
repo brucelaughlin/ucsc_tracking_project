@@ -18,14 +18,32 @@ import scipy.interpolate as spint
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 grid_file_in = 'wc15_grd.nc.0'
+
+point_type_line = 'psi'
+point_type_field = 'rho'
+
+base_dir = '/home/blaughli/tracking_project/'
+grid_dir = 'grid_data/'
+box_file_dir = 'practice/bounding_boxes/create_boxes/'
+grid_file = 'wc15_grd_no_islands.nc'
+
+grid_path = base_dir + grid_dir + grid_file
+
+isoline_coord_file_in = base_dir + box_file_dir + 'isodistance_ij_coords_{}_coastline_wc15_no_islands.p'.format(point_type_field)
+coast_coords_in_i = base_dir + box_file_dir + 'coast_coords_{}_wc15_continent_i.txt'.format(point_type_line)
+coast_coords_in_j = base_dir + box_file_dir + 'coast_coords_{}_wc15_continent_j.txt'.format(point_type_line)
+bounding_boxes_file_out = base_dir + box_file_dir + 'wall_ij_coords_{}_coastline_wc15_continental.p'.format(point_type_line)
+
+
 #isoline_coord_file_in = 'isodistance_ij_coords_wc15_no_islands.p'
 #coast_coords_in_i = 'coast_coords_psi_wc15_continent_i.txt'
 #coast_coords_in_j = 'coast_coords_psi_wc15_continent_j.txt'
 #bounding_boxes_file_out = 'wall_ij_coords_wc15_continental.p'
-isoline_coord_file_in = 'isodistance_ij_coords_rho_coastline_wc15_no_islands.p'
-coast_coords_in_i = 'coast_coords_rho_wc15_continent_i.txt'
-coast_coords_in_j = 'coast_coords_rho_wc15_continent_j.txt'
-bounding_boxes_file_out = 'wall_ij_coords_rho_coastline_wc15_continental.p'
+
+#isoline_coord_file_in = 'isodistance_ij_coords_rho_coastline_wc15_no_islands.p'
+#coast_coords_in_i = 'coast_coords_rho_wc15_continent_i.txt'
+#coast_coords_in_j = 'coast_coords_rho_wc15_continent_j.txt'
+#bounding_boxes_file_out = 'wall_ij_coords_rho_coastline_wc15_continental.p'
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
@@ -37,15 +55,9 @@ bounding_boxes_file_out = 'wall_ij_coords_rho_coastline_wc15_continental.p'
 RGI = spint.RegularGridInterpolator
 
 
-base_path = '/home/blaughli/tracking_project/'
-grid_directory = 'grid_data/'
-grid_path_in = base_path + grid_directory + grid_file_in
-
-dset = netCDF4.Dataset(grid_path_in, 'r')
-#lon_psi_grid = dset['lon_psi']
-#lat_psi_grid = dset['lat_psi']
-lon_grid = dset['lon_rho']
-lat_grid = dset['lat_rho']
+dset = netCDF4.Dataset(grid_path, 'r')
+lon_grid = dset['lon_{}'.format(point_type_field)]
+lat_grid = dset['lat_{}'.format(point_type_field)]
 dset.close
 
 # create interpolator to get lat/lon at isoline points
@@ -73,8 +85,7 @@ def PolyArea(x,y):
 box_area_threshold = 30
 #box_area_threshold = 300
 
-box_directory = 'practice/bounding_boxes/'
-file = open(base_path + box_directory + isoline_coord_file_in,'rb')
+file = open(isoline_coord_file_in,'rb')
 isoline_ij = pickle.load(file)
 file.close
 isoline_i = isoline_ij[:,0]

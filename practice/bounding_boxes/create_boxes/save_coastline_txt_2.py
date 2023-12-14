@@ -6,10 +6,12 @@ import numpy as np
 #-------------------- EDIT THESE -------------------------------------
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
-coastline_file_ij_in = 'coastline_coords_rho_file_wc15_continent.p'
+point_type = 'psi'
 
-coastline_i_out ='coast_coords_rho_wc15_continent_i.txt' 
-coastline_j_out ='coast_coords_rho_wc15_continent_j.txt' 
+coastline_file_ij_in = 'coastline_coords_{}_file_wc15_continent.p'.format(point_type)
+
+coastline_i_out ='coast_coords_{}_wc15_continent_i.txt'.format(point_type) 
+coastline_j_out ='coast_coords_{}_wc15_continent_j.txt' .format(point_type)
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 

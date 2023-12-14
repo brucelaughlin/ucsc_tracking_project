@@ -25,16 +25,14 @@ points_type_field = 'rho'
 
 
 isoline_coord_file_in = 'isodistance_ij_coords_{}_coastline_wc15_no_islands.p'.format(points_type_line)
-bounding_boxes_file_in = 'bounding_boxes_ij_coords_{}_coastline_wc15_continental.p'.format(points_type_line)
+#bounding_boxes_file_in = 'bounding_boxes_ij_coords_{}_coastline_wc15_continental.p'.format(points_type_line)
 coastline_coords_file_in = 'coastline_coords_{}_file_wc15_continent.p'.format(points_type_line)
-dist_field_file_in = 'dist_2_coast_field_{}_coastline_wc15_no_islands.mat'.format(points_type_field)
+#dist_field_file_in = 'dist_2_coast_field_{}_coastline_wc15_no_islands.mat'.format(points_type_field)
 mask = np.array(dset['mask_{}'.format(points_type_field)])
 lon_field = np.array(dset['lon_{}'.format(points_type_field)])
 lat_field = np.array(dset['lat_{}'.format(points_type_field)])
 lon_line = np.array(dset['lon_{}'.format(points_type_line)])
 lat_line = np.array(dset['lat_{}'.format(points_type_line)])
-
-mask_psi = np.array(dset['mask_{}'.format(points_type_line)])
 
 
 dset.close
@@ -51,8 +49,8 @@ rgi_lat = RGI([x,y],lat_line)
 
 
 # Load the "distance field" - plot over this
-dist_field = scipy.io.loadmat(dist_field_file_in)
-dist_field = dist_field['dist_field']
+#dist_field = scipy.io.loadmat(dist_field_file_in)
+#dist_field = dist_field['dist_field']
 
 
 # Load coast
@@ -62,30 +60,26 @@ file.close
 
 
 # Load the boxes
-file = open(bounding_boxes_file_in,'rb')
-boxes_ij = pickle.load(file)
-file.close
+#file = open(bounding_boxes_file_in,'rb')
+#boxes_ij = pickle.load(file)
+#file.close
 
-#x=np.arange(lon_field.shape[1])
-#y=np.arange(lon_field.shape[0])
-x=np.arange(lon_line.shape[1])
-y=np.arange(lon_line.shape[0])
+x=np.arange(lon_field.shape[1])
+y=np.arange(lon_field.shape[0])
 
 fig, ax = plt.subplots()
-#ax.pcolormesh(lon,lat,np.transpose(dist_field),shading="nearest")
-#ax.pcolormesh(lon,lat,np.transpose(mask),shading="nearest")
-#ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
+ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
+
 #ax.pcolormesh(x,y,mask,shading="nearest")
-ax.pcolormesh(x,y,mask_psi,shading="nearest")
 
 
-#ax.plot(rgi_lat((coast_ij[:,0],coast_ij[:,1])),rgi_lon((coast_ij[:,0],coast_ij[:,1])),linewidth=2)
-#ax.plot(rgi_lon((coast_ij[:,0],coast_ij[:,1])),rgi_lat((coast_ij[:,0],coast_ij[:,1])),linewidth=2)
+ax.plot(rgi_lon((coast_ij[:,0],coast_ij[:,1])),rgi_lat((coast_ij[:,0],coast_ij[:,1])),linewidth=2)
+#ax.plot(coast_ij[:,1],coast_ij[:,0])
 
 
-for box in boxes_ij:
-    if box is not None:
-        ax.plot(box[1],box[0])
+#for box in boxes_ij:
+#    if box is not None:
+#        ax.plot(box[1],box[0])
         #ax.plot(rgi_lat((box[0],box[1])),rgi_lon((box[0],box[1])))
         #ax.plot(rgi_lon((box[0],box[1])),rgi_lat((box[0],box[1])))
 
