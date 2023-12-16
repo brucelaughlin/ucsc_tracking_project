@@ -11,8 +11,11 @@ import matplotlib.pyplot as plt
 #-------------------- EDIT THESE -------------------------------------
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
-grid_file_in = 'wc15_grd_no_islands.nc'
-mask_file_out = 'mask_psi_bl.p'
+#grid_file_in = 'wc15_grd_no_islands.nc'
+#mask_file_out = 'mask_psi_bl_continent.p'
+
+grid_file_in = 'wc15_grd_only_islands.nc'
+mask_file_out = 'mask_psi_bl_islands.p'
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
@@ -30,7 +33,7 @@ dset.close
 
 psi_bl_pre_1 = rho_mask[1:,:] + rho_mask[:-1,:]
 psi_bl_pre_2 = psi_bl_pre_1[:,1:] + psi_bl_pre_1[:,:-1]
-psi_bl = psi_bl_pre_2 > .5
+psi_bl = psi_bl_pre_2 > 3
 
 file = open(mask_file_out,'wb')
 pickle.dump(psi_bl,file)

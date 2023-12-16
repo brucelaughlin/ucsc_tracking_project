@@ -20,8 +20,8 @@ import scipy.interpolate as spint
 #---------------------------------------------------------------------
 
 
-points_type_field = 'rho'
-points_type_line = 'psi'
+point_type_field = 'rho'
+point_type_line = 'psi'
 
 
 base_path = '/home/blaughli/tracking_project/'
@@ -30,26 +30,26 @@ grid_file_in = 'wc15_grd_no_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
-lon_field = np.array(dset['lon_{}'.format(points_type_field)])
-lat_field = np.array(dset['lat_{}'.format(points_type_field)])
-lon_line = np.array(dset['lon_{}'.format(points_type_line)])
-lat_line = np.array(dset['lat_{}'.format(points_type_line)])
+lon_field = np.array(dset['lon_{}'.format(point_type_field)])
+lat_field = np.array(dset['lat_{}'.format(point_type_field)])
+lon_line = np.array(dset['lon_{}'.format(point_type_line)])
+lat_line = np.array(dset['lat_{}'.format(point_type_line)])
 
 dset.close
 
 bounding_boxes_dir = 'practice/bounding_boxes/create_boxes/'
-bounding_boxes_file_in = 'bounding_boxes_ij_coords_{}_coastline_wc15_continental.p'.format(points_type_line)
+bounding_boxes_file_in = 'bounding_boxes_ij_coords_{}_coastline_wc15_continental.p'.format(point_type_line)
 bounding_boxes_path = base_path + bounding_boxes_dir + bounding_boxes_file_in
 
-coastline_coords_file_in = bounding_boxes_dir + 'coastline_coords_{}_file_wc15_continent.p'.format(points_type_line)
-
-
-
-#points_in_boxes_ij_file_out = 'points_in_boxes_ij_{}_boundary.p'.format(points_type_line)
-points_in_boxes_file_out = 'points_in_boxes_lon_lat_{}_boundary.p'.format(points_type_line)    
+#points_in_boxes_ij_file_out = 'points_in_boxes_ij_{}_boundary.p'.format(point_type_line)
+points_in_boxes_file_out = 'points_in_boxes_lon_lat_{}_boundary.p'.format(point_type_line)    
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
+
+# something is off here - i'm getting an error bc the final box has
+# a point with an "i" value of 540, which is out of bounds for psi.
+# so.. what's going on?  rho has 1 extra point in each dimension...
 
 # create interpolator to get lat/lon at isoline points
 RGI = spint.RegularGridInterpolator
