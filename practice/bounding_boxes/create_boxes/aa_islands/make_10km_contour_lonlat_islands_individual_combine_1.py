@@ -1,3 +1,6 @@
+# For some islands, contours are segmented where they intersect other islands
+# So, combine them...
+
 
 import pickle
 import netCDF4
@@ -42,8 +45,8 @@ output_dir = islands_dir + 'z_output/'
 
 num_islands = 8
 
-for island_dex in range(1,num_islands+1):
-#for island_dex in range(2,3):
+#for island_dex in range(1,num_islands+1):
+for island_dex in range(2,3):
 
     #---------------------------------------------------------------------
     output_file = output_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}.p'.format(island_dex)
@@ -70,17 +73,27 @@ for island_dex in range(1,num_islands+1):
     contours = measure.find_contours(np.transpose(dist_field), distance_from_coast)
 
 
-    # Assume that the longest contour returned is the one we want....
-    max_length = 0 
-    contour_index = 0 
-    dex = 0 
-    for contour in contours:
-        if np.shape(contour)[0] > max_length:
-            max_length = np.shape(contour)[0]
-            contour_index = dex 
-        dex += 1
+#    # Assume that the longest contour returned is the one we want....
+#    max_length = 0 
+#    contour_index = 0 
+#    dex = 0 
+#    for contour in contours:
+#        if np.shape(contour)[0] > max_length:
+#            max_length = np.shape(contour)[0]
+#            contour_index = dex 
+#        dex += 1
+#
+#    isoline_ij = contours[contour_index]
+    
+    # Assume all contours returned are relevant, combine them into single contour
+    isoline_ij = np.vstack(contours)
 
-    isoline_ij = contours[contour_index]
+
+   # if len(contours) > 1:
+   #     idx = np.argwhere(np.diff(np.sign(y1_interp - y2_interp))).flatten()
+
+
+
 
     isoline_lonlat = np.zeros(np.shape(isoline_ij))
     for ii in range(np.shape(isoline_ij)[0]):
