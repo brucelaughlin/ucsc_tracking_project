@@ -89,21 +89,14 @@ for island_dex in range(0,num_islands_intersecting-1):
 
     # This returns an nx2 element tuple, where n is the number of intersections.
     # the elements alternate as lon,lat
-    # I think the higher of the 2 points comes first
+    # I think the lower (?) of the 2 points comes first
     common_points = x.bounds
-    cp_dex = 2
 
     # ok let's change these polygons.  a bit ad-hoc, hope it works generally
     # Assuming we can keep the first isoline point (ie it's not an intersection point)
 
-    #new_isoline_1 = np.zeros((1,2))
-    #new_isoline_2 = np.zeros((1,2))
-    #new_isoline_1[0,:] = island_isolines[island_dex][0,:]
-    #new_isoline_2[0,:] = island_isolines[island_dex+1][0,:]
     new_isoline_1 = np.empty((1,2), float)
     new_isoline_2 = np.empty((1,2), float)
-
-
 
 
     # Assuming there will only ever be 0 or 2 intersections, right?
@@ -112,68 +105,166 @@ for island_dex in range(0,num_islands_intersecting-1):
         # Treat the forst island's isoline
         # Isoline begins in the "dead zone"...
         
-        cp_dex = 2
+        cp_dex = 0
         iso_dex = 0
-        
+
+        # First step:  we start in the overlap zone, so move west until we cross
+        # the lower intersection.  Then add the lower intersection, and proceed to the next step
         for ii in range(0,len(island_isolines[island_dex])):
-            iso_dex += 1
             if island_isolines[island_dex][ii,0] < common_points[cp_dex]:
                 new_isoline_1 = np.vstack((new_isoline_1,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
-                cp_dex = 0
+                cp_dex = 2
+                iso_dex = ii
                 break
-            
-        for ii in range(iso_dex,len(island_isolines[island_dex])):
-            if island_isolines[island_dex][ii,0] > common_points[cp_dex] and island_isolines[island_dex][ii,0] < common_points[cp_dex+2]:
-                new_isoline_1 = np.vstack((new_isoline_1,island_isolines[island_dex][ii,:]))
-            else:
-                new_isoline_1 = np.vstack((new_isoline_1,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
-                break
+
+        # Second step.  Need to consider different cases.
+        # 1) Lon of upper intersection is greater (closer to zero, more positive, lower magnitude, more east) than lon of lower intersection
+        # 2) Reverse scenario
+
+        # case 1 (simple)
+        if common_points[0] > common_points[2]:
+            for ii in range(iso_dex,len(island_isolines[island_dex])):
+                if island_isolines[island_dex][ii,0] < common_points[cp_dex]: 
+                    new_isoline_1 = np.vstack((new_isoline_1,island_isolines[island_dex][ii,:]))
+                else:
+                    new_isoline_1 = np.vstack((new_isoline_1,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
+                    iso_dex = ii
+                    break
+
+        # case 2 (more complicated)
+        else:
+            # First, append all points of "lower" part of isoline that have longitudes between those of the two intersections
+            for ii in range(iso_dex,len(island_isolines[island_dex])):
+                if island_isolines[island_dex][ii,0] > common_points[cp_dex]: 
+                    new_isoline_1 = np.vstack((new_isoline_1,island_isolines[island_dex][ii,:]))
+                else:
+                    iso_dex = ii
+                    break
+            # Now, append the remaining lines with longitude less than that of the upper intersection
+            for ii in range(iso_dex,len(island_isolines[island_dex])):
+                if island_isolines[island_dex][ii,0] < common_points[cp_dex]: 
+                    new_isoline_1 = np.vstack((new_isoline_1,island_isolines[island_dex][ii,:]))
+                else:
+                    new_isoline_1 = np.vstack((new_isoline_1,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
+                    iso_dex = ii
+                    break
+
 
 
         # Treat the second island's isoline
 
+
+        # Special case: the 2nd island is the last island with an interseting isoline
+        # Here, we want to exit the algorithm altogether after processing
         if island_dex + 1 == num_islands_intersecting:
 
-            cp_dex = 0
-            iso_dex = 0
-            
+            cp_dex = 2
+
+            # First step:  we start in the overlap zone, so move west until we cross
+            # the lower intersection.  Then add the lower intersection, and proceed to the next step
             for ii in range(0,len(island_isolines[island_dex+1])):
-                iso_dex += 1
                 if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]:
                     new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
-                    cp_dex += 2
+                    cp_dex = 0
+                    iso_dex = ii
                     break
-                
-            for ii in range(iso_dex,len(island_isolines[island_dex+1])):
-                if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]: 
-                    new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii,:]))
-                else:
-                    new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
-                    break
+
+            # case 1 (simple)
+            if common_points[0] < common_points[2]:
+                for ii in range(iso_dex,len(island_isolines[island_dex+1])):
+                    if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]: 
+                        new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii,:]))
+                    else:
+                        new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
+                        #iso_dex = ii
+                        break
+
+            # case 2 (more complicated)
+            else:
+                # First, append all points of "lower" part of isoline that have longitudes between those of the two intersections
+                for ii in range(iso_dex,len(island_isolines[island_dex+1])):
+                    if island_isolines[island_dex+1][ii,0] < common_points[cp_dex]: 
+                        new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii,:]))
+                    else:
+                        iso_dex = ii
+                        break
+                # Now, append the remaining lines with longitude less than that of the upper intersection
+                for ii in range(iso_dex,len(island_isolines[island_dex+1])):
+                    if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]: 
+                        new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii,:]))
+                    else:
+                        new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
+                        #iso_dex = ii
+                        break
+
+
+
+
+
+
+
+
+
+#
+#
+#
+#            cp_dex = 2
+#            iso_dex = 0
+#            
+#            for ii in range(0,len(island_isolines[island_dex+1])):
+#                #iso_dex += 1
+#                if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]:
+#                    new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
+#                    #cp_dex += 2
+#                    cp_dex = 0
+#                    iso_dex = ii
+#                    break
+#                
+#            for ii in range(iso_dex,len(island_isolines[island_dex+1])):
+#                if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]: 
+#                    new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii,:]))
+#                else:
+#                    new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
+#                    break
+
+
 
         else:
 
-            cp_dex = 2
+            #cp_dex = 2
+            cp_dex = 0
             iso_dex = 0
 
             for ii in range(0,len(island_isolines[island_dex+1])):
-                iso_dex += 1
                 if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]:
                     new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii,:]))
                 else:
                     new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
-                    cp_dex -= 2
+                    iso_dex = ii
+                    cp_dex = 2
                     break
 
             for ii in range(iso_dex,len(island_isolines[island_dex+1])):
-                iso_dex += 1
                 if island_isolines[island_dex+1][ii,0] > common_points[cp_dex]:
-                    
                     new_isoline_2 = np.vstack((new_isoline_2,np.array([common_points[cp_dex],common_points[cp_dex+1]])))
-                    new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][iso_dex:,:]))
+                    new_isoline_2 = np.vstack((new_isoline_2,island_isolines[island_dex+1][ii:,:]))
                     break
 
-       
+
+
+
+
+
+
+
+
+
+      
+    # The way I did things (creating "empty" array, then "appending", it seems the first entry
+    # in each array is a pair of infinitesimal values
+    new_isoline_1 = np.delete(new_isoline_1,0,0)
+    new_isoline_2 = np.delete(new_isoline_2,0,0)
+
     island_isolines[island_dex] = new_isoline_1
     island_isolines[island_dex+1] = new_isoline_2
 
@@ -181,17 +272,14 @@ for island_dex in range(0,num_islands_intersecting-1):
     # plotting to check.  these files loaded by other plotting script
     fig, ax = plt.subplots()
     ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
-    zx=[x[0] for x in p]
-    zy=[x[1] for x in p]
-    zzx=[x[0] for x in q]
-    zzy=[x[1] for x in q]
-    ax.plot(zx,zy)
-    ax.plot(zzx,zzy)
+    
+    ax.plot(new_isoline_1[:,0],new_isoline_1[:,1])
+    ax.plot(new_isoline_2[:,0],new_isoline_2[:,1])
 
 
 for island_dex in range(0,num_islands_intersecting-1):   
 
-    output_file = output_dir + 'isodistance_lonlat_processed_v1_wc15_island_number_{}.p'.format(island_dex)
+    output_file = input_dir + 'isodistance_lonlat_processed_v1_wc15_island_number_{}.p'.format(island_dex)
     file = open(output_file,'wb')
     pickle.dump(island_isolines[island_dex],file)
     file.close()
