@@ -4,7 +4,9 @@
 
 # Furthermore, we want to impose lines dividing "inshore" and "offshore" coasts, per the ecologists.
 
-
+# V1 is half-working, but need to add the "lower piece" of the 2nd island's isoline FIRST,
+# then add the 1st island's isoline, then add the "upper Piece" of the 2nd island's isoline
+# (all excluding the isoline points in the intersection)
 
 import pickle
 import netCDF4
@@ -60,7 +62,6 @@ new_isolines = []
 
 
 for island_dex in range(1,num_islands_intersecting+1):   
-#for island_dex in range(0,2):   
 
     coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_dex)
     isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}.p'.format(island_dex)
@@ -80,18 +81,19 @@ for island_dex in range(1,num_islands_intersecting+1):
     island_isolines.append(isoline_lonlat)
 
 
-combined_isoline_lon = []
-combined_isoline_lat = []
+# Need to change things - store the "previous isoline" separately, and 
+# only look at the "next" one in the loop
+previous_isoline = island_isolines[0] 
 
-combined_isoline_tuples = []
 
 for island_dex in range(0,num_islands_intersecting-1):
-#for island_dex in range(0,1):   
 
+    combined_isoline_lon = []
+    combined_isoline_lat = []
 
     p = []
-    for ii in range(len(island_isolines[island_dex])):
-        p.append((island_isolines[island_dex][ii,0],island_isolines[island_dex][ii,1]))
+    for ii in range(len(previous_isoline)):
+        p.append((previous_isoline[ii,0],previous_isoline[ii,1]))
 
     q = []
     for ii in range(len(island_isolines[island_dex+1])):
@@ -105,35 +107,59 @@ for island_dex in range(0,num_islands_intersecting-1):
 
     # Add points not in the intersection to the combined_isoline
 
-    p_lon,p_lat=internal_points.exterior.xy
+    p_lon_pre_1,p_lat_pre_1=internal_points.exterior.xy
 
-    p_lon_pre = list(p_lon)    
-    p_lat_pre = list(p_lat)    
+    p_lon_pre_2 = list(p_lon_pre_1)    
+    p_lat_pre_2 = list(p_lat_pre_1)    
 
     # Round polygon coordinates and intersection coordinates, otherwise precisions don't match and we can't filter...??
     round_param = 3
 
-    p_lon = list(np.around(np.array(p_lon_pre),round_param))
-    p_lat = list(np.around(np.array(p_lat_pre),round_param))
-
-    #new_points_lon = [point for point in list(island_isolines[island_dex][:,0]) if point not in p_lon]
-    #new_points_lat = [point for point in list(island_isolines[island_dex][:,1]) if point not in p_lat]
+    p_lon = list(np.around(np.array(p_lon_pre_2),round_param))
+    p_lat = list(np.around(np.array(p_lat_pre_2),round_param))
 
     coord_tuples_intersection = merge_lists(p_lon,p_lat)
 
-    for ii in range(len(island_isolines[island_dex])):
-        if (round(island_isolines[island_dex][ii,0],round_param),round(island_isolines[island_dex][ii,1],round_param)) not in coord_tuples_intersection:
-            combined_isoline_tuples.append((island_isolines[island_dex][ii,0],island_isolines[island_dex][ii,1]))
+    isoline_2_dex = 0
+    # Step 1: Add the "lower piece" of the 2nd island's isoline
+    for ii in range(len(island_isolines[island_dex+1])):
+        if (round(island_isolines[island_dex+1][ii,0],round_param),round(island_isolines[island_dex+1][ii,1],round_param)) in coord_tuples_intersection:
+            isoline_2_dex = ii
+            break
+        else:
+            combined_isoline_lon.append(island_isolines[island_dex+1][ii,0])
+            combined_isoline_lat.append(island_isolines[island_dex+1][ii,1])
+
+    # Step 2: Add the 1st island's isoline
+    for ii in range(len(previous_isoline)):
+        if (round(previous_isoline[ii,0],round_param),round(previous_isoline[ii,1],round_param)) not in coord_tuples_intersection:
+            combined_isoline_lon.append(previous_isoline[ii,0])
+            combined_isoline_lat.append(previous_isoline[ii,1])
+
+    # Step 3: Add the "upper piece" of the 2nd island's isoline
+    for ii in range(isoline_2_dex,len(island_isolines[island_dex+1])):
+        if (round(island_isolines[island_dex+1][ii,0],round_param),round(island_isolines[island_dex+1][ii,1],round_param)) not in coord_tuples_intersection:
+            combined_isoline_lon.append(island_isolines[island_dex+1][ii,0])
+            combined_isoline_lat.append(island_isolines[island_dex+1][ii,1])
+
+    previous_isoline = np.column_stack([combined_isoline_lon,combined_isoline_lat])
 
 
 
-fig, ax = plt.subplots()
-ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
+# Close and store the final isoline
+combined_isoline = np.append(previous_isoline,[previous_isoline[0,:]],axis=0)
 
-ax.plot(*zip(*combined_isoline_tuples))
-plt.show()
+#fig, ax = plt.subplots()
+#ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
+#ax.plot(combined_isoline[:,0],combined_isoline[:,1])
+#plt.show()
 
 
+output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_1_through_4_blob.p'
+
+file = open(output_file,'wb')
+pickle.dump(isoline_lonlat,file)
+file.close()
 
 
 
