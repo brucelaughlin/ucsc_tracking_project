@@ -46,6 +46,12 @@ bridge_point_list = file.read().splitlines()
 file.close()
 bridge_point_list = [ast.literal_eval(el) for el in bridge_point_list]
 
+# load isoline boundary point coordinates
+file = open(box_dir + islands_dir + 'island_isoline_bounding_points.txt','r')
+isoline_bp_list = file.read().splitlines()
+file.close()
+isoline_bp_list = [ast.literal_eval(el) for el in isoline_bp_list]
+
 
 
 fig, ax = plt.subplots()

@@ -14,31 +14,35 @@ import ast
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
+#land_type = 'continent'
+land_type = 'islands'
+
 base_path = '/home/blaughli/tracking_project/'
-psi_bl_directory = 'practice/bounding_boxes/create_boxes/z_modify_psi/'
-output_dir = 'z_output/'
 
 grid_directory = 'grid_data/'
 grid_file_in = 'wc15_grd_only_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
-
-psi_bl_file_in = 'mask_psi_bl_islands.p'
-psi_bl_path_in = base_path + psi_bl_directory + psi_bl_file_in
-
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
-points_type_psi = 'psi'
-lon_psi = np.array(dset['lon_{}'.format(points_type_psi)])
-lat_psi = np.array(dset['lat_{}'.format(points_type_psi)])
+points_type_field = 'rho'
+lon_field = np.array(dset['lon_{}'.format(points_type_field)])
+lat_field = np.array(dset['lat_{}'.format(points_type_field)])
+mask = np.array(dset['mask_{}'.format(points_type_field)])
 
 dset.close
+
+
+box_dir = base_path + 'practice/bounding_boxes/create_boxes/'
+islands_dir = 'aa_islands/'
+input_dir = box_dir + islands_dir + 'z_output/'
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
 
 # load artifical bridge endpoint coordinates
-file = open('artificial_coastline_insertion_points.txt','r')
+#file = open('artificial_coastline_insertion_points.txt','r')
+file = open('artificial_coastline_insertion_points_2.txt','r')
 bridge_point_list = file.read().splitlines()
 file.close()
 bridge_point_list = [ast.literal_eval(el) for el in bridge_point_list]
@@ -51,11 +55,10 @@ coast_lat_top = []
 coast_lon_bottom = []
 coast_lat_bottom = []
 
-bp_dex = 0
+# First, the inshore coastline of the 4 "blob" islands
+for island_number in range(1,num_islands_intersecting+1):   
 
-for island_number in range(1,num_islands_intersecting):   
-
-    coastline_file_in = output_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_number)
+    coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_number)
 
     # Load the coastlines 
     file = open(coastline_file_in,'rb')
@@ -63,32 +66,58 @@ for island_number in range(1,num_islands_intersecting):
     file.close
     coastline_lonlat = coastline_lonlat[0]
 
-
-    # Handling the "top" first...
-    # And just longitude, till I get it right
-
-    #if island_number == 1:
-    #    coast_lon_top += list(coastline_lonlat[0:bridge_point_list[bp_dex][0],0])
-    #    bp_dex += 1
-    #else:
-   
-    # use this to test things:
-    a=[0,2,3,4]
-    a[-2,:]
-    etc
-
-    if bridge_point_list[bp_dex][0] < 0:
-     #   coast_lon_top += list(coastline_lonlat[bridge_point_list[bp_dex][0],0]:coastline_lonlat[bridge_point_list[bp_dex][1],0])
+    if bridge_point_list[island_number - 1][0] < 0:
+        coast_lon_top += list(coastline_lonlat[bridge_point_list[island_number - 1][0]:,0])
+        coast_lat_top += list(coastline_lonlat[bridge_point_list[island_number - 1][0]:,1])
+        coast_lon_top += list(coastline_lonlat[0:bridge_point_list[island_number - 1][1]+1,0])
+        coast_lat_top += list(coastline_lonlat[0:bridge_point_list[island_number - 1][1]+1,1])
     
-    coast_lon_top += list(coastline_lonlat[bridge_point_list[bp_dex][0],0]:coastline_lonlat[bridge_point_list[bp_dex][1],0])
-    bp_dex += 1
+    else:
+        coast_lon_top += list(coastline_lonlat[bridge_point_list[island_number - 1][0]:bridge_point_list[island_number - 1][1]+1,0])
+        coast_lat_top += list(coastline_lonlat[bridge_point_list[island_number - 1][0]:bridge_point_list[island_number - 1][1]+1,1])
+
+coast_lonlat_top = np.column_stack([coast_lon_top,coast_lat_top])
+
+
+# Now, the offshore coastline of the 4 "blob" islands
+#for island_number in range(num_islands_intersecting+1,1,-1):   
+for island_number in range(num_islands_intersecting,0,-1):   
+
+    coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_number)
+
+    # Load the coastlines 
+    file = open(coastline_file_in,'rb')
+    coastline_lonlat = pickle.load(file)
+    file.close
+    coastline_lonlat = coastline_lonlat[0]
+
+    if bridge_point_list[island_number - 1][0] < 0:
+        coast_lon_bottom += list(coastline_lonlat[bridge_point_list[island_number - 1][1]:bridge_point_list[island_number - 1][0]+1,0])
+        coast_lat_bottom += list(coastline_lonlat[bridge_point_list[island_number - 1][1]:bridge_point_list[island_number - 1][0]+1,1])
+    
+    else:
+        coast_lon_bottom += list(coastline_lonlat[bridge_point_list[island_number - 1][1]:,0])
+        coast_lat_bottom += list(coastline_lonlat[bridge_point_list[island_number - 1][1]:,1])
+
+coast_lonlat_bottom = np.column_stack([coast_lon_bottom,coast_lat_bottom])
 
 
 
-#file = open(coastline_file_out,'wb')
-#pickle.dump(coordinate_array_list,file)
-#file.close()
+fig, ax = plt.subplots()
+ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
+ax.plot(coast_lonlat_top[:,0],coast_lonlat_top[:,1],c='red')
+ax.plot(coast_lonlat_bottom[:,0],coast_lonlat_bottom[:,1],c='blue')
+plt.show()
 
+coast_inshore_file_out = input_dir + "coastline_coords_wc15_island_1_through_4_combined_inshore.p"
+file = open(coast_inshore_file_out,'wb')
+pickle.dump(coast_lonlat_top,file)
+file.close()
+
+coast_offshore_file_out = input_dir + "coastline_coords_wc15_island_1_through_4_combined_offshore.p"
+file = open(coast_offshore_file_out,'wb')
+pickle.dump(coast_lonlat_bottom,file)
+file.close()
 
 
 

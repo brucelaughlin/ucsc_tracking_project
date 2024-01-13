@@ -158,7 +158,7 @@ combined_isoline = np.append(previous_isoline,[previous_isoline[0,:]],axis=0)
 output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_1_through_4_blob.p'
 
 file = open(output_file,'wb')
-pickle.dump(isoline_lonlat,file)
+pickle.dump(combined_isoline,file)
 file.close()
 
 

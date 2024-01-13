@@ -49,7 +49,10 @@ ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
 
 num_islands = 8
 
+#num_island = 6
+
 for island_dex in range(1,num_islands+1):   
+#for island_dex in range(num_island,num_island+1):   
 
     coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_dex)
 
