@@ -86,7 +86,15 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 
     isoline_lon = list(isoline[:,0])    
     isoline_lat = list(isoline[:,1])    
-    
+
+
+    # FIX THE "TACK ON" BUG!!
+
+    # Try... just popping off the tacked-on (ie last) element?!
+    isoline_lon.pop()
+    isoline_lat.pop()
+
+
     isoline_dex = 0    
 
     while(isoline_dex != isoline_bp_list[island_dex-num_last_blob_island][0]):
@@ -97,6 +105,10 @@ for island_dex in range(num_last_blob_island,num_islands+1):
         isoline_lon.extend([temp_lon])
         isoline_lat.extend([temp_lat])
         isoline_dex += 1
+
+    # Now tack on the starting point as the last element!
+    isoline_lon.append(isoline_lon[0])
+    isoline_lat.append(isoline_lat[0])
 
     isoline = np.column_stack([isoline_lon,isoline_lat])
 

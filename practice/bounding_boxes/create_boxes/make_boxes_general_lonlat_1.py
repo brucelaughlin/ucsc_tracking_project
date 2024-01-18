@@ -49,11 +49,13 @@ output_dir = 'z_output/'
 point_type_line = 'psi'
 point_type_field = 'rho'
 
-isoline_coord_file_in = base_dir + box_file_dir + 'isodistance_lonlat_coords_{}_coastline_wc15_no_islands.p'.format(point_type_field)
+#isoline_coord_file_in = base_dir + box_file_dir + 'isodistance_lonlat_coords_{}_coastline_wc15_no_islands.p'.format(point_type_field)
+isoline_coord_file_in = base_dir + box_file_dir + output_dir + 'isodistance_lonlat_coords_{}_coastline_wc15_no_islands.p'.format(point_type_field)
 
 #coast_coords_in_lon = base_dir + box_file_dir + 'coast_coords_{}_wc15_continent_lon.txt'.format(point_type_line)
 #coast_coords_in_lat = base_dir + box_file_dir + 'coast_coords_{}_wc15_continent_lat.txt'.format(point_type_line)
-coast_coords_in = base_dir + box_file_dir + 'coastline_coords_{}_file_wc15_continent.p'.format(point_type_line)
+#coast_coords_in = base_dir + box_file_dir + 'coastline_coords_{}_file_wc15_continent.p'.format(point_type_line)
+coast_coords_in = base_dir + box_file_dir + output_dir + 'coastline_coords_{}_file_wc15_continent.p'.format(point_type_line)
 
 bounding_boxes_file_out = base_dir + box_file_dir + output_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15_continental.p'.format(point_type_line)
 

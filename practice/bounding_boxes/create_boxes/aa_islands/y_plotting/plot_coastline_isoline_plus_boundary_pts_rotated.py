@@ -38,13 +38,13 @@ input_dir = box_dir + islands_dir + 'z_output/'
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
-# load artifical bounding endpoint coordinates
+# load coastline artifical bounding endpoint coordinates
 file = open(box_dir + islands_dir + 'island_coastline_bounding_points.txt','r')
 coast_bp_list = file.read().splitlines()
 file.close()
 coast_bp_list = [ast.literal_eval(el) for el in coast_bp_list]
 
-# load artifical bounding endpoint coordinates
+# load isoline artifical bounding endpoint coordinates
 #file = open(box_dir + islands_dir + 'island_isoline_bounding_points.txt','r')
 file = open(box_dir + islands_dir + 'island_isoline_bounding_points_rotated.txt','r')
 isoline_bp_list = file.read().splitlines()
