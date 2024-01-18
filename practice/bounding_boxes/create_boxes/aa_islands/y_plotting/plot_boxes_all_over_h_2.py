@@ -54,52 +54,16 @@ input_dir_continent = box_dir + 'z_output/'
 #---------------------------------------------------------------------
 
 
-# -------------------------------------
-# Custom colormap (https://stackoverflow.com/questions/49367144/modify-matplotlib-colormap)
+# Get nice plot background going
+# (jet color for depth, land masked with grey)
 
-# create colormap
-# ---------------
+h_2 = np.multiply(mask,h)
+cmap_custom = plt.colormaps['jet']
+cmap_custom.set_under('0.8')
 
-# I don't quite understand the math going on, but I did trial and error until I hacked
-# my way into something lat looks ok.
-
-# set upper part: 4 * 256/4 entries   (like, what is going on here?)
-upper = mpl.cm.jet(np.arange(256))
-
-# set lower part: 1 * 256/4 entries  (ok, what is going on?  I changed this)
-# - initialize all entries to 1 to make sure that the alpha channel (4th column) is 1
-#lower = np.ones((int(256/4),4))  (the original)
-#lower = np.ones((int(256/64),4))
-#lower = np.ones((int(256/128),4))
-lower = np.ones((int(256/256),4))
-# - modify the first three columns (RGB):
-#   range linearly between white (1,1,1) and the first color of the upper colormap
-for i in range(3):
-    #lower[:,i] = np.linspace(1, upper[0,i], lower.shape[0])
-    lower[:,i] = np.linspace(0.8, upper[0,i], lower.shape[0])  #(used 0.8 as a starting point, which is gray)
-
-# combine parts of colormap
-cmap = np.vstack(( lower, upper ))
-
-# convert to matplotlib colormap
-cmap = mpl.colors.ListedColormap(cmap, name='myColorMap', N=cmap.shape[0])
-
-
-# ------------------------------------
-
-
-
-
-h_masked = np.multiply(mask,h)
-
+# I really don't know what "vmin" is doing here, but it seems to work (copied from a stack overflow post)
 fig, ax = plt.subplots()
-#ax.pcolormesh(lon_field,lat_field,mask,shading="nearest")
-#ax.pcolormesh(lon_field,lat_field,pretty_h_background,shading="nearest")
-#ax.pcolormesh(lon_field,lat_field,h,shading="nearest")
-#ax.pcolormesh(lon_field,lat_field,h,shading="nearest",cmap = plt.colormaps['jet'])
-#ax.pcolormesh(lon_field,lat_field,h,shading="nearest",cmap = cmap)
-ax.pcolormesh(lon_field,lat_field,h_masked,shading="nearest",cmap = cmap)
-
+ax.pcolormesh(lon_field,lat_field,h_2,shading="nearest",cmap = cmap_custom, vmin=0.001)
 
 
 # Continent

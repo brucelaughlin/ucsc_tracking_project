@@ -59,16 +59,15 @@ points_in_boxes_file_out = 'points_in_boxes_all_lon_lat.p'
 # a point with an "i" value of 540, which is out of bounds for psi.
 # so.. what's going on?  rho has 1 extra point in each dimension...
 
-# create interpolator to get lat/lon at isoline points
+# Create interpolator to get lat/lon at isoline points
+#
+# Note: I'm "naively" using the psi grid for this, since I defined the coast along
+# psi points...
 RGI = spint.RegularGridInterpolator
-#x = np.arange(np.shape(lon_line)[0])
-#y = np.arange(np.shape(lon_line)[1])
-#rgi_lon = RGI([x,y],lon_line)
-#rgi_lat = RGI([x,y],lat_line)
-x = np.arange(np.shape(lon_field)[0])
-y = np.arange(np.shape(lon_field)[1])
-rgi_lon = RGI([x,y],lon_field)
-rgi_lat = RGI([x,y],lat_field)
+x = np.arange(np.shape(lon_line)[0])
+y = np.arange(np.shape(lon_line)[1])
+rgi_lon = RGI([x,y],lon_line)
+rgi_lat = RGI([x,y],lat_line)
 
 
 
