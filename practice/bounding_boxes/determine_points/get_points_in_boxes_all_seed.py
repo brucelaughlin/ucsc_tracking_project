@@ -94,14 +94,14 @@ points_in_boxes_lonlat_continent = []
 
 box_dex = 0
 
-#for box in boxes_lonlat:
-for ii in range(3,len(boxes_lonlat)-3):
-    box_lonlat = boxes_lonlat[ii]
+for box_lonlat in boxes_lonlat:
+#for ii in range(3,len(boxes_lonlat)-3):
+    #box_lonlat = boxes_lonlat[ii]
     box_dex += 1
+    if box_lonlat is None:
+        print('box {} has value "None" ..!?'.format(box_dex-1))
     if box_lonlat is not None:
 
-        #box_lonlat = np.array([rgi_lon((box[0,:],box[1,:])),rgi_lat((box[0,:],box[1,:]))])
-    
         path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
         
         points_inside_flags = path.contains_points(points_lon_lat) 

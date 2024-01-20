@@ -87,20 +87,21 @@ file = open(bounding_boxes_file_in,'rb')
 boxes_lonlat = pickle.load(file)
 file.close
 
-#box_dex = 0 
-#for box in boxes_lonlat:
-#    if box is not None:
-#        ax.plot(box[0],box[1],c = 'white',linewidth=0.6)
-#
-#        if box_dex % 2 == 0:
-#            marker_point = '.' 
-#        else:
-#            marker_point = 'x' 
-#
-#        ax.scatter(points_in_boxes_continent[box_dex][0,:],points_in_boxes_continent[box_dex][1,:], marker = marker_point)
-#            
-#        box_dex += 1
-#
+box_dex = 0 
+for box in boxes_lonlat:
+    if box is not None:
+        ax.plot(box[0],box[1],c = 'white',linewidth=0.6)
+
+        #if box_dex % 2 == 0:
+        #    marker_point = '.' 
+        #else:
+        #    marker_point = 'x' 
+
+        marker_point = '.' 
+        ax.scatter(points_in_boxes_continent[box_dex][0,:],points_in_boxes_continent[box_dex][1,:], marker = marker_point)
+            
+        box_dex += 1
+
 
 
 #---------------------------------------------------------------------
@@ -109,6 +110,8 @@ file.close
 num_islands = 8
 num_last_blob_island = 4
 
+box_dex_inshore = 0
+box_dex_offshore = 0
 
 for island_dex in range(num_last_blob_island,num_islands+1):
 #for island_dex in range(num_last_blob_island,num_last_blob_island+1):
@@ -127,23 +130,30 @@ for island_dex in range(num_last_blob_island,num_islands+1):
         boxes_lonlat = pickle.load(file)
         file.close
 
-        box_dex = 0
         for box in boxes_lonlat:
             if box is not None:
                ax.plot(box[0],box[1],c = 'white',linewidth=0.6)
         
-            if box_dex % 2 == 0:
-                marker_point = '.' 
-            else:
-                marker_point = 'x' 
 
             
+            marker_point = '.' 
             if inoffshore_switch == 0:
-                ax.scatter(points_in_boxes_islands_inshore[box_dex][0,:],points_in_boxes_islands_inshore[box_dex][1,:], marker = marker_point)
-            else:
-                ax.scatter(points_in_boxes_islands_offshore[box_dex][0,:],points_in_boxes_islands_offshore[box_dex][1,:], marker = marker_point)
+                #if box_dex_inshore % 2 == 0:
+                #    marker_point = '.' 
+                #else:
+                #    marker_point = 'x' 
                 
-            box_dex += 1
+                ax.scatter(points_in_boxes_islands_inshore[box_dex_inshore][0,:],points_in_boxes_islands_inshore[box_dex_inshore][1,:], marker = marker_point)
+                box_dex_inshore += 1
+            else:
+                #if box_dex_offshore % 2 == 0:
+                #    marker_point = '.' 
+                #else:
+                #    marker_point = 'x' 
+                
+                ax.scatter(points_in_boxes_islands_offshore[box_dex_offshore][0,:],points_in_boxes_islands_offshore[box_dex_offshore][1,:], marker = marker_point)
+                box_dex_offshore += 1
+                
 
 
 
