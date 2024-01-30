@@ -27,7 +27,11 @@ grid_file_in = 'wc15_grd.nc.0'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
-h_grid = dset['h']
+h = np.array(dset['h'])
+lon = np.array(dset['lon_rho'])
+lat = np.array(dset['lat_rho'])
+
+
 
 dset.close
 
@@ -65,21 +69,63 @@ file.close
 # I got the start time bby ust exploring variables in an early script.
 # This should be ideally be obtained dynamically
 
+# Jerome's daily output has a single timestamp, at hour 12 of the given day
+
 #start_time = '2018-01-02 00:00:00'
-start_time = '1988-01-01 00:00:00'
+#start_time = '1988-01-01 00:00:00'
+start_time = '1988-01-01 12:00:00'
 
 
 outFile = open(r'{}'.format(seed_path_out),"w")
 
 # Set depth to 0 for now, just as a test.  Later, assign depths throughout water column
-depth = 0
+#depth = 0
+
+# Still need to actually get a good profile at each location.  but start with 0 and -5 (should work!?)
+#depths = [0,-5]
+
+# start with simple uniform profile
+num_depths_constant = 10
+
 
 for points_in_box in points_in_boxes:
 
-    #for point in points_in_box:
-    for ii in range(np.shape(points_in_box)[1]):
-        #outFile.write('{}, {}, {}, {}\n'.format(test_point_lon,test_point_lat,depth,start_time))
-        outFile.write('{}, {}, {}, {}\n'.format(points_in_box[0,ii],points_in_box[1,ii],depth,start_time))
+    for depth in depths:
+
+        #for point in points_in_box:
+        for pp in range(np.shape(points_in_box)[1]):
+            #outFile.write('{}, {}, {}, {}\n'.format(test_point_lon,test_point_lat,depth,start_time))
+            #outFile.write('{}, {}, {}, {}\n'.format(points_in_box[0,pp],points_in_box[1,pp],depth,start_time))
+            
+
+            # Get i,j coordinates of the point, so we can get the value of h there
+            #lon_filtered = np.where(lon == points_in_box[0,pp])
+            #lat_filtered = np.where(lat == points_in_box[1,pp])
+
+            #point_ij = [lon_filtered[1][1],lat_filtered[0][1]]
+
+
+            #lon_filtered = lon == points_in_box[0,pp]
+            #lat_filtered = lat == points_in_box[1,pp]
+
+            point_ij = [99999,99999]
+
+            for ii in range(np.shape(lon)[0]): 
+                for jj in range(np.shape(lon)[1]): 
+                    #if lon_filtered[ii,jj] == True and lat_filtered[ii,jj
+                    if lon[ii,jj] == points_in_box[0,pp] and lat[ii,jj] == points_in_box[1,pp]:
+
+                        point_ij = [ii,jj]
+                        #h_point = h[ii,jj]
+                        break
+                if point_ij[0] < 10000:
+                    break
+
+            h_point = h[point_ij[0],point_ij[1]]
+        
+            depth_profile = np.linspace(-1 * h_point, 0 ,num_depths_constant)
+
+            outFile.write('{}, {}, {}, {}\n'.format(points_in_box[0,pp],points_in_box[1,pp],depth,start_time))
 
 
 

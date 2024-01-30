@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# Now add depth profiles
 
 # Jerome's daily files have just one time value.  So we are working with daily output, ie a timestep of a day
-
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,8 +14,12 @@ from opendrift.readers import reader_ROMS_native
 import time
 import sys 
 import os
+from pathlib import Path
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/models_opendrift"))
 from larvaldispersal import LarvalDispersal
+
+# Track how long this takes to run
+t_everything_0 = time.time()
 
 
 #--------- Base Directory Paths -----------
@@ -44,14 +48,21 @@ seed_file_pre = 'box_points_seed_1.txt'
 seed_file = seed_base + seed_file_pre
 
 
-#----------Output File---------------------
+#----------Output netCDF File---------------------
 
-test_number = 3
+test_number = 4
 
 #tracking_output_pre = 'test_output_2.nc'
 tracking_output_pre = 'test_output_{}.nc'.format(str(test_number))
 
 tracking_output_file = output_base + tracking_output_pre
+
+
+#----------Runtime Data Text File---------------------
+
+runtime_text_file_pre =  'runtime_data.txt' 
+
+runtime_text_file =  output_base + runtime_text_file_pre
 
 #----------------------------------------
 #----------------------------------------
@@ -89,7 +100,8 @@ with open(seed_file, 'r') as inputfile:
 # Do I need this "special" reader for ROMS files???
 roms_his_reader = reader_ROMS_native.Reader(his_file)
 
-o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for debug information
+#o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for debug information
+o = LarvalDispersal(loglevel=0)  # Set loglevel to 0 for debug information
 o.add_reader(roms_his_reader)
 
 
@@ -128,7 +140,7 @@ o.seed_elements(lon=lons,lat=lats, z=zs, time=times)
 
 
 
-t0 = time.time()
+t_run_0 = time.time()
 
 #o.run(time_step=3600, outfile=out_file)
 #o.run(time_step=3600, outfile = tracking_output_file)
@@ -139,17 +151,29 @@ t0 = time.time()
 # 30 day run, timestep = 1 day
 o.run(steps = 30, time_step=timedelta(hours=24), outfile = tracking_output_file)
 
-t1 = time.time()
-total_runtime = t1-t0
+t_1 = time.time()
+total_runtime = t_1-t_run_0
+total_execution_time = t_1-t_everything_0
 
 
 print(o)
 
+print('\n\ntotal execution time: {}\n\n'.format(total_execution_time))
 print('\n\ntotal runtime: {}\n\n'.format(total_runtime))
 
-o.plot(linecolor='z', fast=True)
+
+runtime_file = Path(runtime_text_file)
+#with open(r'{}'.format(runtime_text_file),"a") as outfile: 
+with open(runtime_text_file,"a") as out_file: 
+    out_file.write('runtime: {}, execution: {}\n'.format(total_runtime, total_execution_time))
+    
+
+#o.plot(linecolor='z', fast=True)
 
 #o.plot_property('z')
+
+
+
 
 
 
