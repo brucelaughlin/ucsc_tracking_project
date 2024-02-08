@@ -32,7 +32,7 @@ from shapely.geometry import LineString, Point, Polygon
 base_path = '/home/blaughli/tracking_project/'
 
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_only_islands.nc'
+grid_file_in = 'wc15n_grd.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
@@ -93,9 +93,9 @@ for island_dex in range(num_last_blob_island,num_islands+1):
     # Load coastline and isoline coordinates
     if island_dex == num_last_blob_island:
 
-        coastline_inshore_file_in = input_dir + 'coastline_coords_wc15_island_1_through_4_combined_inshore.p'
-        coastline_offshore_file_in = input_dir + 'coastline_coords_wc15_island_1_through_4_combined_offshore.p'
-        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_1_through_4_blob_rotated.p'
+        coastline_inshore_file_in = input_dir + 'coastline_coords_wc15n_island_1_through_4_combined_inshore.p'
+        coastline_offshore_file_in = input_dir + 'coastline_coords_wc15n_island_1_through_4_combined_offshore.p'
+        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_1_through_4_blob_rotated.p'
 
         # Load the coastlines
         file = open(coastline_inshore_file_in,'rb')
@@ -107,8 +107,8 @@ for island_dex in range(num_last_blob_island,num_islands+1):
         coastline_lonlat = np.append(coastline_lonlat_1,coastline_lonlat_2,axis=0)
 
     else:
-        coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_dex)
-        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}_rotated.p'.format(island_dex)
+        coastline_file_in = input_dir + 'coastline_coords_wc15n_island_number_{}.p'.format(island_dex)
+        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}_rotated.p'.format(island_dex)
 
         # Load the coastlines
         file = open(coastline_file_in,'rb')
@@ -126,9 +126,9 @@ for island_dex in range(num_last_blob_island,num_islands+1):
     for inoffshore_switch in range(0,2):
     
         if inoffshore_switch == 0:
-            bounding_boxes_file_out = input_dir + 'bounding_boxes_lonlat_wc15_island_number_{}_inshore.p'.format(island_dex)
+            bounding_boxes_file_out = input_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_inshore.p'.format(island_dex)
         else:
-            bounding_boxes_file_out = input_dir + 'bounding_boxes_lonlat_wc15_island_number_{}_offshore.p'.format(island_dex)
+            bounding_boxes_file_out = input_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
 
         if inoffshore_switch == 0:
             coast_lon = list(coastline_lonlat[0:coastline_bp_list[bp_dex][1]+1,0])

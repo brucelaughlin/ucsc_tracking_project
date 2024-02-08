@@ -20,7 +20,8 @@ land_type = 'islands'
 base_path = '/home/blaughli/tracking_project/'
 
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_only_islands.nc'
+#grid_file_in = 'wc15n_grd_only_islands.nc'
+grid_file_in = 'wc15n_grd_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
@@ -49,8 +50,8 @@ num_islands = 8
 
 for island_dex in range(1,num_islands+1):   
 
-    coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_dex)
-    isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}.p'.format(island_dex)
+    coastline_file_in = input_dir + 'coastline_coords_wc15n_island_number_{}.p'.format(island_dex)
+    isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}.p'.format(island_dex)
 
     # Load the coastlines
     file = open(coastline_file_in,'rb')
@@ -70,8 +71,8 @@ for island_dex in range(1,num_islands+1):
     ax.plot(coastline[:,0],coastline[:,1])
     ax.plot(isoline[:,0],isoline[:,1])
 
-    ax.axis('image')
-    plt.show()
+ax.axis('image')
+plt.show()
 
 
 

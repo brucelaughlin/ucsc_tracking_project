@@ -27,7 +27,7 @@ point_type_line = 'psi'
 
 base_path = '/home/blaughli/tracking_project/'
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_no_islands.nc'
+grid_file_in = 'wc15n_grd.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
@@ -39,14 +39,15 @@ lat_line = np.array(dset['lat_{}'.format(point_type_line)])
 dset.close
 
 bounding_boxes_dir = 'practice/bounding_boxes/create_boxes/'
-bounding_boxes_file_in = 'bounding_boxes_lonlat_coords_{}_coastline_wc15_continental.p'.format(point_type_line)
+bounding_boxes_file_in = 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
 bounding_boxes_path = base_path + bounding_boxes_dir + bounding_boxes_file_in
 
 
 box_dir = base_path + 'practice/bounding_boxes/create_boxes/'
 islands_dir = 'aa_islands/'
+continent_dir = 'continent/'
 input_dir_islands = box_dir + islands_dir + 'z_output/'
-input_dir_continent = box_dir + 'z_output/'
+input_dir_continent = box_dir + continent_dir + 'z_output/'
 
 
 points_in_boxes_file_out_continent = 'z_output/' + 'points_in_boxes_lon_lat_continent.p'
@@ -84,7 +85,7 @@ points_lon_lat = np.array(points_lon_lat)
 # Continent
 
 
-bounding_boxes_file_in = input_dir_continent + 'bounding_boxes_lonlat_coords_{}_coastline_wc15_continental.p'.format(point_type_line)
+bounding_boxes_file_in = input_dir_continent + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
 file = open(bounding_boxes_file_in,'rb')
 boxes_lonlat = pickle.load(file)
 file.close
@@ -141,9 +142,9 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 
 
         if inoffshore_switch == 0:
-            bounding_boxes_file_in = input_dir_islands + 'bounding_boxes_lonlat_wc15_island_number_{}_inshore.p'.format(island_dex)
+            bounding_boxes_file_in = input_dir_islands + 'bounding_boxes_lonlat_wc15n_island_number_{}_inshore.p'.format(island_dex)
         else:
-            bounding_boxes_file_in = input_dir_islands + 'bounding_boxes_lonlat_wc15_island_number_{}_offshore.p'.format(island_dex)
+            bounding_boxes_file_in = input_dir_islands + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
 
 
         # Load the boxes

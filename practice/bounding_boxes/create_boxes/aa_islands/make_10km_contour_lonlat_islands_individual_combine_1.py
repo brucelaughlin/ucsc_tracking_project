@@ -22,7 +22,7 @@ import scipy.interpolate as spint
 
 base_path = '/home/blaughli/tracking_project/'
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_no_islands.nc'
+grid_file_in = 'wc15n_grd_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
@@ -45,13 +45,13 @@ output_dir = islands_dir + 'z_output/'
 
 num_islands = 8
 
-#for island_dex in range(1,num_islands+1):
-for island_dex in range(2,3):
+for island_dex in range(1,num_islands+1):
+#for island_dex in range(2,3):
 
     #---------------------------------------------------------------------
-    output_file = output_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}.p'.format(island_dex)
+    output_file = output_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}.p'.format(island_dex)
     
-    dist_field_file = output_dir + 'dist_2_coast_field_rho_coastline_wc15_island_number_{}.mat'.format(island_dex)
+    dist_field_file = output_dir + 'dist_2_coast_field_rho_coastline_wc15n_island_number_{}.mat'.format(island_dex)
     dist_field = scipy.io.loadmat(dist_field_file)
     dist_field = dist_field['dist_field']
     #---------------------------------------------------------------------

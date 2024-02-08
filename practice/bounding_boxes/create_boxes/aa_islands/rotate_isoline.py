@@ -26,7 +26,7 @@ land_type = 'islands'
 base_path = '/home/blaughli/tracking_project/'
 
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_only_islands.nc'
+grid_file_in = 'wc15n_grd.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
@@ -73,11 +73,11 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 
 
     if island_dex == num_last_blob_island:
-        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_1_through_4_blob.p'
-        output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_1_through_4_blob_rotated.p'
+        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_1_through_4_blob.p'
+        output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_1_through_4_blob_rotated.p'
     else:
-        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}.p'.format(island_dex)
-        output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}_rotated.p'.format(island_dex)
+        isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}.p'.format(island_dex)
+        output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}_rotated.p'.format(island_dex)
 
     # Load the isolines
     file = open(isoline_file_in,'rb')
@@ -86,7 +86,15 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 
     isoline_lon = list(isoline[:,0])    
     isoline_lat = list(isoline[:,1])    
-    
+
+
+    # FIX THE "TACK ON" BUG!!
+
+    # Try... just popping off the tacked-on (ie last) element?!
+    isoline_lon.pop()
+    isoline_lat.pop()
+
+
     isoline_dex = 0    
 
     while(isoline_dex != isoline_bp_list[island_dex-num_last_blob_island][0]):
@@ -97,6 +105,10 @@ for island_dex in range(num_last_blob_island,num_islands+1):
         isoline_lon.extend([temp_lon])
         isoline_lat.extend([temp_lat])
         isoline_dex += 1
+
+    # Now tack on the starting point as the last element!
+    isoline_lon.append(isoline_lon[0])
+    isoline_lat.append(isoline_lat[0])
 
     isoline = np.column_stack([isoline_lon,isoline_lat])
 

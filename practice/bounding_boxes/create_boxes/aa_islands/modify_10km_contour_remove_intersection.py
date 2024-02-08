@@ -27,7 +27,8 @@ land_type = 'islands'
 base_path = '/home/blaughli/tracking_project/'
 
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_only_islands.nc'
+#grid_file_in = 'wc15n_grd_only_islands.nc'
+grid_file_in = 'wc15n_grd_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 
@@ -63,8 +64,10 @@ new_isolines = []
 
 for island_dex in range(1,num_islands_intersecting+1):   
 
-    coastline_file_in = input_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_dex)
-    isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_number_{}.p'.format(island_dex)
+    #coastline_file_in = input_dir + 'coastline_coords_wc15n_island_number_{}.p'.format(island_dex)
+    #isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}.p'.format(island_dex)
+    coastline_file_in = input_dir + 'coastline_coords_wc15n_island_number_{}.p'.format(island_dex)
+    isoline_file_in = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_number_{}.p'.format(island_dex)
 
     # Load the coastlines
     file = open(coastline_file_in,'rb')
@@ -155,7 +158,7 @@ combined_isoline = np.append(previous_isoline,[previous_isoline[0,:]],axis=0)
 #plt.show()
 
 
-output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15_island_1_through_4_blob.p'
+output_file = input_dir + 'isodistance_lonlat_coords_rho_coastline_wc15n_island_1_through_4_blob.p'
 
 file = open(output_file,'wb')
 pickle.dump(combined_isoline,file)

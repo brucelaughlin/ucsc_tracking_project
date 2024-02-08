@@ -15,11 +15,20 @@ import ast
 #---------------------------------------------------------------------
 
 base_path = '/home/blaughli/tracking_project/'
-psi_bl_directory = 'practice/bounding_boxes/create_boxes/z_modify_psi/'
-output_dir = 'z_output/'
+
+box_dir_general = base_path + 'practice/bounding_boxes/create_boxes/'
+
+continent_dir = box_dir_general + 'continent/'
+
+#psi_bl_directory = 'practice/bounding_boxes/create_boxes/z_modify_psi/'
+psi_bl_directory = continent_dir + 'z_modify_psi/'
+
+
+output_dir = continent_dir + 'z_output/'
 
 grid_directory = 'grid_data/'
-grid_file_in = 'wc15_grd_only_islands.nc'
+#grid_file_in = 'wc15_grd_only_islands.nc'
+grid_file_in = 'wc15n_grd_islands.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 
 psi_bl_file_in = 'mask_psi_bl_islands.p'
@@ -68,7 +77,7 @@ for starting_point in starting_point_list:
     
     coordinate_array_list = []
     island_dex += 1
-    coastline_file_out = output_dir + 'coastline_coords_wc15_island_number_{}.p'.format(island_dex)
+    coastline_file_out = output_dir + 'coastline_coords_wc15n_island_number_{}.p'.format(island_dex)
 
 
     coast_lon = []
