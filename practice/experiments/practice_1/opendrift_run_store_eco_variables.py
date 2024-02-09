@@ -33,7 +33,7 @@ test_number = 99
 run_dt = timedelta(hours=1)
 save_dt = timedelta(hours=1)
 
-run_length = timedelta(days=2)
+run_length = timedelta(days=4)
 # -----------------------------------------------------------------------------
 
 
@@ -109,9 +109,6 @@ o.add_reader(r)
 
 o.set_config('general:coastline_action', 'previous')
 
-# restrict to 2D motion?  use the following method call:
-# o.disable_vertical_motion()
-
 
 # Shouldn't I also be able to set parameters like swim speed, etc, 
 # using the input text file?  And could maybe have switch variables
@@ -119,17 +116,15 @@ o.set_config('general:coastline_action', 'previous')
 # disabling vertical motion, stranding behavior, etc...?
 
 
-# FLAG FOR VERTICAL TURBULENT MIXING
-# from oceandrift model cod:
-#if self.get_config('drift:vertical_mixing') is False:
-#    logger.debug('Turbulent mixing deactivated')
-#     return
+#--------------------------------------------------------------------------
+# Options to disable vertical motion:
+
+# Restrict to 2D motion?  Use the following method call:
+# o.disable_vertical_motion()
+
+# Flag for vertical turbulent mixing (default is True)
 #o.set_config('drift:vertical_mixing', False)
-o.set_config('drift:vertical_mixing', True)
-
-# Setting mixing to True gave an error:
-# AttributeError: 'LarvalDispersal' object has no attribute 'set_fallback_values'
-
+#--------------------------------------------------------------------------
 
 o.seed_elements(lon=lons,lat=lats, z=zs, time=times, origin_marker = 0)
 
@@ -151,10 +146,7 @@ print('\n\ntotal runtime: {}\n\n'.format(total_runtime))
 
 test_number_printable = '{:03.0f}'.format(test_number)
 
-runtime_file = Path(runtime_text_file)
-#with open(r'{}'.format(runtime_text_file),"a") as outfile: 
 with open(runtime_text_file,"a") as out_file: 
-    #out_file.write('runtime: {}, execution: {}\n'.format(total_runtime, total_execution_time))
     out_file.write('test number: {}, runtime: {}, execution: {}\n'.format(test_number_printable,total_runtime, total_execution_time))
     
 

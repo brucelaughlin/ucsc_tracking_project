@@ -5,23 +5,23 @@ import sys
 import os
 from pathlib import Path
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
-from larvaldispersal_track_new_variables import LarvalDispersal
-#from larvaldispersal import LarvalDispersal
+from larvaldispersal_track_eco_variables_v2 import LarvalDispersal
 import opendrift
 
 
 # -------------
-test_number = '12'
+test_number = '99'
 # -------------
 
-output_base = '/home/blaughli/tracking_project/practice/experiments/practice_1/y_figures/'
+output_base = '/home/blaughli/tracking_project/practice/experiments/practice_1/z_output/'
+figure_output_base = '/home/blaughli/tracking_project/practice/experiments/practice_1/y_figures/'
 tracking_output_pre = 'test_output_{}.nc'.format(str(test_number))
 tracking_output_file = output_base + tracking_output_pre
 
 output_png_pre = 'domain_plot_experiment_{}.png'.format(str(test_number))
-output_png_file = output_base + output_png_pre
+output_png_file = figure_output_base + output_png_pre
 output_mp4_pre = 'domain_plot_experiment_{}.mp4'.format(str(test_number))
-output_mp4_file = output_base + output_mp4_pre
+output_mp4_file = figure_output_base + output_mp4_pre
 
 # -------------
 
