@@ -1,0 +1,4 @@
+/var/spool/slurmd/job800824/slurm_script: line 16: 82984 Killed                  python opendrift_run_store_eco_variables_2_of_6.py &>z_output/log_2.txt
+/var/spool/slurmd/job800824/slurm_script: line 16: 82985 Killed                  python opendrift_run_store_eco_variables_3_of_6.py &>z_output/log_3.txt
+/var/spool/slurmd/job800824/slurm_script: line 16: 82986 Killed                  python opendrift_run_store_eco_variables_4_of_6.py &>z_output/log_4.txt
+/var/spool/slurmd/job800824/slurm_script: line 16: 82988 Killed                  python opendrift_run_store_eco_variables_6_of_6.py &>z_output/log_6.txt

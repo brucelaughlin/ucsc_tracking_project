@@ -224,7 +224,7 @@ print('\n\ntotal runtime: {}\n\n'.format(total_runtime))
 
 with open(runtime_text_file,"a") as out_file: 
     #out_file.write('days: {}, test metadata: {}, runtime (hrs): {}, execution (hrs): {}\n'.format(run_length_days.days,test_metadata,round(total_runtime/3600,3), round(total_execution_time/3600,3)))    
-    out_file.write('days: {}, test metadata: {}, runtime (hrs): {}, execution (hrs): {}, start_time_init: {}, start_time_run: {}, end_time: {}\n'.format(run_length_days.days,test_metadata,round(total_runtime/3600,3), round(total_execution_time/3600,3)),t_init,t_run_start,t_run_end)    
+    out_file.write('days: {}, run_dt (seconds): {}, save_dt (seconds): {}, test metadata: {}, runtime (hrs): {}, execution (hrs): {}, start_time_init: {}, start_time_run: {}, end_time: {}\n'.format(run_length_days.days,run_dt.seconds,save_dt.seconds,test_metadata,round(total_runtime/3600,3), round(total_execution_time/3600,3)),t_init,t_run_start,t_run_end)    
 
 #o.plot(linecolor='z', fast=True)
 
