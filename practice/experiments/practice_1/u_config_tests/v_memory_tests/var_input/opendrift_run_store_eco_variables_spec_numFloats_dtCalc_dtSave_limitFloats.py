@@ -54,7 +54,8 @@ run_save = int(sys.argv[3])
 number_of_seeds = 1
 # New format of metadata - we're always seeding bi-daily, so just indicate the number of bi-daily seedings we want
 
-run_string = 'floats_{}_saveDT_{}_calcDT_{}'.format(str(number_of_floats),str(run_save),str(run_compute))
+#run_string = 'floats_{}_saveDT_{}_calcDT_{}'.format(str(number_of_floats),str(run_save),str(run_compute))
+run_string = 'floats_{a:05d}_saveDT_{b:02d}_calcDT_{c:03d}'.format(a=number_of_floats,b=run_save,c=run_compute)
 
 # Make dynamic output directories
 parent_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/'
@@ -207,18 +208,40 @@ end_seed_time = start_seed_time + relativedelta(days = number_of_seeds)
 
 #for run_day in range(0,n_days_seed,2):
 
+float_dex = 0
+#break_switch = 0
+#while float_dex < number_of_floats
 for run_day in range(0,1):
     for ii in range(len(points_in_boxes_lon_lat)):
         for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+#               if break_switch != 0:
+#                   break
+#               else:
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
             depth_min = np.floor(min(min_float_depth,bottom_depth))
             for kk in range(int(np.floor(depth_min / depth_step)) + 1):
-            #for kk in range(1,2):
-                zs.append(-kk*depth_step)
-                lons.append(points_in_boxes_lon_lat[ii][0,jj])
-                lats.append(points_in_boxes_lon_lat[ii][1,jj])
-                times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
-                    
+                if float_dex < number_of_floats:
+                    float_dex += 1
+                    #for kk in range(1,2):
+                    zs.append(-kk*depth_step)
+                    lons.append(points_in_boxes_lon_lat[ii][0,jj])
+                    lats.append(points_in_boxes_lon_lat[ii][1,jj])
+                    times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+                else:
+#                    break_switch = 1
+                    break
+            else:
+                continue
+            break
+        else:
+            continue
+        break
+    else:
+        continue
+    break
+
+
+
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
 print('USER PRINT STATEMENT: number of floats specified: {}, length of float arrays: {} (should match)'.format(number_of_floats,len(lons)),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
