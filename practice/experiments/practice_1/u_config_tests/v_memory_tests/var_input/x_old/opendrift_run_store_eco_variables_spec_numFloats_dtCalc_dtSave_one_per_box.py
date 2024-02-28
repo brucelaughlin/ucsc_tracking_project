@@ -208,12 +208,15 @@ end_seed_time = start_seed_time + relativedelta(days = number_of_seeds)
 #for run_day in range(0,n_days_seed,2):
 
 for run_day in range(0,1):
-    for ii in range(len(points_in_boxes_lon_lat)):
-        for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+    #for ii in range(len(points_in_boxes_lon_lat)):
+    # Only release one float from a box.  Probably gonna be the islands
+    for ii in range(len(points_in_boxes_lon_lat)-number_of_floats,len(points_in_boxes_lon_lat)):
+        #for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+        for jj in range(0,1):
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
             depth_min = np.floor(min(min_float_depth,bottom_depth))
-            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
-            #for kk in range(1,2):
+            #for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+            for kk in range(1,2):
                 zs.append(-kk*depth_step)
                 lons.append(points_in_boxes_lon_lat[ii][0,jj])
                 lats.append(points_in_boxes_lon_lat[ii][1,jj])
@@ -293,7 +296,7 @@ print('\ntotal runtime: {}\n'.format(total_runtime),flush=True)
 print('\ntotal execution time: {}\n'.format(total_execution_time),flush=True)
 print('\nsummary info: {}\n'.format(summary_string),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
-print('Finished')
+
 
 #with open(runtime_text_file,"a") as out_file: 
 #    out_file.write('{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))) 
