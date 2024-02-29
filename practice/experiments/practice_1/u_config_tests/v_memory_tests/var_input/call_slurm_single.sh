@@ -3,8 +3,10 @@
 # Provide input arguments, currently $1 = number of floats, no other input for now
 
 numFloats=$1
-dtCalc=60
-dtSave=60
+dtCalc=$2
+dtSave=$3
+#dtCalc=60
+#dtSave=60
 
 runString="numFloats=${numFloats},dtCalc=${dtCalc},dtSave=${dtSave}"
 logString="$(printf %05d ${numFloats})_$(printf %02d ${dtCalc})_$(printf %03d ${dtSave})"
