@@ -16,4 +16,6 @@ sinfo -N -l
 
 
 
+squeue -u blaughli | grep 801 | awk '{print $1}' | xargs -n 1 scancel
+
 

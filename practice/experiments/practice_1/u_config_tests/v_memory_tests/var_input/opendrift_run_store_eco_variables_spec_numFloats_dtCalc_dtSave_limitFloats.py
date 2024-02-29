@@ -179,11 +179,6 @@ points_in_boxes_i_j= pickle.load(file)
 file.close
 
 
-lons = []
-lats = []
-zs = []
-times = []
-
 # We want profiles of floats at each lat/lon starting point.  Space them "depth_step" (5m) apart, from the surface
 # down to a set depth min "min_float_depth" (20m) or the bottom depth, whichever is shallower
 min_float_depth = 20
@@ -207,6 +202,12 @@ end_seed_time = start_seed_time + relativedelta(days = number_of_seeds)
 #assert n_days_seed == (end_seed_time - start_seed_time).days, "number of seed days calculation is wrong"
 
 #for run_day in range(0,n_days_seed,2):
+
+lons = []
+lats = []
+zs = []
+times = []
+
 
 float_dex = 0
 #break_switch = 0

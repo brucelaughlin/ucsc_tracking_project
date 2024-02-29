@@ -9,7 +9,7 @@ max_num_floats=11839
 #num_floats_incrememnt=150
     
 #for ((num_floats=1; num_floats < $max_num_floats; num_floats+=150)); do
-for ((num_floats=1; num_floats < $max_num_floats; num_floats+=600)); do
+for ((num_floats=1; num_floats < $max_num_floats; num_floats=${num_floats}*10)); do
     
     #num_floats=$((num_floats+num_floats_increment))
     #echo $num_floats
