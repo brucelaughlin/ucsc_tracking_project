@@ -1,6 +1,7 @@
 #!/bin/bash
 
-max_num_floats=11839
+#max_num_floats=11839
+max_num_floats=11
 
 #max_num_floats=200
 
