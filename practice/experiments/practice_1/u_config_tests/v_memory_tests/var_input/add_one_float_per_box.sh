@@ -1,6 +1,7 @@
 #!/bin/bash
 
-max_num_floats=82
+#max_num_floats=82
+max_num_floats=4
 
 dtCalc=60
 

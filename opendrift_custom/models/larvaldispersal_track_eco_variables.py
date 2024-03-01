@@ -130,7 +130,11 @@ class LarvalDispersal(OceanDrift):
 
         #L = self.elements.length[larvae] # I don't have this implemented, so I hack it:
         L = np.ones(len(self.elements))*larvae_length
-        
+       
+
+        # Below, with fraction_of_timestep_swimming = 0.15 (see above), this means
+        # that max_migration_per_timestep = 1.75cm... is that too small?
+
         swim_speed = (0.261*(L**(1.552*L**(-0.08))) - 5.289/L) / 1000
         f = self.get_config('IBM:fraction_of_timestep_swimming')
         max_migration_per_timestep = f*swim_speed*self.time_step.total_seconds()

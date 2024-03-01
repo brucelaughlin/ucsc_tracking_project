@@ -11,12 +11,8 @@ dtSave=$3
 runString="numFloats=${numFloats},dtCalc=${dtCalc},dtSave=${dtSave}"
 logString="$(printf %05d ${numFloats})_$(printf %02d ${dtCalc})_$(printf %03d ${dtSave})"
 
-#sbatch --export="$(ALL,${runString})" run_single.sh >> job_strings_slurm.txt
-job_num_pre=$(sbatch --export="ALL,${runString}" run_single.sh)
-job_num_split=($job_num_pre)
-jobId=${job_num_split[-1]}
-
-#echo $jobId
+sbatch --export="ALL,${runString}" run_single.sh >> job_strings_slurm.txt
+#sbatch --export="ALL,${runString}" run_single_limitFloats.sh >> job_strings_slurm.txt
 
 while [ ! -f z_output/log_${logString}.txt ]; do
     sleep 20
@@ -29,7 +25,7 @@ mv slurm-*.out s_slurm_output/ 2>/dev/null; true
 #    mv slurm-*.out s_slurm_output/
 #fi
 
-#jobId=$(tail -n 1 job_strings_slurm.txt | awk '{print $NF}')
+jobId=$(tail -n 1 job_strings_slurm.txt | awk '{print $NF}')
 
 while [[ $(tail -n 1 z_output/log_${logString}.txt | awk '{print $NF}') != Finished ]]; do
     if [ ! -f z_output/log_${logString}.txt ]; then

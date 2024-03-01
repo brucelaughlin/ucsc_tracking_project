@@ -213,14 +213,15 @@ for run_day in range(0,1):
         for jj in range(1):
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
             depth_min = np.floor(min(min_float_depth,bottom_depth))
-            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+            #for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+            #for kk in range(1,2):
+            for kk in range(2,3):
                 if float_dex < number_of_floats:
-                    for kk in range(1,2):
-                        float_dex += 1
-                        zs.append(-kk*depth_step)
-                        lons.append(points_in_boxes_lon_lat[ii][0,jj])
-                        lats.append(points_in_boxes_lon_lat[ii][1,jj])
-                        times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+                    float_dex += 1
+                    zs.append(-kk*depth_step)
+                    lons.append(points_in_boxes_lon_lat[ii][0,jj])
+                    lats.append(points_in_boxes_lon_lat[ii][1,jj])
+                    times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
                 else:
                     break
             else:

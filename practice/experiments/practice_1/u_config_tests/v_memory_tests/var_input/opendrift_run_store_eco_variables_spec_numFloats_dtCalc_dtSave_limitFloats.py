@@ -257,7 +257,8 @@ zs = np.asarray(zs)
 # Set run length (typically 3 months longer than seeding period, to let all floats reach the end of their (3 month?) pld
 start_run_time = start_seed_time
 #end_run_time = end_seed_time + relativedelta(months = n_months_pld)
-end_run_time = end_seed_time + relativedelta(days = n_days_test)
+#end_run_time = end_seed_time + relativedelta(days = n_days_test)
+end_run_time = end_seed_time + relativedelta(days = n_days_test - 1)
 n_days_run = int((end_run_time - start_run_time).days)
 run_length_days = timedelta(days = n_days_run)
 
