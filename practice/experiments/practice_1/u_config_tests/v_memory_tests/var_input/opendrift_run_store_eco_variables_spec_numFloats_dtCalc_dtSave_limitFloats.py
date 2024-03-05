@@ -9,6 +9,16 @@
 
 # New format of metadata - we're always seeding bi-daily, so just indicate the window of the run (in days)
 
+#n_days_test = 10
+#n_days_test = 20
+n_days_test = 180
+
+# See if changing the input parameter "export_buffer_length" (default 100 in basemodel) changes the monotonic increase in memory usage we're seeing
+#buffer_length = 50
+#buffer_length = 10
+
+
+
 number_of_seeds = 1
 
 days_between_seeds = 2
@@ -46,22 +56,22 @@ t_init = time.time()
 #number_of_floats = 1
 number_of_floats = int(sys.argv[1])
 # dt of compute (minutes)
-#run_compute = 60
-run_compute = int(sys.argv[2])
+#run_calc = 60
+run_calc = int(sys.argv[2])
 # dt of save (minutes)
 run_save = int(sys.argv[3])
 
 number_of_seeds = 1
 # New format of metadata - we're always seeding bi-daily, so just indicate the number of bi-daily seedings we want
 
-#run_string = 'floats_{}_saveDT_{}_calcDT_{}'.format(str(number_of_floats),str(run_save),str(run_compute))
-run_string = 'floats_{a:05d}_saveDT_{b:02d}_calcDT_{c:03d}'.format(a=number_of_floats,b=run_save,c=run_compute)
+#run_string = 'floats_{a:05d}_saveDT_{b:04d}_calcDT_{c:03d}'.format(a=number_of_floats,b=run_save,c=run_calc)
+run_string = 'floats_{a:05d}_calcDT_{b:03d}_saveDT_{c:04d}'.format(a=number_of_floats,b=run_calc,c=run_save)
 
 # Make dynamic output directories
 parent_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/'
-#output_dir_local = 'z_output_{}_{}_{}/'.format(number_of_floats,run_compute,run_save)
+#output_dir_local = 'z_output_{}_{}_{}/'.format(number_of_floats,run_calc,run_save)
 
-output_dir = parent_dir + '/z_output/'
+output_dir = parent_dir + 'z_output/'
 
 #output_dir = parent_dir + output_dir_local
 #output_dir_path = os.path.join(parent_dir,output_dir_local)
@@ -79,12 +89,19 @@ print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # 3 month run for each float, so... 3 month pld??
 #n_months_pld = 3
 
-n_days_test = 10
-
 #run_dt = timedelta(hours=1)
 #save_dt = timedelta(hours=1)
-save_dt = timedelta(minutes = run_save)
-run_dt = timedelta(minutes = run_compute)
+#save_dt_min = timedelta(minutes = run_save)
+#save_dt = save_dt_min * 60
+#save_dt = save_dt_min.seconds
+
+save_dt = run_save * 60;
+
+#run_dt_min = timedelta(minutes = run_calc)
+#run_dt = run_dt_min * 60
+#run_dt = run_dt_min.seconds
+
+run_dt = run_calc * 60
 
 # All tests start at Jan 1, 12pm, 1988
 base_datetime = datetime.datetime(1988,1,1,12,0,0)
@@ -302,6 +319,7 @@ o.seed_elements(lon=lons,lat=lats, z=zs, time=times, origin_marker = 0)
 t_run_start = time.time()
 
 o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list)
+#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list,export_buffer_length=buffer_length)
 
 t_run_end = time.time()
 total_runtime = t_run_end-t_run_start

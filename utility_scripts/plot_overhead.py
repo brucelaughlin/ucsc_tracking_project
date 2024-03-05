@@ -15,10 +15,10 @@ tracking_output_file = sys.argv[1]
 output_file_split = tracking_output_file.split('.')
 output_file_pre = output_file_split[0]
 
-dset = netCDF4.Dataset(tracking_output_file, 'r')
-
-h_pre = dset['z']
-h = np.array(h_pre)
+#dset = netCDF4.Dataset(tracking_output_file, 'r')
+#h_pre = dset['z']
+#dset.close
+#h = np.array(h_pre)
 
 o = opendrift.open(tracking_output_file)
 
