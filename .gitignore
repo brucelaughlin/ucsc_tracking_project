@@ -5,8 +5,10 @@
 # stop tracking it:
 # https://stackoverflow.com/questions/25458306/git-rm-fatal-pathspec-did-not-match-any-files
 
-home/blaughli/tracking_project/practice/experiments/**/*.txt
+#home/blaughli/tracking_project/practice/experiments/**/*.txt
 practice/experiments/**/*.txt
+practice/seed_input_files/**/*.txt
+*.b
 *.nc
 *.nc*
 *.nc_*
