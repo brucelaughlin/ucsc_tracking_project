@@ -1,3 +1,5 @@
+# My initialization of the reader with a wildcard filename might be the memory bug
+
 # Make input dynamic, for gods' sake
 
 # Upon investigating, memory use depends on the geographical spread of a cloud of points.  Opendrift only reads nearby (geographically) data for
@@ -30,7 +32,7 @@ n_runs = number_of_seeds
 #n_days_seed = n_runs
 seed_window = number_of_seeds * days_between_seeds
 
-
+import glob
 import pickle
 import netCDF4
 import matplotlib.pyplot as plt
@@ -42,10 +44,14 @@ import time
 import sys 
 import os
 from pathlib import Path
-sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
-sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
-from larvaldispersal_track_eco_variables import LarvalDispersal
-from reader_ROMS_native_custom_eco import Reader
+#sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
+#sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
+#from larvaldispersal_track_eco_variables import LarvalDispersal
+#from larvaldispersal_track_eco_variables_test import LarvalDispersal
+#from reader_ROMS_native_custom_eco import Reader
+
+from opendrift.readers import reader_ROMS_native
+from opendrift.models.oceandrift import OceanDrift
 
 # Track how long this takes to run
 t_init = time.time()
@@ -109,6 +115,7 @@ run_dt = timedelta(minutes = run_calc)
 
 # All tests start at Jan 1, 12pm, 1988
 base_datetime = datetime.datetime(1988,1,1,12,0,0)
+#base_datetime = datetime.datetime(1988,1,2,12,0,0)
 # -----------------------------------------------------------------------------
 
 
@@ -160,6 +167,11 @@ his_dir_year_1 = 'Run_1988/'
 his_file_wildcard = 'wc15n_avg_*.nc'
 his_file_1 = history_base + his_dir_year_1 + his_file_wildcard
 #his_file_2 = history_base + his_dir_year_2 + his_file_wildcard
+
+his_file_list = []
+for filename in glob.glob(history_base + his_dir_year_1 + "wc15n_avg_*.nc"):
+    his_file_list.append(filename)
+his_file_list.sort()
 
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
@@ -288,15 +300,25 @@ run_length_days = timedelta(days = n_days_run)
 
 
 #o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for debug information
-o = LarvalDispersal(loglevel=0)  # Set loglevel to 0 for debug information
+#o = LarvalDispersal(loglevel=0)  # Set loglevel to 0 for debug information
+
+o = OceanDrift(loglevel=0)  # Set loglevel to 0 for debug information
 
 
+# was my reader initialization the memory bug????????????????????????????????????????????????????????????/
 # ------------------------- Adding Readers --------------------------------
 t_read_0 = time.time()
 
-r = Reader(his_file_1)
+#r = Reader(his_file_1)
+r = reader_ROMS_native.Reader(his_file_1)
 o.add_reader(r)
-#r = Reader(his_file_2)
+
+##r = Reader(his_file_2)
+##o.add_reader(r)
+
+#o.add_readers_from_list(his_file_list)
+
+#r = Reader(his_file_list)
 #o.add_reader(r)
 
 t_read_1 = time.time()
@@ -321,13 +343,20 @@ o.set_config('general:coastline_action', 'previous')
 #o.set_config('drift:vertical_mixing', False)
 #--------------------------------------------------------------------------
 
-o.seed_elements(lon=lons,lat=lats, z=zs, time=times, origin_marker = 0)
+#o.seed_elements(lon=lons,lat=lats, z=zs, time=times, origin_marker = 0)
+#o.seed_elements(lon=lons,lat=lats, z=zs, time=start_seed_time, origin_marker = 0)
+o.seed_elements(lon=lons,lat=lats, z=zs, time=start_seed_time)
 
 t_run_start = time.time()
 
 #o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list)
 #o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list,export_buffer_length=buffer_length)
+
+#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_buffer_length=buffer_length)
+#o.run(outfile = tracking_output_file, export_buffer_length=buffer_length)
 o.run(outfile = tracking_output_file)
+
+#o.run(outfile = tracking_output_file)
 
 t_run_end = time.time()
 total_runtime = t_run_end-t_run_start

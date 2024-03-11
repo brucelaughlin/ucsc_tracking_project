@@ -133,6 +133,8 @@ class Reader(BaseReader, StructuredReader):
         # Add user provided variable mappings
         self.ROMS_variable_mapping.update(standard_name_mapping)
 
+        # WAIT - what's this sigma-layer interpolation business?  There are definitely not 42 elements in the following list...
+
         # z-levels to which sigma-layers may be interpolated
         self.zlevels = np.array([
             0, -.5, -1, -3, -5, -10, -25, -50, -75, -100, -150, -200,
