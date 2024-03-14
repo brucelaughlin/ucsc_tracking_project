@@ -14,8 +14,8 @@ runString="numFloats=${numFloats},dtCalc=${dtCalc},dtSave=${dtSave},bufferLength
 #logString="$(printf %05d ${numFloats})_$(printf %02d ${dtCalc})_$(printf %03d ${dtSave})"
 logString="$(printf %05d ${numFloats})_$(printf %02d ${dtCalc})_$(printf %03d ${dtSave})_$(printf %03d ${bufferLength})"
 
-#sbatch --export="$(ALL,${runString})" run_single.sh >> job_strings_slurm.txt
-job_num_pre=$(sbatch --export="ALL,${runString}" run_single.sh)
+#sbatch --export="$(ALL,${runString})" a_run_single.sh >> job_strings_slurm.txt
+job_num_pre=$(sbatch --export="ALL,${runString}" a_run_single.sh)
 job_num_split=($job_num_pre)
 jobId=${job_num_split[-1]}
 

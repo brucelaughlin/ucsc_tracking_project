@@ -33,13 +33,22 @@ lat_line = np.array(dset['lat_{}'.format(point_type_line)])
 
 dset.close
 
-bounding_boxes_dir = 'practice/bounding_boxes/create_boxes/'
-bounding_boxes_file_in = 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
-bounding_boxes_path = base_path + bounding_boxes_dir + bounding_boxes_file_in
+bounding_boxes_base = base_path + 'practice/bounding_boxes/create_boxes/'
+bounding_boxes_continent_dir = bounding_boxes_base + 'continent/z_output/'
+bounding_boxes_islands_dir = bounding_boxes_base + 'aa_islands/z_output/'
 
-tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/x_results_1/vv_10_factor_correct_15dt_20day/'
-tracking_output_file = 'test_output_floats_10000_saveDT_60_calcDT_015.nc'
+#bounding_boxes_file_in = 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
+#bounding_boxes_path = base_path + bounding_boxes_dir + bounding_boxes_file_in
+
+#tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/x_results_1/vv_10_factor_correct_15dt_20day/'
+#tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/vv_buffer50/'
+tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/x_old_1/vv_add_boxes_by_4_tests/'
+#tracking_output_file = 'test_output_floats_10000_saveDT_60_calcDT_015.nc'
+#tracking_output_file = 'test_output_floats_10000_saveDT_60_calcDT_060.nc'
+tracking_output_file = 'test_output_floats_11401_saveDT_60_calcDT_060.nc'
 tracking_output_path = tracking_output_dir + tracking_output_file
+
+
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
@@ -64,8 +73,8 @@ z_if[:,1] = z_all[:,-1]
 
 
 
-particles_initial_lonlat = []
-particles_final_lonlat = []
+particles_initial_lon_lat = []
+particles_final_lon_lat = []
 
 for ii in range(num_floats):
     particles_initial_lon_lat.append((lon_if[ii,0],lat_if[ii,0]))
@@ -75,7 +84,7 @@ for ii in range(num_floats):
 # Continent
 
 
-bounding_boxes_file_in = input_dir_continent + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
+bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
 file = open(bounding_boxes_file_in,'rb')
 boxes_lonlat = pickle.load(file)
 file.close
@@ -110,9 +119,17 @@ for box_lonlat in boxes_lonlat:
         
         #particles_box_lon_lat = np.array([particles_box_lon,particles_box_lat])
         #particles_in_boxes_lonlat_continent.append(particles_box_lon_lat)
-        particles_initial_box_continent.append(particles_initial_inside)
-        particles_final_box_continent.append(particles_final_inside)
-        
+
+        #particles_initial_box_continent.append(particles_initial_inside)
+        #particles_final_box_continent.append(particles_final_inside)
+        if len(particles_initial_inside) > 0 :
+            particles_initial_box_continent.append(particles_initial_inside)
+        else:
+            particles_initial_box_continent.append(None)
+        if len(particles_final_inside) > 0 :
+            particles_final_box_continent.append(particles_final_inside)
+        else:
+            particles_final_box_continent.append(None)
 
 
 
@@ -136,9 +153,9 @@ for island_dex in range(num_last_blob_island,num_islands+1):
     for inoffshore_switch in range(0,2):
 
         if inoffshore_switch == 0:
-            bounding_boxes_file_in = input_dir_islands + 'bounding_boxes_lonlat_wc15n_island_number_{}_inshore.p'.format(island_dex)
+            bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_inshore.p'.format(island_dex)
         else:
-            bounding_boxes_file_in = input_dir_islands + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
+            bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
 
 
         # Load the boxes
@@ -160,11 +177,27 @@ for island_dex in range(num_last_blob_island,num_islands+1):
                 
                 
                 if inoffshore_switch == 0:
-                    particles_initial_box_islands_inshore.append(particles_initial_inside)
-                    particles_final_box_islands_inshore.append(particles_final_inside)
+                    #particles_initial_box_islands_inshore.append(particles_initial_inside)
+                    #particles_final_box_islands_inshore.append(particles_final_inside)
+                    if len(particles_initial_inside) > 0 :
+                        particles_initial_box_islands_inshore.append(particles_initial_inside)
+                    else:
+                        particles_initial_box_islands_inshore.append(None)
+                    if len(particles_final_inside) > 0 :
+                        particles_final_box_islands_inshore.append(particles_final_inside)
+                    else:
+                        particles_final_box_islands_inshore.append(None)
                 else:
-                    particles_initial_box_islands_offshore.append(particles_initial_inside)
-                    particles_final_box_islands_offshore.append(particles_final_inside)
+                    #particles_initial_box_islands_offshore.append(particles_initial_inside)
+                    #particles_final_box_islands_offshore.append(particles_final_inside)
+                    if len(particles_initial_inside) > 0 :
+                        particles_initial_box_islands_offshore.append(particles_initial_inside)
+                    else:
+                        particles_initial_box_islands_offshore.append(None)
+                    if len(particles_final_inside) > 0 :
+                        particles_final_box_islands_offshore.append(particles_final_inside)
+                    else:
+                        particles_final_box_islands_offshore.append(None)
 
 
 
@@ -172,15 +205,17 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 # Combine all seed and settlement information... May want to have separate files for islands, but start here.
 
 particles_initial_box_combined = particles_initial_box_islands_inshore + particles_initial_box_islands_offshore + particles_initial_box_continent
-particles_initial_box_combined = particles_initial_box_islands_inshore + particles_initial_box_islands_offshore + particles_initial_box_continent
+particles_final_box_combined = particles_final_box_islands_inshore + particles_final_box_islands_offshore + particles_final_box_continent
 
-file = open(particles_in_boxes_file_out_combined,'wb')
-pickle.dump(particles_in_boxes_lonlat_combined,file)
-file.close()
 
-file = open(particles_in_boxes_file_out_combined_ij,'wb')
-pickle.dump(particles_in_boxes_ij_combined,file)
-file.close()
+
+#file = open(particles_in_boxes_file_out_combined,'wb')
+#pickle.dump(particles_in_boxes_lonlat_combined,file)
+#file.close()
+
+#file = open(particles_in_boxes_file_out_combined_ij,'wb')
+#pickle.dump(particles_in_boxes_ij_combined,file)
+#file.close()
 
 
 
