@@ -2,8 +2,8 @@ import glob, os
 import re
 import matplotlib.pyplot as plt
 
-
-output_dir_600 = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/z_output'
+output_dir_600 = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/x_old_mem_problems/v_memory_tests/var_input/v_test_output/90day_success1'
+#output_dir_600 = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/z_output'
 #output_dir_600 = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/bufferTest1'
 
 os.chdir(output_dir_600)
