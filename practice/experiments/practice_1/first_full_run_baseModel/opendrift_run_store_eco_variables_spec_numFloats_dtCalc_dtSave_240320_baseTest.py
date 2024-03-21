@@ -1,19 +1,5 @@
-# My initialization of the reader with a wildcard filename might be the memory bug
 
-# Make input dynamic, for gods' sake
-
-# Upon investigating, memory use depends on the geographical spread of a cloud of points.  Opendrift only reads nearby (geographically) data for
-# the timesteps before and after the current timestep, regardless of how many particles are in the cloud.  So, hypothetically, a tight cloud 
-# could have millions of points but still not overflow the node memory.  
-# Furthermore, the "next timestep" data for the previous timestep becomes the "previous timestep" data for the current timestep.  So, I'm 
-# Wondering if we can get away with running 2 seedings at once... will this overflow the memory?  Or will the proximity in space AND time
-# be used advantageously by opendrift, and, if so, will it allow 2 seedings to run?  
-
-# New format of metadata - we're always seeding bi-daily, so just indicate the window of the run (in days)
-
-#n_days_test = 10
-n_days_test = 20
-#n_days_test = 180
+n_days_run = 90
 
 # See if changing the input parameter "export_buffer_length" (default 100 in basemodel) changes the monotonic increase in memory usage we're seeing
 #buffer_length = 50
@@ -47,11 +33,11 @@ from pathlib import Path
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
 #from larvaldispersal_track_eco_variables import LarvalDispersal
-from larvaldispersal_track_eco_variables_test import LarvalDispersal # don't track eco variables
-from reader_ROMS_native_custom_eco import Reader
+#from larvaldispersal_track_eco_variables_test import LarvalDispersal # don't track eco variables
+#from reader_ROMS_native_custom_eco import Reader
 
-#from opendrift.readers import reader_ROMS_native
-#from opendrift.models.oceandrift import OceanDrift
+from opendrift.readers import reader_ROMS_native
+from opendrift.models.oceandrift import OceanDrift
 
 # Track how long this takes to run
 t_init = time.time()
@@ -59,30 +45,22 @@ t_init = time.time()
 
 
 
-#number_of_floats = 1
-number_of_floats = int(sys.argv[1])
 # dt of compute (minutes)
 #run_calc = 60
-run_calc = int(sys.argv[2])
+run_calc = int(sys.argv[1])
 # dt of save (minutes)
-run_save = int(sys.argv[3])
-buffer_length = int(sys.argv[4])
+run_save = int(sys.argv[2])
+buffer_length = int(sys.argv[3])
 
 number_of_seeds = 1
 # New format of metadata - we're always seeding bi-daily, so just indicate the number of bi-daily seedings we want
 
-#run_string = 'floats_{a:05d}_calcDT_{b:03d}_saveDT_{c:04d}'.format(a=number_of_floats,b=run_calc,c=run_save)
-run_string_test = 'floats_{a:05d}_calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}'.format(a=number_of_floats,b=run_calc,c=run_save,d=buffer_length)
+run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}'.format(b=run_calc,c=run_save,d=buffer_length)
 
 # Make dynamic output directories
 parent_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/'
-#output_dir_local = 'z_output_{}_{}_{}/'.format(number_of_floats,run_calc,run_save)
 
 output_dir = parent_dir + 'z_output/'
-
-#output_dir = parent_dir + output_dir_local
-#output_dir_path = os.path.join(parent_dir,output_dir_local)
-#os.mkdir(output_dir_path)
 
 #run_string = 'run_{}_of_{}'.format(run_number,n_runs)
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
@@ -168,10 +146,10 @@ his_file_wildcard = 'wc15n_avg_*.nc'
 his_file_1 = history_base + his_dir_year_1 + his_file_wildcard
 #his_file_2 = history_base + his_dir_year_2 + his_file_wildcard
 
-his_file_list = []
-for filename in glob.glob(history_base + his_dir_year_1 + "wc15n_avg_*.nc"):
-    his_file_list.append(filename)
-his_file_list.sort()
+#his_file_list = []
+#for filename in glob.glob(history_base + his_dir_year_1 + "wc15n_avg_*.nc"):
+#    his_file_list.append(filename)
+#his_file_list.sort()
 
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
@@ -216,8 +194,8 @@ file.close
 
 # We want profiles of floats at each lat/lon starting point.  Space them "depth_step" (5m) apart, from the surface
 # down to a set depth min "min_float_depth" (20m) or the bottom depth, whichever is shallower
-#min_float_depth = 20
-min_float_depth = 15
+min_float_depth = 20
+#min_float_depth = 15
 depth_step = 5
 
 
@@ -245,43 +223,20 @@ zs = []
 times = []
 
 
-float_dex = 0
-#break_switch = 0
-#while float_dex < number_of_floats:
 for run_day in range(0,1):
     for ii in range(len(points_in_boxes_lon_lat)):
-        #for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
-        for jj in range(1):
+        for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
             depth_min = np.floor(min(min_float_depth,bottom_depth))
-            #for kk in range(int(np.floor(depth_min / depth_step)) + 1):
-            for kk in range(2,3):
-                if float_dex < number_of_floats:
-                    #for kk in range(1,2):
-                    zs.append(-kk*depth_step)
-                    lons.append(points_in_boxes_lon_lat[ii][0,jj])
-                    lats.append(points_in_boxes_lon_lat[ii][1,jj])
-                    times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
-                    float_dex += 1
-                else:
-                    break
-            else:
-                continue
-            break
-        else:
-            continue
-        break
-    else:
-        continue
-    break
- #   else:
- #       continue
- #   break
-
-
+            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+                zs.append(-kk*depth_step)
+                lons.append(points_in_boxes_lon_lat[ii][0,jj])
+                lats.append(points_in_boxes_lon_lat[ii][1,jj])
+                times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
-print('USER PRINT STATEMENT: number of floats specified: {}, length of float arrays: {} (should match)'.format(number_of_floats,len(lons)),flush=True)
+#print('USER PRINT STATEMENT: number of floats specified: {}, length of float arrays: {} (should match)'.format(number_of_floats,len(lons)),flush=True)
+print('USER PRINT STATEMENT: number of floats seeded: {} '.format(len(lons)),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 
 lons = np.asarray(lons)
@@ -295,23 +250,24 @@ zs = np.asarray(zs)
 start_run_time = start_seed_time
 #end_run_time = end_seed_time + relativedelta(months = n_months_pld)
 #end_run_time = end_seed_time + relativedelta(days = n_days_test)
-end_run_time = end_seed_time + relativedelta(days = n_days_test - 1)
-n_days_run = int((end_run_time - start_run_time).days)
+#end_run_time = end_seed_time + relativedelta(days = n_days_test - 1)
+end_run_time = end_seed_time + relativedelta(days = n_days_run - 1)
+#n_days_run = int((end_run_time - start_run_time).days)
 run_length_days = timedelta(days = n_days_run)
 
 
 
 #o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for debug information
-o = LarvalDispersal(loglevel=0)  # Set loglevel to 0 for debug information
-#o = OceanDrift(loglevel=0)  # Set loglevel to 0 for debug information
+#o = LarvalDispersal(loglevel=0)  # Set loglevel to 0 for debug information
+o = OceanDrift(loglevel=0)  # Set loglevel to 0 for debug information
 
 
 # was my reader initialization the memory bug????????????????????????????????????????????????????????????/
 # ------------------------- Adding Readers --------------------------------
 t_read_0 = time.time()
 
-r = Reader(his_file_1)
-#r = reader_ROMS_native.Reader(his_file_1)
+#r = Reader(his_file_1)
+r = reader_ROMS_native.Reader(his_file_1)
 o.add_reader(r)
 
 #o.add_readers_from_list(his_file_list)
@@ -347,9 +303,8 @@ o.seed_elements(lon=lons,lat=lats, z=zs, time=start_seed_time)
 
 t_run_start = time.time()
 
+#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
 #o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list)
-#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list,export_buffer_length=buffer_length)
-
 o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_buffer_length=buffer_length)
 #o.run(outfile = tracking_output_file, export_buffer_length=buffer_length)
 #o.run(outfile = tracking_output_file)

@@ -36,17 +36,13 @@ class LarvalDispersal(OceanDrift):
     required_variables = {
         'x_sea_water_velocity': {'fallback': 0},
         'y_sea_water_velocity': {'fallback': 0},
+        'sea_surface_wave_significant_height': {'fallback': 0},
         'x_wind': {'fallback': 0},
         'y_wind': {'fallback': 0},
+        'land_binary_mask': {'fallback': None},
         'sea_floor_depth_below_sea_level': {'fallback': 100},
         'ocean_vertical_diffusivity': {'fallback': 0.01, 'profiles': True},
         'ocean_mixed_layer_thickness': {'fallback': 50},
-        'upward_sea_water_velocity': {'fallback': 0},
-        'surface_downward_x_stress': {'fallback': 0},
-        'surface_downward_y_stress': {'fallback': 0},
-        'turbulent_kinetic_energy': {'fallback': 0},
-        'turbulent_generic_length_scale': {'fallback': 0},
-        'land_binary_mask': {'fallback': None},
         'sea_water_temperature': {'fallback': 10, 'profiles': True},
         'sea_water_salinity': {'fallback': 34, 'profiles': True},
         'CalC': {'fallback': 0},
@@ -71,6 +67,13 @@ class LarvalDispersal(OceanDrift):
 
         # Deleted all having to do with waves, and not sure I need these either:
         # (see old versions for the exhaustive list)
+        #'sea_surface_wave_stokes_drift_x_velocity': {'fallback': 0},
+        #'sea_surface_wave_stokes_drift_y_velocity': {'fallback': 0},
+        #'upward_sea_water_velocity': {'fallback': 0},
+        #'surface_downward_x_stress': {'fallback': 0},
+        #'surface_downward_y_stress': {'fallback': 0},
+        #'turbulent_kinetic_energy': {'fallback': 0},
+        #'turbulent_generic_length_scale': {'fallback': 0},
 
 
 

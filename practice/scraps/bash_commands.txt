@@ -1,3 +1,12 @@
+# mostly from Paul!
+# some from Chris!
+
+
+ncdump -h test_output_calcDT_060_saveDT_0060_buffer_100.nc | grep float
+ncdump -h test_output_calcDT_060_saveDT_0060_buffer_100.nc | grep float | wc
+ncdump -h test_output_calcDT_060_saveDT_0060_buffer_100.nc | grep int
+
+
 Paul:  You could also choose the big 4D variables that you definitely DON'T want (like temperature, salinity, etc), and do ncks -x -v t,s, ....       this will EXCLUDE t and s
 
 
@@ -89,4 +98,13 @@ AKs,AKt,AKv,CO2flx,CalC,DON,NH4,NO3,PON,Pzooplankton,SiOH4,TIC,alkalinity,diatom
 exclude:
 
 CO2flx,CalC,DON,NH4,NO3,PON,Pzooplankton,SiOH4,TIC,alkalinity,diatom,mesozooplankton,microzooplankton,nanophytoplankton,omega,opal,oxygen,pCO2,pH,salt,temp
+
+
+
+
+
+
+
+
+
 

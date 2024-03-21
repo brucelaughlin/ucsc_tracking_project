@@ -59,14 +59,15 @@ class LarvalDispersal(OceanDrift):
         'TIC': {'fallback': 0},
         'alkalinity': {'fallback': 0},
         'diatom': {'fallback': 0},
-        'mesozooplankton': {'fallback': 0},
-        'microzooplankton': {'fallback': 0},
-        'nanophytoplankton': {'fallback': 0},
-        'omega': {'fallback': 0},
-        'opal': {'fallback': 0},
-        'oxygen': {'fallback': 0},
-        'pCO2': {'fallback': 0},
-        'pH': {'fallback': 0},
+        }
+        #'mesozooplankton': {'fallback': 0},
+        #'microzooplankton': {'fallback': 0},
+        #'nanophytoplankton': {'fallback': 0},
+        #'omega': {'fallback': 0},
+        #'opal': {'fallback': 0},
+        #'oxygen': {'fallback': 0},
+        #'pCO2': {'fallback': 0},
+        #'pH': {'fallback': 0},
         }
 
         # Deleted all having to do with waves, and not sure I need these either:

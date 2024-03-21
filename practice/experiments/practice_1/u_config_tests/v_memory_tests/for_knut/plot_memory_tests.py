@@ -3,8 +3,7 @@ import re
 import matplotlib.pyplot as plt
 
 
-output_dir_600 = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/z_output'
-#output_dir_600 = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/t_plot_memory/v_mem_files_to_plot'
+output_dir_600 = 'z_output'
 
 os.chdir(output_dir_600)
 
@@ -37,13 +36,6 @@ for filename in glob.glob("run_memory_info_*.txt"):
                         good_lines.append(value)
         mem_list.append(good_lines)
 
-# from G4G
-#def sort_lists(list1, list2):
-#    zipped_pairs = zip(list2, list1)
-#    z = [x for _, x in sorted(zipped_pairs)]
-#    return z
-#
-#print(sort_lists(run_name_list,mem_list))
 
 fig,ax = plt.subplots()
 
@@ -53,11 +45,7 @@ for ii in range(len(mem_list)):
 ax.legend()
 ax.set_xlabel("Runtime (x 10 seconds)")
 ax.set_ylabel("Memory usage (GB)")
-
-#plt.title('Memory (GB) vs time, for 20 runs, from 1 float to 1200 in increments of 600')
-#plt.title('Memory (GB) vs Runtime, from 1 float to 10,000 by factors of 10')
 plt.title('Memory usage (GB) vs Runtime (not simulation time)')
-
 
 plt.show()
 
