@@ -176,7 +176,7 @@ class Reader(BaseReader, StructuredReader):
                     self.Dataset = xr.open_mfdataset(filename,
                         chunks={'ocean_time': 1}, compat='override', decode_times=False,
                         preprocess=drop_non_essential_vars_pop,
-                        data_vars='minimal', coords='minimal')
+                        data_vars='minimal', coords='minimal', engine="h5netcdf")
                 else:
                     logger.info('Opening file with Dataset')
                     self.Dataset = xr.open_dataset(filename, decode_times=False)

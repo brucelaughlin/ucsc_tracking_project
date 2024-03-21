@@ -10,6 +10,6 @@ logString="$(printf %02d ${dtCalc})_$(printf %04d ${dtSave})_$(printf %03d ${buf
 cd /home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input
 
 #python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240314.py $dtCalc $dtSave $bufferLength  &> z_output/log_${logString}.txt 
-#python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240320.py $dtCalc $dtSave $bufferLength  &> z_output/log_${logString}.txt 
-python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240320_baseTest.py $dtCalc $dtSave $bufferLength  &> z_output/log_${logString}.txt 
+python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240320.py $dtCalc $dtSave $bufferLength  &> z_output/log_${logString}.txt 
+#python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240320_baseTest.py $dtCalc $dtSave $bufferLength  &> z_output/log_${logString}.txt 
 

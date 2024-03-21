@@ -35,8 +35,8 @@ from pathlib import Path
 from opendrift.readers import reader_ROMS_native
 from opendrift.models.oceandrift import OceanDrift
 
-os.environ["MALLOC_MMAP_THRESHOLD_"] = "8192"
-os.environ["MALLOC_ARENA_MAX"] = "4"
+os.environ["MALLOC_MMAP_THRESHOLD_"] = "512"
+#os.environ["MALLOC_ARENA_MAX"] = "4"
 
 
 # Note: 9528 is the exact number of floats I have if I use each of my starting lat/lon coordinate pairs, and have 4 floats

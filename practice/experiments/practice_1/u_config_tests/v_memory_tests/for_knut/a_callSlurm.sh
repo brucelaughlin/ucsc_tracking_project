@@ -13,8 +13,8 @@ runString="numFloats=${numFloats},dtCalc=${dtCalc},dtSave=${dtSave},bufferLength
 #logString="$(printf %02d ${dtCalc})_$(printf %03d ${dtSave})_$(printf %03d ${bufferLength})"
 logString="$(printf %06d ${numFloats})_$(printf %02d ${dtCalc})_$(printf %03d ${dtSave})_$(printf %03d ${bufferLength})"
 
-#job_num_pre=$(sbatch --export="ALL,${runString}" a_runSingle.sh)
-job_num_pre=$(sbatch --export="ALL,${runString}" a_runSingle_setEnvMalloc.sh)
+job_num_pre=$(sbatch --export="ALL,${runString}" a_runSingle.sh)
+#job_num_pre=$(sbatch --export="ALL,${runString}" a_runSingle_setEnvMalloc.sh)
 job_num_split=($job_num_pre)
 jobId=${job_num_split[-1]}
 
