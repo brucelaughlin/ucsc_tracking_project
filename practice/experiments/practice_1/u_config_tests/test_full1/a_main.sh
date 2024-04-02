@@ -29,6 +29,8 @@ runDirArray=("${runDirArray[@]%/}")    # This removes the trailing slash on each
 
 finalYearFlag=0
 
+nodeLimitPlusOne=5 # set to 1 higher than max number of nodes to use
+
 #dayNumber=1
 
 #numDays=0
@@ -50,13 +52,20 @@ do
 
     for jj in "${!runYearArray[@]}" # The "!" gives us jj as the array index (integer from 0 to 364 or 365)
     do
-        
+       
+        while [ $(squeue -u blaughli -h -t running | wc -l) -lt $nodeLimitPlusOne ]; do
+           sleep 20
+       done 
         
         #if [ "$jj" = "${runYearArray[0]}" ]; then
-        if [ $jj = 365 ]; then
-            echo $jj
-        fi
+        
+        #if [ $jj = 365 ]; then
+        #    echo $jj
+        #fi
 
+         
+        numNodesUsed=$(squeue -u blaughli -h -t running | wc -l) # This returns the number of runnings jobs.  So, continue if not at our chosen max number of nodes
+        
         if ; then
             break
         fi
