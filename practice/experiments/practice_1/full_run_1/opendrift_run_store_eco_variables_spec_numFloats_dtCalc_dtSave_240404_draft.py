@@ -1,22 +1,16 @@
+# Need to modify so it's ready for prime time
+
+# I believe we aren't actually memory constrained
+
+# So, we can seed every day for two months, at a time.  I.e. we can handle ~60 seedings at a time.
+# So, I'm thinking we should just seed 2 months at a time, however many days are in the months.
+# Stop seeding on Sep 30th of final year, so all floats can drift for 90 days
 
 n_days_run = 90
 
-# See if changing the input parameter "export_buffer_length" (default 100 in basemodel) changes the monotonic increase in memory usage we're seeing
-#buffer_length = 50
-#buffer_length = 10
 
 
 
-number_of_seeds = 1
-
-days_between_seeds = 2
-
-# Test metadata and configuration
-#-------------------------------------------------
-#n_runs = int(number_of_seeds/n_days_seed)
-n_runs = number_of_seeds
-#n_days_seed = n_runs
-seed_window = number_of_seeds * days_between_seeds
 
 import glob
 import pickle
@@ -32,17 +26,18 @@ import os
 from pathlib import Path
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
-#from larvaldispersal_track_eco_variables import LarvalDispersal
+from larvaldispersal_track_eco_variables import LarvalDispersal
 #from larvaldispersal_track_eco_variables_test import LarvalDispersal # don't track eco variables
-#from reader_ROMS_native_custom_eco import Reader
+from reader_ROMS_native_custom_eco import Reader
 
-from opendrift.readers import reader_ROMS_native
-from opendrift.models.oceandrift import OceanDrift
+#from opendrift.readers import reader_ROMS_native
+#from opendrift.models.oceandrift import OceanDrift
 
 # Track how long this takes to run
 t_init = time.time()
 
-
+# Temporal spacing (days) between seeds
+days_between_seeds = 2
 
 
 # dt of compute (minutes)
@@ -52,15 +47,20 @@ run_calc = int(sys.argv[1])
 run_save = int(sys.argv[2])
 buffer_length = int(sys.argv[3])
 
-number_of_seeds = 1
-# New format of metadata - we're always seeding bi-daily, so just indicate the number of bi-daily seedings we want
-
-run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}'.format(b=run_calc,c=run_save,d=buffer_length)
-
 # Make dynamic output directories
-parent_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/'
+parent_dir = sys.argv[4]
+output_dir = parent_dir + '/z_output/'
 
-output_dir = parent_dir + 'z_output/'
+number_of_seeds = int(sys.argv[5])
+
+#year_initial = int(sys.argv[4])
+#day_initial = int(sys.argv[5])
+
+year_initial = 0
+day_initial = 0
+
+#run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}'.format(b=run_calc,c=run_save,d=buffer_length)
+run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds)
 
 #run_string = 'run_{}_of_{}'.format(run_number,n_runs)
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
@@ -69,27 +69,31 @@ print('USER PRINT STATEMENT: {}'.format(run_string_test),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 #-------------------------------------------------
 
+
+
+
+# Test metadata and configuration
+#-------------------------------------------------
+#n_runs = int(number_of_seeds/n_days_seed)
+n_runs = number_of_seeds
+#n_days_seed = n_runs
+#seed_window_length = number_of_seeds * days_between_seeds
+#seed_window_length = (number_of_seeds - 1) * days_between_seeds
+seed_window_length = (number_of_seeds - 1) * days_between_seeds + 1
+
+
+
+
+
+
 # -----------------------------------------------------------------------------
 # run configuration parameters:
 
-# 3 month run for each float, so... 3 month pld??
-#n_months_pld = 3
+#save_dt = timedelta(minutes = run_save)
+save_dt = run_save * 60;
 
-#run_dt = timedelta(hours=1)
-#save_dt = timedelta(hours=1)
-#save_dt_min = timedelta(minutes = run_save)
-#save_dt = save_dt_min * 60
-#save_dt = save_dt_min.seconds
-
-save_dt = timedelta(minutes = run_save)
-#save_dt = run_save * 60;
-
-#run_dt_min = timedelta(minutes = run_calc)
-#run_dt = run_dt_min * 60
-#run_dt = run_dt_min.seconds
-
-run_dt = timedelta(minutes = run_calc)
-#run_dt = run_calc * 60
+#run_dt = timedelta(minutes = run_calc)
+run_dt = run_calc * 60
 
 # All tests start at Jan 1, 12pm, 1988
 base_datetime = datetime.datetime(1988,1,1,12,0,0)
@@ -151,32 +155,17 @@ his_file_1 = history_base + his_dir_year_1 + his_file_wildcard
 #    his_file_list.append(filename)
 #his_file_list.sort()
 
-# ----------------------------------------------------------------------------------
-# ----------------------------------------------------------------------------------
-# ----------------------------------------------------------------------------------
-
-
-
-#----------Seed File---------------------
-#seed_file_pre = 'seed_uniform_depths_0_20_points_per_profile_11_test1.txt'
-
-#seed_file = seed_base + seed_file_pre
-
-#----------Runtime Data Text File---------------------
-#runtime_text_file_pre =  'runtime_data_{}.txt'.format(run_string) 
-runtime_text_file_pre =  'runtime_data_{}.txt'.format(run_string_test) 
-runtime_text_file =  output_dir + runtime_text_file_pre
 
 #----------Output netCDF File---------------------
-#tracking_output_pre = 'test_output_{}.nc'.format(str(test_number))
-
-
-#tracking_output_pre = 'test_output_{}_{}.nc'.format(str(number_of_seeds),run_string)
-#tracking_output_pre = 'test_output_{}.nc'.format(run_string)
 tracking_output_pre = 'test_output_{}.nc'.format(run_string_test)
 
-#tracking_output_file = output_base + tracking_output_pre
 tracking_output_file = output_dir + tracking_output_pre
+
+
+
+
+
+
 
 #----------------------------------------
 export_variables_list = ['z','sea_water_temperature','sea_water_salinity','CalC','DON','NH4','NO3','PON','Pzooplankton','SiOH4','TIC','alkalinity','diatom','mesozooplankton','microzooplankton','nanophytoplankton','omega','opal','oxygen','pCO2','pH']
@@ -209,9 +198,15 @@ depth_step = 5
 #start_seed_day_nudge = (run_number - 1) * n_days_seed
 #start_seed_day_nudge = (run_number - 1) * days_between_seeds
 start_seed_day_nudge = 0
+
 start_seed_time = base_datetime + relativedelta(days = start_seed_day_nudge)
+#start_seed_time = base_datetime + relativedelta(years = year_initial) + relativedelta(days = day_initial)
+
+
+
 #end_seed_time = start_seed_time + relativedelta(days = n_days_seed)
-end_seed_time = start_seed_time + relativedelta(days = number_of_seeds)
+#end_seed_time = start_seed_time + relativedelta(days = number_of_seeds)
+end_seed_time = start_seed_time + relativedelta(days = seed_window_length)
 
 #assert n_days_seed == (end_seed_time - start_seed_time).days, "number of seed days calculation is wrong"
 
@@ -223,7 +218,7 @@ zs = []
 times = []
 
 
-for run_day in range(0,1):
+for run_day in range(0,seed_window_length,days_between_seeds): 
     for ii in range(len(points_in_boxes_lon_lat)):
         for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
@@ -257,17 +252,16 @@ run_length_days = timedelta(days = n_days_run)
 
 
 
-#o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for debug information
+o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for full debug information, 50 for no output
 #o = LarvalDispersal(loglevel=0)  # Set loglevel to 0 for debug information
-o = OceanDrift(loglevel=0)  # Set loglevel to 0 for debug information
 
 
 # was my reader initialization the memory bug????????????????????????????????????????????????????????????/
 # ------------------------- Adding Readers --------------------------------
 t_read_0 = time.time()
 
-#r = Reader(his_file_1)
-r = reader_ROMS_native.Reader(his_file_1)
+r = Reader(his_file_1)
+#r = reader_ROMS_native.Reader(his_file_1)
 o.add_reader(r)
 
 #o.add_readers_from_list(his_file_list)
@@ -303,11 +297,8 @@ o.seed_elements(lon=lons,lat=lats, z=zs, time=start_seed_time)
 
 t_run_start = time.time()
 
-#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
-#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list)
-o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_buffer_length=buffer_length)
-#o.run(outfile = tracking_output_file, export_buffer_length=buffer_length)
-#o.run(outfile = tracking_output_file)
+o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
+#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_buffer_length=buffer_length)
 
 #o.run(outfile = tracking_output_file)
 
@@ -330,9 +321,6 @@ print('USER PRINT STATEMENT: \nsummary info: {}\n'.format(summary_string),flush=
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 print('Finished')
 
-#with open(runtime_text_file,"a") as out_file: 
-#    out_file.write('{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))) 
-#    out_file.write('{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))) 
         
 
 

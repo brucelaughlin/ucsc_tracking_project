@@ -22,7 +22,7 @@ runOutputDir="run_240403"
 ############################################################
 
 
-maxNodes=8
+
 
 
 dtCalc=60
@@ -49,58 +49,48 @@ runDirArray=("${runDirArray[@]%/}")    # This removes the trailing slash on each
 
 #printf '%s\n' "${runDirArray[@]}"
 
-#declare -a monthSeedArray=(
-#[0]=0
-#[1]=2
-#[2]=4
-#[3]=6
-#[4]=8
-#[5]=10
-#)
+finalYearFlag=0
 
-monthSeedArray=(0 2 4 6 8 10)
+#dayNumber=1
+
+#numDays=0
 
 #for ii in "${runDirArray[@]}"
 for ii in "${!runDirArray[@]}"
 do
-    #runYearArray=(${runDirArray[ii]}/wc15n_avg_*.nc) #Array of all the filenames within the year directory (just used to get day number)
+    runYearArray=(${runDirArray[ii]}/wc15n_avg_*.nc) #Array of all the filenames within the year directory (just used to get day number)
     #runYearArray=($ii/wc15n_avg_*.nc) #Array of all the filenames within the year directory (just used to get day number)
 
-    
-    # Check if we're in the final year
-    if (( $ii+1 == ${#runDirArray[@]} )); then
-    
-        unset monthSeedArray[-1]
-    
-        for jj in ${monthSeedArray[@]}; do
-            while [ $(squeue -u blaughli -h -t running | wc -l) -gt $maxNodes ]; do
-                sleep 20
-            done
-            ./a_call_slurm_varMonth.sh $jj &
-        done   
+    #numDays=$((numDays+${#runYearArray[@]}))
+            
 
-    elif
-
-        for jj in ${monthSeedArray[@]}; do
-
-            while [ $(squeue -u blaughli -h -t running | wc -l) -gt $maxNodes ]; do
-                sleep 20
-            done
-
-
-            ./a_call_slurm_varMonth.sh $jj &
-
-
-        done   
-   
-    fi 
+        
+        # Check if we're in the final year
+        if (( $ii+1 == ${#runDirArray[@]} )); then
+            finalYearFlag=1
+        fi
 
 
 
-    
-    #./a_call_slurm_varInputFile.sh $dtCalc $dtSave $bufferLength $ii $jj $finalYearFlag &
+
+    for jj in "${!runYearArray[@]}" # The "!" gives us jj as the array index (integer from 0 to 364 or 365)
+    do
+        
+        
+        #if [ "$jj" = "${runYearArray[0]}" ]; then
+        if [ $jj = 365 ]; then
+            echo $jj
+        fi
+
+        if ; then
+            break
+        fi
+       
+        
+        #./a_call_slurm_varInputFile.sh $dtCalc $dtSave $bufferLength $ii $jj $finalYearFlag &
 
 
+    done    
 
 done
 
