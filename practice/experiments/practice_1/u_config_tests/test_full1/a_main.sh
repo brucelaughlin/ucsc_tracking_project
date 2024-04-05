@@ -29,7 +29,7 @@ runDirArray=("${runDirArray[@]%/}")    # This removes the trailing slash on each
 
 finalYearFlag=0
 
-nodeLimitPlusOne=5 # set to 1 higher than max number of nodes to use
+nodeLimit=4
 
 #dayNumber=1
 
@@ -53,7 +53,7 @@ do
     for jj in "${!runYearArray[@]}" # The "!" gives us jj as the array index (integer from 0 to 364 or 365)
     do
        
-        while [ $(squeue -u blaughli -h -t running | wc -l) -lt $nodeLimitPlusOne ]; do
+        while [ $(squeue -u blaughli -h -t running | wc -l) -le $nodeLimit ]; do
            sleep 20
        done 
         

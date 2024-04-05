@@ -1,6 +1,6 @@
 
 n_days_run = 90
-#n_days_run = 30
+#n_days_run = 20
 
 # Can finally increase number of seeds per run again.  But, still worried about that "doubling" spike in memory usage
 # at the very end of runs... see what happens
@@ -10,10 +10,6 @@ number_of_seeds = 1
 
 days_between_seeds = 2
 
-
-# Make dynamic output directories
-parent_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/config_tests_2/separation_study_v2/'
-output_dir = parent_dir + 'z_output/'
 
 
 # Test metadata and configuration
@@ -57,6 +53,10 @@ run_calc = int(sys.argv[1])
 # dt of save (minutes)
 run_save = int(sys.argv[2])
 buffer_length = int(sys.argv[3])
+
+# Make dynamic output directories
+parent_dir = sys.argv[4]
+output_dir = parent_dir + '/z_output/'
 
 #year_initial = int(sys.argv[4])
 #day_initial = int(sys.argv[5])

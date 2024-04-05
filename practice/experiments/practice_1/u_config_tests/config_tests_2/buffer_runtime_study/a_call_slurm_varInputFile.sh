@@ -5,7 +5,12 @@ dtSave=$2
 bufferLength=$3
 #inputFile=$4
 
-runString="dtCalc=${dtCalc},dtSave=${dtSave},bufferLength=${bufferLength}"
+parentDir=$4
+
+cd $parentDir #needed?
+
+#runString="dtCalc=${dtCalc},dtSave=${dtSave},bufferLength=${bufferLength}"
+runString="dtCalc=${dtCalc},dtSave=${dtSave},bufferLength=${bufferLength},parentDir=${parentDir}"
 logString="$(printf %02d ${dtCalc})_$(printf %04d ${dtSave})_$(printf %03d ${bufferLength})"
 
 job_num_pre=$(sbatch --export="ALL,${runString}" a_run_opendrift_controller.sh)
