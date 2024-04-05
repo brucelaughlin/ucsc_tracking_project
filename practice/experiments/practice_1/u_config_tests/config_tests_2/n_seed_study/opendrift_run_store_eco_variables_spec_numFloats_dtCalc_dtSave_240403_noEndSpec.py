@@ -1,15 +1,7 @@
-# Need to modify so it's ready for prime time
+# Now "number_of_seeds" is an input argument 
 
-# I believe we aren't actually memory constrained
-
-# So, we can seed every day for two months, at a time.  I.e. we can handle ~60 seedings at a time.
-# So, I'm thinking we should just seed 2 months at a time, however many days are in the months.
-# Stop seeding on Sep 30th of final year, so all floats can drift for 90 days
-
-# Actually, I think we can do 90 seedings at a time
-
-n_days_run = 90
-
+#n_days_run = 90
+particle_lifetime = 90
 
 
 
@@ -245,13 +237,6 @@ zs = np.asarray(zs)
 
 # Set run length (typically 3 months longer than seeding period, to let all floats reach the end of their (3 month?) pld
 start_run_time = start_seed_time
-#end_run_time = end_seed_time + relativedelta(months = n_months_pld)
-#end_run_time = end_seed_time + relativedelta(days = n_days_test)
-#end_run_time = end_seed_time + relativedelta(days = n_days_test - 1)
-end_run_time = end_seed_time + relativedelta(days = n_days_run - 1)
-#n_days_run = int((end_run_time - start_run_time).days)
-run_length_days = timedelta(days = n_days_run)
-
 
 
 o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for full debug information, 50 for no output
@@ -299,7 +284,8 @@ o.seed_elements(lon=lons,lat=lats, z=zs, time=start_seed_time)
 
 t_run_start = time.time()
 
-o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
+o.run(time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
+#o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
 #o.run(duration=run_length_days, time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_buffer_length=buffer_length)
 
 #o.run(outfile = tracking_output_file)
@@ -309,7 +295,8 @@ total_runtime = t_run_end-t_run_start
 total_execution_time = t_run_end-t_init
 
 #summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
-summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+#summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+summary_string = '{}, number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
 #print(o,flush=True)

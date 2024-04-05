@@ -9,20 +9,12 @@ dtCalc=60
 dtSave=1440
 
 declare -a nSeedArray=(
-[0]=10
+[0]=60
 )
-
-#declare -a nSeedArray=(
-#[0]=20
-#[1]=40
-#[2]=60
-#[3]=80
-#[4]=100
-#)
 
 
 bufferLength=100 # default, but must be provided in my code
 
 for ii in ${nSeedArray[@]}; do
-    ./a_call_slurm_varInputFile_varSeed.sh $dtCalc $dtSave $bufferLength $ii &
+    ./a_call_slurm_varInputFile_varSeed_printRunDay.sh $dtCalc $dtSave $bufferLength $ii &
 done

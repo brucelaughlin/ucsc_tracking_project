@@ -1,18 +1,10 @@
-# Need to modify so it's ready for prime time
+# Now "number_of_seeds" is an input argument 
 
-# I believe we aren't actually memory constrained
-
-# So, we can seed every day for two months, at a time.  I.e. we can handle ~60 seedings at a time.
-# So, I'm thinking we should just seed 2 months at a time, however many days are in the months.
-# Stop seeding on Sep 30th of final year, so all floats can drift for 90 days
-
-# Actually, I think we can do 90 seedings at a time
-
-n_days_run = 90
+n_days_run = 2
 
 
 
-
+import subprocess
 
 import glob
 import pickle
@@ -163,8 +155,8 @@ tracking_output_pre = 'test_output_{}.nc'.format(run_string_test)
 
 tracking_output_file = output_dir + tracking_output_pre
 
-
-
+tracking_output_pre_test = 'test_output_{}_compressed.nc'.format(run_string_test)
+tracking_output_file_test = output_dir + tracking_output_pre_test
 
 
 
@@ -323,9 +315,20 @@ print('USER PRINT STATEMENT: \nsummary info: {}\n'.format(summary_string),flush=
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 print('Finished')
 
-        
 
 
+
+# Try to copy and then compress the output file
+
+bash_command_copy = "cp {} {}".format(tracking_output_file,tracking_output_file_test)        
+process = subprocess.Popen(bash_command_copy.split(), stdout=subprocess.PIPE)
+output, error = process.communicate()
+
+time.sleep(20)
+
+bash_command_compress = "nc_compress {}".format(tracking_output_file_test)        
+process = subprocess.Popen(bash_command_compress.split(), stdout=subprocess.PIPE)
+output, error = process.communicate()
 
 
 
