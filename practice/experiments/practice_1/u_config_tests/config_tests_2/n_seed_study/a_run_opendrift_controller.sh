@@ -10,5 +10,5 @@ logString="$(printf %02d ${dtCalc})_$(printf %04d ${dtSave})_$(printf %03d ${buf
 cd $parentDir
 
 #python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240403.py $dtCalc $dtSave $bufferLength $parentDir $nSeed &> z_output/log_${logString}.txt 
-python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240403_noEndSpec.py $dtCalc $dtSave $bufferLength $parentDir $nSeed &> z_output_2/log_${logString}.txt 
+python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240403_noEndSpec.py $dtCalc $dtSave $bufferLength $parentDir $nSeed &> z_output/log_${logString}.txt 
 

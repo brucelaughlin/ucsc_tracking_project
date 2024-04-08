@@ -97,7 +97,7 @@ do
             while [ $(squeue -u blaughli -h -t running | wc -l) -gt $maxNodes ]; do
                 sleep 20
             done
-            ./a_call_slurm_varMonth.sh $dtCalc $dtSave $bufferLength $outputdir $yearNudge  $jj $finalYearFlag &
+            ./a_call_slurm.sh $dtCalc $dtSave $bufferLength $outputdir $yearNudge  $jj $finalYearFlag &
         done   
 
     elif
@@ -107,7 +107,7 @@ do
             while [ $(squeue -u blaughli -h -t running | wc -l) -gt $maxNodes ]; do
                 sleep 20
             done
-            ./a_call_slurm_varMonth.sh $jj &
+            ./a_call_slurm.sh $jj &
 
 
         done   

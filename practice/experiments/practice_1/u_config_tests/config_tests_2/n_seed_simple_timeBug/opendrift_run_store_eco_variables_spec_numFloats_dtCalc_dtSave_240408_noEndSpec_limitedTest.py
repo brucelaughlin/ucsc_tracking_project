@@ -3,7 +3,7 @@
 #n_days_run = 90
 particle_lifetime = 90
 
-
+output_dir_local = '/z_output/'
 
 
 import glob
@@ -43,7 +43,7 @@ buffer_length = int(sys.argv[3])
 
 # Make dynamic output directories
 parent_dir = sys.argv[4]
-output_dir = parent_dir + '/z_output/'
+output_dir = parent_dir + output_dir_local
 
 number_of_seeds = int(sys.argv[5])
 
@@ -139,10 +139,10 @@ box_i_j_file = box_base + box_file_i_j_pre
 
 #-------- History Files -----------------
 his_dir_year_1 = 'Run_1988/'
-his_dir_year_2 = 'Run_1989/'
+#his_dir_year_2 = 'Run_1989/'
 his_file_wildcard = 'wc15n_avg_*.nc'
 his_file_1 = history_base + his_dir_year_1 + his_file_wildcard
-his_file_2 = history_base + his_dir_year_2 + his_file_wildcard
+#his_file_2 = history_base + his_dir_year_2 + his_file_wildcard
 
 #his_file_list = []
 #for filename in glob.glob(history_base + his_dir_year_1 + "wc15n_avg_*.nc"):
@@ -211,17 +211,24 @@ lats = []
 zs = []
 times = []
 
-
-for run_day in range(0,seed_window_length,days_between_seeds): 
-    for ii in range(len(points_in_boxes_lon_lat)):
-        for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+# Need to figure out why runs only lasting 90 days despite removing the "run duration" parameter
+#for run_day in range(0,seed_window_length,days_between_seeds): 
+for run_day in range(10,seed_window_length,days_between_seeds): 
+    #for ii in range(len(points_in_boxes_lon_lat)):
+    for ii in range(1):
+        #for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+        for jj in range(1):
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
             depth_min = np.floor(min(min_float_depth,bottom_depth))
-            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+            #for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+            for kk in range(1):
                 zs.append(-kk*depth_step)
                 lons.append(points_in_boxes_lon_lat[ii][0,jj])
                 lats.append(points_in_boxes_lon_lat[ii][1,jj])
                 times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+
+                print('particle starting time: {}'.format(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S')),flush=True)
+
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
 #print('USER PRINT STATEMENT: number of floats specified: {}, length of float arrays: {} (should match)'.format(number_of_floats,len(lons)),flush=True)
@@ -248,9 +255,7 @@ o = LarvalDispersal(loglevel=20)  # Set loglevel to 0 for full debug information
 t_read_0 = time.time()
 
 r = Reader(his_file_1)
-o.add_reader(r)
-
-r = Reader(his_file_2)
+#r = reader_ROMS_native.Reader(his_file_1)
 o.add_reader(r)
 
 #o.add_readers_from_list(his_file_list)

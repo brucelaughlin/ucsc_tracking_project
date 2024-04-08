@@ -8,19 +8,9 @@ dtCalc=60
 
 dtSave=1440
 
-#declare -a nSeedArray=(
-#[0]=10
-#)
-
 declare -a nSeedArray=(
-[0]=150
-[1]=180
+[0]=10
 )
-#[2]=60
-#[3]=80
-#[4]=100
-#)
-
 
 bufferLength=100 # default, but must be provided in my code
 
