@@ -21,3 +21,4 @@ practice/seed_input_files/**/*.txt
 *.mat\.*
 *.p
 *.p\.*
+*slurm-*.out

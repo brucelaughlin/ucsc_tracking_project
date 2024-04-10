@@ -18,8 +18,9 @@ for ii in ${startNudgeArray[@]}; do
     logString="$(printf %02d ${dtCalc})_$(printf %04d ${dtSave})_$(printf %03d ${bufferLength})_$(printf %02d ${nSeed})_$(printf %02d ${nRuns})_$(printf %03d ${ii})"
     
     #python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py $dtCalc $dtSave $bufferLength $parentDir $nSeed $ii &> z_output/log_${logString}.txt 
-    #python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py $dtCalc $dtSave $bufferLength $parentDir $nSeed $ii &> z_output/log_${logString}.txt &
-    python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py $dtCalc $dtSave $bufferLength $parentDir $nSeed $ii > z_output/log_${logString}.txt &
+    python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py $dtCalc $dtSave $bufferLength $parentDir $nSeed $ii &> z_output/log_${logString}.txt &
+    #python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py $dtCalc $dtSave $bufferLength $parentDir $nSeed $ii > z_output/log_${logString}.txt &
+    #python opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py $dtCalc $dtSave $bufferLength $parentDir $nSeed $ii &> z_output/log_${logString}.txt
 
 done
 wait # I guess I needed this "wait" statement.  Also perhaps my previous placement of the "&" ( ie &> ) was not working for running the function in a loop

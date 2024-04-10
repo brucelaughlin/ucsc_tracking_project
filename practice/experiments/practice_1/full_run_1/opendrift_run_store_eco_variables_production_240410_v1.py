@@ -1,4 +1,4 @@
-# Now "number_of_seeds" is an input argument 
+# Finish this... hard to think when I don't know if we're doing parallel runs or serial runs
 
 #n_days_run = 90
 particle_lifetime = 90
@@ -21,11 +21,7 @@ from pathlib import Path
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
 from larvaldispersal_track_eco_variables import LarvalDispersal
-#from larvaldispersal_track_eco_variables_test import LarvalDispersal # don't track eco variables
 from reader_ROMS_native_custom_eco import Reader
-
-#from opendrift.readers import reader_ROMS_native
-#from opendrift.models.oceandrift import OceanDrift
 
 # Track how long this takes to run
 t_init = time.time()
@@ -54,41 +50,22 @@ start_nudge = int(sys.argv[6])
 year_initial = 0
 day_initial = 0
 
-#run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}'.format(b=run_calc,c=run_save,d=buffer_length)
-#run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds)
-run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}_startNudge_{f:03d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds,f=start_nudge)
+run_string = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}_startNudge_{f:03d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds,f=start_nudge)
 
-#run_string = 'run_{}_of_{}'.format(run_number,n_runs)
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
-#print('USER PRINT STATEMENT: {}'.format(run_string),flush=True)
-print('USER PRINT STATEMENT: {}'.format(run_string_test),flush=True)
+print('USER PRINT STATEMENT: {}'.format(run_string),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 #-------------------------------------------------
 
 
 
 
-# Test metadata and configuration
+# Metadata and configuration
 #-------------------------------------------------
-#n_runs = int(number_of_seeds/n_days_seed)
 n_runs = number_of_seeds
-#n_days_seed = n_runs
-#seed_window_length = number_of_seeds * days_between_seeds
-#seed_window_length = (number_of_seeds - 1) * days_between_seeds
 seed_window_length = (number_of_seeds - 1) * days_between_seeds + 1
 
-
-
-
-
-
-# -----------------------------------------------------------------------------
-# run configuration parameters:
-
-#save_dt = timedelta(minutes = run_save)
 save_dt = run_save * 60;
-
-#run_dt = timedelta(minutes = run_calc)
 run_dt = run_calc * 60
 
 # All tests start at Jan 1, 12pm, 1988
@@ -153,7 +130,7 @@ his_file_2 = history_base + his_dir_year_2 + his_file_wildcard
 
 
 #----------Output netCDF File---------------------
-tracking_output_pre = 'test_output_{}.nc'.format(run_string_test)
+tracking_output_pre = 'test_output_{}.nc'.format(run_string)
 
 tracking_output_file = output_dir + tracking_output_pre
 
@@ -297,9 +274,9 @@ total_runtime = t_run_end-t_run_start
 total_execution_time = t_run_end-t_init
 
 #summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
-#summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
-#summary_string = '{}, number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
-summary_string = '{}, time_start: {}, time_end: {},  number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(t_init_),str(t_run_end),str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+#summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+#summary_string = '{}, number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+summary_string = '{}, time_start: {}, time_end: {},  number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(t_init_),str(t_run_end),str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
 #print(o,flush=True)

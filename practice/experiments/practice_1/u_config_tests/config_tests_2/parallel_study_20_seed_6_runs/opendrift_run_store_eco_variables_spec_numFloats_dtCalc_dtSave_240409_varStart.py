@@ -55,7 +55,8 @@ year_initial = 0
 day_initial = 0
 
 #run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}'.format(b=run_calc,c=run_save,d=buffer_length)
-run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds)
+#run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds)
+run_string_test = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:02d}_startNudge_{f:03d}'.format(b=run_calc,c=run_save,d=buffer_length,e=number_of_seeds,f=start_nudge)
 
 #run_string = 'run_{}_of_{}'.format(run_number,n_runs)
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
@@ -297,7 +298,8 @@ total_execution_time = t_run_end-t_init
 
 #summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
 #summary_string = '{}, number_of_seeds: {}, days_running_per_seed: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),run_length_days.days-1,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
-summary_string = '{}, number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+#summary_string = '{}, number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
+summary_string = '{}, time_start: {}, time_end: {},  number_of_seeds: {}, days_particle_lifetime: {}, readerloading (mins): {}, run_time (hrs): {}, execution_time (hrs): {}\n'.format(run_string_test,str(t_init_),str(t_run_end),str(number_of_seeds),particle_lifetime,round(reader_time/60,3),round(total_runtime/3600,3), round(total_execution_time/3600,3))
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
 #print(o,flush=True)
@@ -305,8 +307,13 @@ print('USER PRINT STATEMENT: ' + str(o),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
-print('USER PRINT STATEMENT: \ntotal runtime: {}\n'.format(total_runtime),flush=True)
-print('USER PRINT STATEMENT: \ntotal execution time: {}\n'.format(total_execution_time),flush=True)
+print('USER PRINT STATEMENT: \nprogram start time: {}\n'.format(t_init),flush=True)
+print('USER PRINT STATEMENT: \nopendrift start time: {}\n'.format(t_init),flush=True)
+print('USER PRINT STATEMENT: \nend time: {}\n'.format(t_run_end),flush=True)
+#print('USER PRINT STATEMENT: \ntotal runtime: {}\n'.format(total_runtime),flush=True)
+print('USER PRINT STATEMENT: \ntotal runtime: {} hours\n'.format(round(total_runtime/3600,1)),flush=True)
+#print('USER PRINT STATEMENT: \ntotal execution time: {}\n'.format(total_execution_time),flush=True)
+print('USER PRINT STATEMENT: \ntotal execution time: {} hours\n'.format(round(total_execution_time/3600,1)),flush=True)
 print('USER PRINT STATEMENT: \nsummary info: {}\n'.format(summary_string),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 print('Finished')
