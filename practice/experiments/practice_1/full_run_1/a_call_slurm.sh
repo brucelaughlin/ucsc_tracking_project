@@ -3,9 +3,9 @@
 dtCalc=$1
 dtSave=$2
 bufferLength=$3
-#inputFile=$4
+outputDir=$4
 
-nSeed=$4
+
 
 parentDir=$(pwd)
 

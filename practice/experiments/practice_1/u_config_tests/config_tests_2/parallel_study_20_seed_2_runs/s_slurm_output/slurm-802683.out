@@ -1,0 +1,453 @@
+18:35:22 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
+18:35:22 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
+18:41:28 WARNING opendrift.readers.basereader.structured:44: No proj string or projection could be derived, using 'fakeproj'. This assumes that the variables are structured and gridded approximately equidistantly on the surface (i.e. in meters). This must be guaranteed by the user. You can get rid of this warning by supplying a valid projection to the reader.
+18:41:28 INFO    opendrift.readers.basereader.structured:59: Making interpolator for lon,lat to x,y conversion...
+18:41:42 WARNING opendrift.readers.basereader.structured:44: No proj string or projection could be derived, using 'fakeproj'. This assumes that the variables are structured and gridded approximately equidistantly on the surface (i.e. in meters). This must be guaranteed by the user. You can get rid of this warning by supplying a valid projection to the reader.
+18:41:42 INFO    opendrift.readers.basereader.structured:59: Making interpolator for lon,lat to x,y conversion...
+18:47:56 WARNING opendrift.readers.basereader.structured:44: No proj string or projection could be derived, using 'fakeproj'. This assumes that the variables are structured and gridded approximately equidistantly on the surface (i.e. in meters). This must be guaranteed by the user. You can get rid of this warning by supplying a valid projection to the reader.
+18:47:56 INFO    opendrift.readers.basereader.structured:59: Making interpolator for lon,lat to x,y conversion...
+18:48:01 INFO    opendrift.models.basemodel.environment:220: Adding a dynamical landmask with max. priority based on assumed maximum speed of 1.0 m/s. Adding a customised landmask may be faster...
+18:48:07 INFO    opendrift.models.basemodel.environment:247: Fallback values will be used for the following variables which have no readers: 
+18:48:07 INFO    opendrift.models.basemodel.environment:250: 	x_wind: 0.000000
+18:48:07 INFO    opendrift.models.basemodel.environment:250: 	y_wind: 0.000000
+18:48:07 INFO    opendrift.models.basemodel.environment:250: 	ocean_mixed_layer_thickness: 50.000000
+18:48:07 INFO    opendrift.models.basemodel.environment:250: 	turbulent_kinetic_energy: 0.000000
+18:48:07 INFO    opendrift.models.basemodel.environment:250: 	turbulent_generic_length_scale: 0.000000
+18:48:08 INFO    opendrift.models.basemodel:1819: Duration, steps or end time not specified, running until end of first reader: 1988-12-31 12:00:00
+18:48:08 INFO    opendrift.models.basemodel:1819: Duration, steps or end time not specified, running until end of first reader: 1988-12-31 12:00:00
+18:48:08 INFO    opendrift.models.basemodel:1819: Duration, steps or end time not specified, running until end of first reader: 1988-12-31 12:00:00
+18:48:16 WARNING opendrift.readers.basereader.structured:44: No proj string or projection could be derived, using 'fakeproj'. This assumes that the variables are structured and gridded approximately equidistantly on the surface (i.e. in meters). This must be guaranteed by the user. You can get rid of this warning by supplying a valid projection to the reader.
+18:48:16 INFO    opendrift.readers.basereader.structured:59: Making interpolator for lon,lat to x,y conversion...
+18:48:16 INFO    opendrift.models.basemodel:891: Using existing reader for land_binary_mask
+18:48:16 INFO    opendrift.models.basemodel:905: Moving 200 out of 236780 points from land to water
+18:48:17 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:17 INFO    opendrift.models.basemodel:1992: 1988-01-01 12:00:00 - step 1 of 8760 - 11839 active elements (0 deactivated)
+18:48:20 INFO    opendrift.models.basemodel.environment:220: Adding a dynamical landmask with max. priority based on assumed maximum speed of 1.0 m/s. Adding a customised landmask may be faster...
+18:48:25 INFO    opendrift.models.basemodel.environment:247: Fallback values will be used for the following variables which have no readers: 
+18:48:25 INFO    opendrift.models.basemodel.environment:250: 	x_wind: 0.000000
+18:48:25 INFO    opendrift.models.basemodel.environment:250: 	y_wind: 0.000000
+18:48:25 INFO    opendrift.models.basemodel.environment:250: 	ocean_mixed_layer_thickness: 50.000000
+18:48:25 INFO    opendrift.models.basemodel.environment:250: 	turbulent_kinetic_energy: 0.000000
+18:48:25 INFO    opendrift.models.basemodel.environment:250: 	turbulent_generic_length_scale: 0.000000
+18:48:26 INFO    opendrift.models.basemodel:1819: Duration, steps or end time not specified, running until end of first reader: 1988-12-31 12:00:00
+18:48:26 INFO    opendrift.models.basemodel:1819: Duration, steps or end time not specified, running until end of first reader: 1988-12-31 12:00:00
+18:48:26 INFO    opendrift.models.basemodel:1819: Duration, steps or end time not specified, running until end of first reader: 1988-12-31 12:00:00
+18:48:27 WARNING opendrift.readers.basereader.variables:635: Invalid values (1.0000093 to 88478.06) found for ocean_vertical_diffusivity, replacing with NaN
+18:48:27 WARNING opendrift.readers.basereader.variables:638: (allowed range: [0, 1])
+18:48:27 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:28 INFO    opendrift.models.basemodel:1992: 1988-01-01 13:00:00 - step 2 of 8760 - 11839 active elements (0 deactivated)
+Traceback (most recent call last):
+  File "/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/config_tests_2/parallel_study_20_seed_2_runs/opendrift_run_store_eco_variables_spec_numFloats_dtCalc_dtSave_240409_varStart.py", line 288, in <module>
+    o.run(time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
+  File "/home/blaughli/opendrift/opendrift/models/basemodel/__init__.py", line 107, in inner
+    r = func(self, *args, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/blaughli/opendrift/opendrift/models/basemodel/__init__.py", line 1928, in run
+    self.io_init(outfile)
+  File "/home/blaughli/opendrift/opendrift/export/io_netcdf.py", line 23, in init
+    self.outfile = Dataset(filename, 'w')
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "src/netCDF4/_netCDF4.pyx", line 2463, in netCDF4._netCDF4.Dataset.__init__
+  File "src/netCDF4/_netCDF4.pyx", line 2026, in netCDF4._netCDF4._ensure_nc_success
+PermissionError: [Errno 13] Permission denied: b'/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/config_tests_2/parallel_study_20_seed_2_runs/z_output/test_output_calcDT_060_saveDT_1440_buffer_100_nSeed_20.nc'
+18:48:37 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:39 INFO    opendrift.models.basemodel:1992: 1988-01-01 14:00:00 - step 3 of 8760 - 11839 active elements (0 deactivated)
+18:48:39 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:40 INFO    opendrift.models.basemodel:1992: 1988-01-01 15:00:00 - step 4 of 8760 - 11839 active elements (0 deactivated)
+18:48:40 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:41 INFO    opendrift.models.basemodel:1992: 1988-01-01 16:00:00 - step 5 of 8760 - 11839 active elements (0 deactivated)
+18:48:42 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:43 INFO    opendrift.models.basemodel:1992: 1988-01-01 17:00:00 - step 6 of 8760 - 11839 active elements (0 deactivated)
+18:48:43 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:44 INFO    opendrift.models.basemodel:1992: 1988-01-01 18:00:00 - step 7 of 8760 - 11839 active elements (0 deactivated)
+18:48:44 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:46 INFO    opendrift.models.basemodel:1992: 1988-01-01 19:00:00 - step 8 of 8760 - 11839 active elements (0 deactivated)
+18:48:46 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:47 INFO    opendrift.models.basemodel:1992: 1988-01-01 20:00:00 - step 9 of 8760 - 11839 active elements (0 deactivated)
+18:48:47 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:49 INFO    opendrift.models.basemodel:1992: 1988-01-01 21:00:00 - step 10 of 8760 - 11839 active elements (0 deactivated)
+18:48:49 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:50 INFO    opendrift.models.basemodel:1992: 1988-01-01 22:00:00 - step 11 of 8760 - 11839 active elements (0 deactivated)
+18:48:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:51 INFO    opendrift.models.basemodel:1992: 1988-01-01 23:00:00 - step 12 of 8760 - 11839 active elements (0 deactivated)
+18:48:51 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:53 INFO    opendrift.models.basemodel:1992: 1988-01-02 00:00:00 - step 13 of 8760 - 11839 active elements (0 deactivated)
+18:48:53 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:54 INFO    opendrift.models.basemodel:1992: 1988-01-02 01:00:00 - step 14 of 8760 - 11839 active elements (0 deactivated)
+18:48:54 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:56 INFO    opendrift.models.basemodel:1992: 1988-01-02 02:00:00 - step 15 of 8760 - 11839 active elements (0 deactivated)
+18:48:56 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:57 INFO    opendrift.models.basemodel:1992: 1988-01-02 03:00:00 - step 16 of 8760 - 11839 active elements (0 deactivated)
+18:48:57 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:48:58 INFO    opendrift.models.basemodel:1992: 1988-01-02 04:00:00 - step 17 of 8760 - 11839 active elements (0 deactivated)
+18:48:58 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:00 INFO    opendrift.models.basemodel:1992: 1988-01-02 05:00:00 - step 18 of 8760 - 11839 active elements (0 deactivated)
+18:49:00 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:01 INFO    opendrift.models.basemodel:1992: 1988-01-02 06:00:00 - step 19 of 8760 - 11839 active elements (0 deactivated)
+18:49:01 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:03 INFO    opendrift.models.basemodel:1992: 1988-01-02 07:00:00 - step 20 of 8760 - 11839 active elements (0 deactivated)
+18:49:03 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:04 INFO    opendrift.models.basemodel:1992: 1988-01-02 08:00:00 - step 21 of 8760 - 11839 active elements (0 deactivated)
+18:49:04 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:06 INFO    opendrift.models.basemodel:1992: 1988-01-02 09:00:00 - step 22 of 8760 - 11839 active elements (0 deactivated)
+18:49:06 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:07 INFO    opendrift.models.basemodel:1992: 1988-01-02 10:00:00 - step 23 of 8760 - 11839 active elements (0 deactivated)
+18:49:07 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:08 INFO    opendrift.models.basemodel:1992: 1988-01-02 11:00:00 - step 24 of 8760 - 11839 active elements (0 deactivated)
+18:49:08 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:10 INFO    opendrift.models.basemodel:1992: 1988-01-02 12:00:00 - step 25 of 8760 - 11839 active elements (0 deactivated)
+18:49:10 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:11 INFO    opendrift.models.basemodel:1992: 1988-01-02 13:00:00 - step 26 of 8760 - 11839 active elements (0 deactivated)
+18:49:20 WARNING opendrift.readers.basereader.variables:635: Invalid values (1.0990396 to 1.6997252) found for ocean_vertical_diffusivity, replacing with NaN
+18:49:20 WARNING opendrift.readers.basereader.variables:638: (allowed range: [0, 1])
+18:49:20 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:22 INFO    opendrift.models.basemodel:1992: 1988-01-02 14:00:00 - step 27 of 8760 - 11839 active elements (0 deactivated)
+18:49:22 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:24 INFO    opendrift.models.basemodel:1992: 1988-01-02 15:00:00 - step 28 of 8760 - 11839 active elements (0 deactivated)
+18:49:24 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:25 INFO    opendrift.models.basemodel:1992: 1988-01-02 16:00:00 - step 29 of 8760 - 11839 active elements (0 deactivated)
+18:49:25 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:27 INFO    opendrift.models.basemodel:1992: 1988-01-02 17:00:00 - step 30 of 8760 - 11839 active elements (0 deactivated)
+18:49:27 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:28 INFO    opendrift.models.basemodel:1992: 1988-01-02 18:00:00 - step 31 of 8760 - 11839 active elements (0 deactivated)
+18:49:28 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:30 INFO    opendrift.models.basemodel:1992: 1988-01-02 19:00:00 - step 32 of 8760 - 11839 active elements (0 deactivated)
+18:49:30 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:31 INFO    opendrift.models.basemodel:1992: 1988-01-02 20:00:00 - step 33 of 8760 - 11839 active elements (0 deactivated)
+18:49:31 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:33 INFO    opendrift.models.basemodel:1992: 1988-01-02 21:00:00 - step 34 of 8760 - 11839 active elements (0 deactivated)
+18:49:33 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:34 INFO    opendrift.models.basemodel:1992: 1988-01-02 22:00:00 - step 35 of 8760 - 11839 active elements (0 deactivated)
+18:49:34 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:36 INFO    opendrift.models.basemodel:1992: 1988-01-02 23:00:00 - step 36 of 8760 - 11839 active elements (0 deactivated)
+18:49:36 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:37 INFO    opendrift.models.basemodel:1992: 1988-01-03 00:00:00 - step 37 of 8760 - 11839 active elements (0 deactivated)
+18:49:38 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:39 INFO    opendrift.models.basemodel:1992: 1988-01-03 01:00:00 - step 38 of 8760 - 11839 active elements (0 deactivated)
+18:49:39 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:40 INFO    opendrift.models.basemodel:1992: 1988-01-03 02:00:00 - step 39 of 8760 - 11839 active elements (0 deactivated)
+18:49:41 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:42 INFO    opendrift.models.basemodel:1992: 1988-01-03 03:00:00 - step 40 of 8760 - 11839 active elements (0 deactivated)
+18:49:42 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:43 INFO    opendrift.models.basemodel:1992: 1988-01-03 04:00:00 - step 41 of 8760 - 11839 active elements (0 deactivated)
+18:49:44 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:45 INFO    opendrift.models.basemodel:1992: 1988-01-03 05:00:00 - step 42 of 8760 - 11839 active elements (0 deactivated)
+18:49:45 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:46 INFO    opendrift.models.basemodel:1992: 1988-01-03 06:00:00 - step 43 of 8760 - 11839 active elements (0 deactivated)
+18:49:47 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:48 INFO    opendrift.models.basemodel:1992: 1988-01-03 07:00:00 - step 44 of 8760 - 11839 active elements (0 deactivated)
+18:49:48 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:50 INFO    opendrift.models.basemodel:1992: 1988-01-03 08:00:00 - step 45 of 8760 - 11839 active elements (0 deactivated)
+18:49:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:51 INFO    opendrift.models.basemodel:1992: 1988-01-03 09:00:00 - step 46 of 8760 - 11839 active elements (0 deactivated)
+18:49:51 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:53 INFO    opendrift.models.basemodel:1992: 1988-01-03 10:00:00 - step 47 of 8760 - 11839 active elements (0 deactivated)
+18:49:53 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:54 INFO    opendrift.models.basemodel:1992: 1988-01-03 11:00:00 - step 48 of 8760 - 11839 active elements (0 deactivated)
+18:49:55 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:56 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:56 INFO    opendrift.models.basemodel:1992: 1988-01-03 12:00:00 - step 49 of 8760 - 23678 active elements (0 deactivated)
+18:49:56 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:49:58 INFO    opendrift.models.basemodel:1992: 1988-01-03 13:00:00 - step 50 of 8760 - 23678 active elements (0 deactivated)
+18:50:09 WARNING opendrift.readers.basereader.variables:635: Invalid values (1.0324931 to 1.7684665) found for ocean_vertical_diffusivity, replacing with NaN
+18:50:09 WARNING opendrift.readers.basereader.variables:638: (allowed range: [0, 1])
+18:50:09 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:11 INFO    opendrift.models.basemodel:1992: 1988-01-03 14:00:00 - step 51 of 8760 - 23678 active elements (0 deactivated)
+18:50:11 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:13 INFO    opendrift.models.basemodel:1992: 1988-01-03 15:00:00 - step 52 of 8760 - 23678 active elements (0 deactivated)
+18:50:13 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:15 INFO    opendrift.models.basemodel:1992: 1988-01-03 16:00:00 - step 53 of 8760 - 23678 active elements (0 deactivated)
+18:50:16 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:18 INFO    opendrift.models.basemodel:1992: 1988-01-03 17:00:00 - step 54 of 8760 - 23678 active elements (0 deactivated)
+18:50:18 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:20 INFO    opendrift.models.basemodel:1992: 1988-01-03 18:00:00 - step 55 of 8760 - 23678 active elements (0 deactivated)
+18:50:20 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:22 INFO    opendrift.models.basemodel:1992: 1988-01-03 19:00:00 - step 56 of 8760 - 23678 active elements (0 deactivated)
+18:50:22 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:24 INFO    opendrift.models.basemodel:1992: 1988-01-03 20:00:00 - step 57 of 8760 - 23678 active elements (0 deactivated)
+18:50:24 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:26 INFO    opendrift.models.basemodel:1992: 1988-01-03 21:00:00 - step 58 of 8760 - 23678 active elements (0 deactivated)
+18:50:26 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:28 INFO    opendrift.models.basemodel:1992: 1988-01-03 22:00:00 - step 59 of 8760 - 23678 active elements (0 deactivated)
+18:50:29 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:31 INFO    opendrift.models.basemodel:1992: 1988-01-03 23:00:00 - step 60 of 8760 - 23678 active elements (0 deactivated)
+18:50:31 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:33 INFO    opendrift.models.basemodel:1992: 1988-01-04 00:00:00 - step 61 of 8760 - 23678 active elements (0 deactivated)
+18:50:33 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:35 INFO    opendrift.models.basemodel:1992: 1988-01-04 01:00:00 - step 62 of 8760 - 23678 active elements (0 deactivated)
+18:50:35 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:37 INFO    opendrift.models.basemodel:1992: 1988-01-04 02:00:00 - step 63 of 8760 - 23678 active elements (0 deactivated)
+18:50:37 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:39 INFO    opendrift.models.basemodel:1992: 1988-01-04 03:00:00 - step 64 of 8760 - 23678 active elements (0 deactivated)
+18:50:39 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:41 INFO    opendrift.models.basemodel:1992: 1988-01-04 04:00:00 - step 65 of 8760 - 23678 active elements (0 deactivated)
+18:50:41 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:43 INFO    opendrift.models.basemodel:1992: 1988-01-04 05:00:00 - step 66 of 8760 - 23678 active elements (0 deactivated)
+18:50:43 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:46 INFO    opendrift.models.basemodel:1992: 1988-01-04 06:00:00 - step 67 of 8760 - 23678 active elements (0 deactivated)
+18:50:46 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:48 INFO    opendrift.models.basemodel:1992: 1988-01-04 07:00:00 - step 68 of 8760 - 23678 active elements (0 deactivated)
+18:50:48 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:50 INFO    opendrift.models.basemodel:1992: 1988-01-04 08:00:00 - step 69 of 8760 - 23678 active elements (0 deactivated)
+18:50:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:52 INFO    opendrift.models.basemodel:1992: 1988-01-04 09:00:00 - step 70 of 8760 - 23678 active elements (0 deactivated)
+18:50:52 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:54 INFO    opendrift.models.basemodel:1992: 1988-01-04 10:00:00 - step 71 of 8760 - 23678 active elements (0 deactivated)
+18:50:54 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:56 INFO    opendrift.models.basemodel:1992: 1988-01-04 11:00:00 - step 72 of 8760 - 23678 active elements (0 deactivated)
+18:50:56 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:50:58 INFO    opendrift.models.basemodel:1992: 1988-01-04 12:00:00 - step 73 of 8760 - 23678 active elements (0 deactivated)
+18:50:59 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:00 INFO    opendrift.models.basemodel:1992: 1988-01-04 13:00:00 - step 74 of 8760 - 23678 active elements (0 deactivated)
+18:51:11 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:13 INFO    opendrift.models.basemodel:1992: 1988-01-04 14:00:00 - step 75 of 8760 - 23678 active elements (0 deactivated)
+18:51:13 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:16 INFO    opendrift.models.basemodel:1992: 1988-01-04 15:00:00 - step 76 of 8760 - 23678 active elements (0 deactivated)
+18:51:16 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:18 INFO    opendrift.models.basemodel:1992: 1988-01-04 16:00:00 - step 77 of 8760 - 23678 active elements (0 deactivated)
+18:51:18 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:20 INFO    opendrift.models.basemodel:1992: 1988-01-04 17:00:00 - step 78 of 8760 - 23678 active elements (0 deactivated)
+18:51:20 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:22 INFO    opendrift.models.basemodel:1992: 1988-01-04 18:00:00 - step 79 of 8760 - 23678 active elements (0 deactivated)
+18:51:22 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:24 INFO    opendrift.models.basemodel:1992: 1988-01-04 19:00:00 - step 80 of 8760 - 23678 active elements (0 deactivated)
+18:51:24 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:26 INFO    opendrift.models.basemodel:1992: 1988-01-04 20:00:00 - step 81 of 8760 - 23678 active elements (0 deactivated)
+18:51:26 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:28 INFO    opendrift.models.basemodel:1992: 1988-01-04 21:00:00 - step 82 of 8760 - 23678 active elements (0 deactivated)
+18:51:28 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:30 INFO    opendrift.models.basemodel:1992: 1988-01-04 22:00:00 - step 83 of 8760 - 23678 active elements (0 deactivated)
+18:51:31 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:33 INFO    opendrift.models.basemodel:1992: 1988-01-04 23:00:00 - step 84 of 8760 - 23678 active elements (0 deactivated)
+18:51:33 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:35 INFO    opendrift.models.basemodel:1992: 1988-01-05 00:00:00 - step 85 of 8760 - 23678 active elements (0 deactivated)
+18:51:35 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:37 INFO    opendrift.models.basemodel:1992: 1988-01-05 01:00:00 - step 86 of 8760 - 23678 active elements (0 deactivated)
+18:51:37 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:39 INFO    opendrift.models.basemodel:1992: 1988-01-05 02:00:00 - step 87 of 8760 - 23678 active elements (0 deactivated)
+18:51:39 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:41 INFO    opendrift.models.basemodel:1992: 1988-01-05 03:00:00 - step 88 of 8760 - 23678 active elements (0 deactivated)
+18:51:41 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:43 INFO    opendrift.models.basemodel:1992: 1988-01-05 04:00:00 - step 89 of 8760 - 23678 active elements (0 deactivated)
+18:51:43 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:45 INFO    opendrift.models.basemodel:1992: 1988-01-05 05:00:00 - step 90 of 8760 - 23678 active elements (0 deactivated)
+18:51:45 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:48 INFO    opendrift.models.basemodel:1992: 1988-01-05 06:00:00 - step 91 of 8760 - 23678 active elements (0 deactivated)
+18:51:48 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:50 INFO    opendrift.models.basemodel:1992: 1988-01-05 07:00:00 - step 92 of 8760 - 23678 active elements (0 deactivated)
+18:51:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:52 INFO    opendrift.models.basemodel:1992: 1988-01-05 08:00:00 - step 93 of 8760 - 23678 active elements (0 deactivated)
+18:51:52 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:54 INFO    opendrift.models.basemodel:1992: 1988-01-05 09:00:00 - step 94 of 8760 - 23678 active elements (0 deactivated)
+18:51:54 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:56 INFO    opendrift.models.basemodel:1992: 1988-01-05 10:00:00 - step 95 of 8760 - 23678 active elements (0 deactivated)
+18:51:56 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:51:58 INFO    opendrift.models.basemodel:1992: 1988-01-05 11:00:00 - step 96 of 8760 - 23678 active elements (0 deactivated)
+18:51:58 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:00 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:00 INFO    opendrift.models.basemodel:1992: 1988-01-05 12:00:00 - step 97 of 8760 - 35517 active elements (0 deactivated)
+18:52:01 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:02 INFO    opendrift.models.basemodel:1992: 1988-01-05 13:00:00 - step 98 of 8760 - 35517 active elements (0 deactivated)
+18:52:13 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:16 INFO    opendrift.models.basemodel:1992: 1988-01-05 14:00:00 - step 99 of 8760 - 35517 active elements (0 deactivated)
+18:52:16 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:18 INFO    opendrift.models.basemodel:1992: 1988-01-05 15:00:00 - step 100 of 8760 - 35517 active elements (0 deactivated)
+18:52:19 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:21 INFO    opendrift.models.basemodel:1992: 1988-01-05 16:00:00 - step 101 of 8760 - 35517 active elements (0 deactivated)
+18:52:21 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:24 INFO    opendrift.models.basemodel:1992: 1988-01-05 17:00:00 - step 102 of 8760 - 35517 active elements (0 deactivated)
+18:52:24 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:27 INFO    opendrift.models.basemodel:1992: 1988-01-05 18:00:00 - step 103 of 8760 - 35517 active elements (0 deactivated)
+18:52:27 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:29 INFO    opendrift.models.basemodel:1992: 1988-01-05 19:00:00 - step 104 of 8760 - 35517 active elements (0 deactivated)
+18:52:29 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:32 INFO    opendrift.models.basemodel:1992: 1988-01-05 20:00:00 - step 105 of 8760 - 35517 active elements (0 deactivated)
+18:52:32 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:35 INFO    opendrift.models.basemodel:1992: 1988-01-05 21:00:00 - step 106 of 8760 - 35517 active elements (0 deactivated)
+18:52:35 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:38 INFO    opendrift.models.basemodel:1992: 1988-01-05 22:00:00 - step 107 of 8760 - 35517 active elements (0 deactivated)
+18:52:38 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:40 INFO    opendrift.models.basemodel:1992: 1988-01-05 23:00:00 - step 108 of 8760 - 35517 active elements (0 deactivated)
+18:52:40 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:43 INFO    opendrift.models.basemodel:1992: 1988-01-06 00:00:00 - step 109 of 8760 - 35517 active elements (0 deactivated)
+18:52:43 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:46 INFO    opendrift.models.basemodel:1992: 1988-01-06 01:00:00 - step 110 of 8760 - 35517 active elements (0 deactivated)
+18:52:46 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:48 INFO    opendrift.models.basemodel:1992: 1988-01-06 02:00:00 - step 111 of 8760 - 35517 active elements (0 deactivated)
+18:52:48 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:51 INFO    opendrift.models.basemodel:1992: 1988-01-06 03:00:00 - step 112 of 8760 - 35517 active elements (0 deactivated)
+18:52:51 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:54 INFO    opendrift.models.basemodel:1992: 1988-01-06 04:00:00 - step 113 of 8760 - 35517 active elements (0 deactivated)
+18:52:54 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:57 INFO    opendrift.models.basemodel:1992: 1988-01-06 05:00:00 - step 114 of 8760 - 35517 active elements (0 deactivated)
+18:52:57 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:52:59 INFO    opendrift.models.basemodel:1992: 1988-01-06 06:00:00 - step 115 of 8760 - 35517 active elements (0 deactivated)
+18:52:59 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:02 INFO    opendrift.models.basemodel:1992: 1988-01-06 07:00:00 - step 116 of 8760 - 35517 active elements (0 deactivated)
+18:53:02 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:05 INFO    opendrift.models.basemodel:1992: 1988-01-06 08:00:00 - step 117 of 8760 - 35517 active elements (0 deactivated)
+18:53:05 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:07 INFO    opendrift.models.basemodel:1992: 1988-01-06 09:00:00 - step 118 of 8760 - 35517 active elements (0 deactivated)
+18:53:08 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:10 INFO    opendrift.models.basemodel:1992: 1988-01-06 10:00:00 - step 119 of 8760 - 35517 active elements (0 deactivated)
+18:53:10 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:13 INFO    opendrift.models.basemodel:1992: 1988-01-06 11:00:00 - step 120 of 8760 - 35517 active elements (0 deactivated)
+18:53:13 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:16 INFO    opendrift.models.basemodel:1992: 1988-01-06 12:00:00 - step 121 of 8760 - 35517 active elements (0 deactivated)
+18:53:16 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:17 INFO    opendrift.models.basemodel:1992: 1988-01-06 13:00:00 - step 122 of 8760 - 35517 active elements (0 deactivated)
+18:53:28 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:32 INFO    opendrift.models.basemodel:1992: 1988-01-06 14:00:00 - step 123 of 8760 - 35517 active elements (0 deactivated)
+18:53:32 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:34 INFO    opendrift.models.basemodel:1992: 1988-01-06 15:00:00 - step 124 of 8760 - 35517 active elements (0 deactivated)
+18:53:34 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:37 INFO    opendrift.models.basemodel:1992: 1988-01-06 16:00:00 - step 125 of 8760 - 35517 active elements (0 deactivated)
+18:53:37 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:40 INFO    opendrift.models.basemodel:1992: 1988-01-06 17:00:00 - step 126 of 8760 - 35517 active elements (0 deactivated)
+18:53:40 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:42 INFO    opendrift.models.basemodel:1992: 1988-01-06 18:00:00 - step 127 of 8760 - 35517 active elements (0 deactivated)
+18:53:42 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:45 INFO    opendrift.models.basemodel:1992: 1988-01-06 19:00:00 - step 128 of 8760 - 35517 active elements (0 deactivated)
+18:53:45 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:48 INFO    opendrift.models.basemodel:1992: 1988-01-06 20:00:00 - step 129 of 8760 - 35517 active elements (0 deactivated)
+18:53:48 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:51 INFO    opendrift.models.basemodel:1992: 1988-01-06 21:00:00 - step 130 of 8760 - 35517 active elements (0 deactivated)
+18:53:51 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:54 INFO    opendrift.models.basemodel:1992: 1988-01-06 22:00:00 - step 131 of 8760 - 35517 active elements (0 deactivated)
+18:53:54 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:56 INFO    opendrift.models.basemodel:1992: 1988-01-06 23:00:00 - step 132 of 8760 - 35517 active elements (0 deactivated)
+18:53:56 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:53:59 INFO    opendrift.models.basemodel:1992: 1988-01-07 00:00:00 - step 133 of 8760 - 35517 active elements (0 deactivated)
+18:53:59 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:02 INFO    opendrift.models.basemodel:1992: 1988-01-07 01:00:00 - step 134 of 8760 - 35517 active elements (0 deactivated)
+18:54:02 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:05 INFO    opendrift.models.basemodel:1992: 1988-01-07 02:00:00 - step 135 of 8760 - 35517 active elements (0 deactivated)
+18:54:05 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:08 INFO    opendrift.models.basemodel:1992: 1988-01-07 03:00:00 - step 136 of 8760 - 35517 active elements (0 deactivated)
+18:54:08 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:11 INFO    opendrift.models.basemodel:1992: 1988-01-07 04:00:00 - step 137 of 8760 - 35517 active elements (0 deactivated)
+18:54:11 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:13 INFO    opendrift.models.basemodel:1992: 1988-01-07 05:00:00 - step 138 of 8760 - 35517 active elements (0 deactivated)
+18:54:14 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:16 INFO    opendrift.models.basemodel:1992: 1988-01-07 06:00:00 - step 139 of 8760 - 35517 active elements (0 deactivated)
+18:54:16 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:19 INFO    opendrift.models.basemodel:1992: 1988-01-07 07:00:00 - step 140 of 8760 - 35517 active elements (0 deactivated)
+18:54:19 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:22 INFO    opendrift.models.basemodel:1992: 1988-01-07 08:00:00 - step 141 of 8760 - 35517 active elements (0 deactivated)
+18:54:22 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:25 INFO    opendrift.models.basemodel:1992: 1988-01-07 09:00:00 - step 142 of 8760 - 35517 active elements (0 deactivated)
+18:54:25 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:28 INFO    opendrift.models.basemodel:1992: 1988-01-07 10:00:00 - step 143 of 8760 - 35517 active elements (0 deactivated)
+18:54:28 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:31 INFO    opendrift.models.basemodel:1992: 1988-01-07 11:00:00 - step 144 of 8760 - 35517 active elements (0 deactivated)
+18:54:31 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:34 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:34 INFO    opendrift.models.basemodel:1992: 1988-01-07 12:00:00 - step 145 of 8760 - 47356 active elements (0 deactivated)
+18:54:34 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:36 INFO    opendrift.models.basemodel:1992: 1988-01-07 13:00:00 - step 146 of 8760 - 47356 active elements (0 deactivated)
+18:54:46 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:50 INFO    opendrift.models.basemodel:1992: 1988-01-07 14:00:00 - step 147 of 8760 - 47356 active elements (0 deactivated)
+18:54:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:53 INFO    opendrift.models.basemodel:1992: 1988-01-07 15:00:00 - step 148 of 8760 - 47356 active elements (0 deactivated)
+18:54:54 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:54:57 INFO    opendrift.models.basemodel:1992: 1988-01-07 16:00:00 - step 149 of 8760 - 47356 active elements (0 deactivated)
+18:54:57 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:00 INFO    opendrift.models.basemodel:1992: 1988-01-07 17:00:00 - step 150 of 8760 - 47356 active elements (0 deactivated)
+18:55:00 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:03 INFO    opendrift.models.basemodel:1992: 1988-01-07 18:00:00 - step 151 of 8760 - 47356 active elements (0 deactivated)
+18:55:03 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:07 INFO    opendrift.models.basemodel:1992: 1988-01-07 19:00:00 - step 152 of 8760 - 47356 active elements (0 deactivated)
+18:55:07 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:10 INFO    opendrift.models.basemodel:1992: 1988-01-07 20:00:00 - step 153 of 8760 - 47356 active elements (0 deactivated)
+18:55:10 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:13 INFO    opendrift.models.basemodel:1992: 1988-01-07 21:00:00 - step 154 of 8760 - 47356 active elements (0 deactivated)
+18:55:13 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:17 INFO    opendrift.models.basemodel:1992: 1988-01-07 22:00:00 - step 155 of 8760 - 47356 active elements (0 deactivated)
+18:55:17 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:20 INFO    opendrift.models.basemodel:1992: 1988-01-07 23:00:00 - step 156 of 8760 - 47356 active elements (0 deactivated)
+18:55:20 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:23 INFO    opendrift.models.basemodel:1992: 1988-01-08 00:00:00 - step 157 of 8760 - 47356 active elements (0 deactivated)
+18:55:23 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:27 INFO    opendrift.models.basemodel:1992: 1988-01-08 01:00:00 - step 158 of 8760 - 47356 active elements (0 deactivated)
+18:55:27 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:30 INFO    opendrift.models.basemodel:1992: 1988-01-08 02:00:00 - step 159 of 8760 - 47356 active elements (0 deactivated)
+18:55:30 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:33 INFO    opendrift.models.basemodel:1992: 1988-01-08 03:00:00 - step 160 of 8760 - 47356 active elements (0 deactivated)
+18:55:33 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:37 INFO    opendrift.models.basemodel:1992: 1988-01-08 04:00:00 - step 161 of 8760 - 47356 active elements (0 deactivated)
+18:55:37 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:40 INFO    opendrift.models.basemodel:1992: 1988-01-08 05:00:00 - step 162 of 8760 - 47356 active elements (0 deactivated)
+18:55:40 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:43 INFO    opendrift.models.basemodel:1992: 1988-01-08 06:00:00 - step 163 of 8760 - 47356 active elements (0 deactivated)
+18:55:43 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:47 INFO    opendrift.models.basemodel:1992: 1988-01-08 07:00:00 - step 164 of 8760 - 47356 active elements (0 deactivated)
+18:55:47 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:50 INFO    opendrift.models.basemodel:1992: 1988-01-08 08:00:00 - step 165 of 8760 - 47356 active elements (0 deactivated)
+18:55:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:53 INFO    opendrift.models.basemodel:1992: 1988-01-08 09:00:00 - step 166 of 8760 - 47356 active elements (0 deactivated)
+18:55:53 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:55:57 INFO    opendrift.models.basemodel:1992: 1988-01-08 10:00:00 - step 167 of 8760 - 47356 active elements (0 deactivated)
+18:55:57 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:00 INFO    opendrift.models.basemodel:1992: 1988-01-08 11:00:00 - step 168 of 8760 - 47356 active elements (0 deactivated)
+18:56:00 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:03 INFO    opendrift.models.basemodel:1992: 1988-01-08 12:00:00 - step 169 of 8760 - 47356 active elements (0 deactivated)
+18:56:03 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:06 INFO    opendrift.models.basemodel:1992: 1988-01-08 13:00:00 - step 170 of 8760 - 47356 active elements (0 deactivated)
+18:56:15 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:19 INFO    opendrift.models.basemodel:1992: 1988-01-08 14:00:00 - step 171 of 8760 - 47356 active elements (0 deactivated)
+18:56:19 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:22 INFO    opendrift.models.basemodel:1992: 1988-01-08 15:00:00 - step 172 of 8760 - 47356 active elements (0 deactivated)
+18:56:22 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:25 INFO    opendrift.models.basemodel:1992: 1988-01-08 16:00:00 - step 173 of 8760 - 47356 active elements (0 deactivated)
+18:56:26 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:29 INFO    opendrift.models.basemodel:1992: 1988-01-08 17:00:00 - step 174 of 8760 - 47356 active elements (0 deactivated)
+18:56:29 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:32 INFO    opendrift.models.basemodel:1992: 1988-01-08 18:00:00 - step 175 of 8760 - 47356 active elements (0 deactivated)
+18:56:32 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:35 INFO    opendrift.models.basemodel:1992: 1988-01-08 19:00:00 - step 176 of 8760 - 47356 active elements (0 deactivated)
+18:56:35 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:39 INFO    opendrift.models.basemodel:1992: 1988-01-08 20:00:00 - step 177 of 8760 - 47356 active elements (0 deactivated)
+18:56:39 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:42 INFO    opendrift.models.basemodel:1992: 1988-01-08 21:00:00 - step 178 of 8760 - 47356 active elements (0 deactivated)
+18:56:42 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:45 INFO    opendrift.models.basemodel:1992: 1988-01-08 22:00:00 - step 179 of 8760 - 47356 active elements (0 deactivated)
+18:56:45 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:48 INFO    opendrift.models.basemodel:1992: 1988-01-08 23:00:00 - step 180 of 8760 - 47356 active elements (0 deactivated)
+18:56:49 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:52 INFO    opendrift.models.basemodel:1992: 1988-01-09 00:00:00 - step 181 of 8760 - 47356 active elements (0 deactivated)
+18:56:52 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:55 INFO    opendrift.models.basemodel:1992: 1988-01-09 01:00:00 - step 182 of 8760 - 47356 active elements (0 deactivated)
+18:56:55 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:56:58 INFO    opendrift.models.basemodel:1992: 1988-01-09 02:00:00 - step 183 of 8760 - 47356 active elements (0 deactivated)
+18:56:58 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:02 INFO    opendrift.models.basemodel:1992: 1988-01-09 03:00:00 - step 184 of 8760 - 47356 active elements (0 deactivated)
+18:57:02 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:05 INFO    opendrift.models.basemodel:1992: 1988-01-09 04:00:00 - step 185 of 8760 - 47356 active elements (0 deactivated)
+18:57:05 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:09 INFO    opendrift.models.basemodel:1992: 1988-01-09 05:00:00 - step 186 of 8760 - 47356 active elements (0 deactivated)
+18:57:09 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:12 INFO    opendrift.models.basemodel:1992: 1988-01-09 06:00:00 - step 187 of 8760 - 47356 active elements (0 deactivated)
+18:57:12 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:15 INFO    opendrift.models.basemodel:1992: 1988-01-09 07:00:00 - step 188 of 8760 - 47356 active elements (0 deactivated)
+18:57:15 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:19 INFO    opendrift.models.basemodel:1992: 1988-01-09 08:00:00 - step 189 of 8760 - 47356 active elements (0 deactivated)
+18:57:19 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:22 INFO    opendrift.models.basemodel:1992: 1988-01-09 09:00:00 - step 190 of 8760 - 47356 active elements (0 deactivated)
+18:57:22 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:25 INFO    opendrift.models.basemodel:1992: 1988-01-09 10:00:00 - step 191 of 8760 - 47356 active elements (0 deactivated)
+18:57:25 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:29 INFO    opendrift.models.basemodel:1992: 1988-01-09 11:00:00 - step 192 of 8760 - 47356 active elements (0 deactivated)
+18:57:29 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:32 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:32 INFO    opendrift.models.basemodel:1992: 1988-01-09 12:00:00 - step 193 of 8760 - 59195 active elements (0 deactivated)
+18:57:32 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:35 INFO    opendrift.models.basemodel:1992: 1988-01-09 13:00:00 - step 194 of 8760 - 59195 active elements (0 deactivated)
+18:57:45 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:49 INFO    opendrift.models.basemodel:1992: 1988-01-09 14:00:00 - step 195 of 8760 - 59195 active elements (0 deactivated)
+18:57:50 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:53 INFO    opendrift.models.basemodel:1992: 1988-01-09 15:00:00 - step 196 of 8760 - 59195 active elements (0 deactivated)
+18:57:53 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:57:57 INFO    opendrift.models.basemodel:1992: 1988-01-09 16:00:00 - step 197 of 8760 - 59195 active elements (0 deactivated)
+18:57:57 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.
+18:58:01 INFO    opendrift.models.basemodel:1992: 1988-01-09 17:00:00 - step 198 of 8760 - 59195 active elements (0 deactivated)
+18:58:01 WARNING opendrift.readers.basereader.structured:287: Data block from roms native not large enough to cover element positions within timestep. Buffer size (30) must be increased. See `Variables.set_buffer_size`.

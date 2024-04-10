@@ -1,0 +1,3 @@
+18:53:33 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
+18:53:33 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
+slurmstepd: error: *** JOB 802688 ON node02 CANCELLED AT 2024-04-09T18:57:09 ***
