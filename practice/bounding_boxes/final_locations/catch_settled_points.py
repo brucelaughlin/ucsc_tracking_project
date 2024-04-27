@@ -2,6 +2,9 @@
 # depends on the grid type... ie it's wrong to use i/j from a polygon in psi
 # to bound rho points... 
 
+# Note that "status" is 0 when the particle and active, and a large magnitude negative
+# number when not.  (strange!)
+
 import netCDF4
 import pickle
 import numpy as np
@@ -10,9 +13,19 @@ import matplotlib.path as plt_path
 from scipy.interpolate import interp1d
 from geopy.distance import great_circle
 import scipy.interpolate as spint
+from os import listdir
+from os.path import isfile, join
+import sys
 
-#-------------------- EDIT THESE -------------------------------------
 #---------------------------------------------------------------------
+# Need to know the number of DAYS of each particle's life (fixed unless I change the 
+# the deactivation time in the model code)
+
+run_length_days = 91
+
+
+# Save the number of days in the drifting window before the settlement window opens
+first_settlement_day = 30
 #---------------------------------------------------------------------
 
 
@@ -37,118 +50,50 @@ bounding_boxes_base = base_path + 'practice/bounding_boxes/create_boxes/'
 bounding_boxes_continent_dir = bounding_boxes_base + 'continent/z_output/'
 bounding_boxes_islands_dir = bounding_boxes_base + 'aa_islands/z_output/'
 
-#bounding_boxes_file_in = 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
-#bounding_boxes_path = base_path + bounding_boxes_dir + bounding_boxes_file_in
 
-#tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/x_results_1/vv_10_factor_correct_15dt_20day/'
-#tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/vv_buffer50/'
-tracking_output_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/u_config_tests/v_memory_tests/var_input/v_test_output/x_old_1/vv_add_boxes_by_4_tests/'
-#tracking_output_file = 'test_output_floats_10000_saveDT_60_calcDT_015.nc'
-#tracking_output_file = 'test_output_floats_10000_saveDT_60_calcDT_060.nc'
-tracking_output_file = 'test_output_floats_11401_saveDT_60_calcDT_060.nc'
-tracking_output_path = tracking_output_dir + tracking_output_file
+tracking_output_dir = '/data03/blaughli/tracking_project_output/test2_physics_only/'
+tracking_output_files = [f for f in listdir(tracking_output_dir) if isfile(join(tracking_output_dir,f))]
+tracking_output_files.sort()
 
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
-dset = netCDF4.Dataset(tracking_output_path, 'r')
+
+#for tracking_output_file_pre in tracking_output_files:
+#---------------------------------------------------------------------
+# indent here
+#tracking_output_file = tracking_output_dir + tracking_output_file_pre
+
+# just for testing
+tracking_output_file = tracking_output_dir + tracking_output_files[0] # JUST FOR TESTING
+
+dset = netCDF4.Dataset(tracking_output_file, 'r')
 
 particle_labels = dset.variables['trajectory'][:]
 lon_all = dset.variables['lon'][:]
 lat_all = dset.variables['lat'][:]
-z_all = dset.variables['z'][:]
+#z_all = dset.variables['z'][:]
+status_all = dset.variables['status'][:]
 
-num_floats = np.shape(lon_all)[0]
-lon_if = np.zeros((num_floats,2))
-lat_if = np.zeros((num_floats,2))
-z_if = np.zeros((num_floats,2))
+# Store the total number of particles
+num_particles = len(particle_labels)
 
-lon_if[:,0] = lon_all[:,0]
-lon_if[:,1] = lon_all[:,-1]
-lat_if[:,0] = lat_all[:,0]
-lat_if[:,1] = lat_all[:,-1]
-z_if[:,0] = z_all[:,0]
-z_if[:,1] = z_all[:,-1]
-
-
-
-particles_initial_lon_lat = []
-particles_final_lon_lat = []
-
-for ii in range(num_floats):
-    particles_initial_lon_lat.append((lon_if[ii,0],lat_if[ii,0]))
-    particles_final_lon_lat.append((lon_if[ii,1],lat_if[ii,1]))
-
-
-# Continent
-
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+# Prepare the data structure (2D array) for saving the pdf data
 
 bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
 file = open(bounding_boxes_file_in,'rb')
 boxes_lonlat = pickle.load(file)
 file.close
 
-particles_initial_box_continent = []
-particles_final_box_continent = []
-
-
-# each "box" is a 2 by n array, with the first column being "i" coordinates, 2nd being "j"
-
-box_dex = 0
-
-for box_lonlat in boxes_lonlat:
-#for ii in range(3,len(boxes_lonlat)-3):
-    #box_lonlat = boxes_lonlat[ii]
-    box_dex += 1
-    if box_lonlat is None:
-        print('box {} has value "None" ..!?'.format(box_dex-1))
-    if box_lonlat is not None:
-
-        path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
-        
-        #points_inside_flags = path.contains_points(points_lon_lat) 
-        particles_initial_inside_flags = path.contains_points(particles_initial_lon_lat) 
-        particles_final_inside_flags = path.contains_points(particles_final_lon_lat) 
-        
-        #particles_initial_inside = particles_initial_lon_lat[particles_initial_inside_flags]
-        #particles_final_inside = particles_final_lon_lat[particles_final_inside_flags]
-        particles_initial_inside = particle_labels[particles_initial_inside_flags]
-        particles_final_inside = particle_labels[particles_final_inside_flags]
-        
-        
-        #particles_box_lon_lat = np.array([particles_box_lon,particles_box_lat])
-        #particles_in_boxes_lonlat_continent.append(particles_box_lon_lat)
-
-        #particles_initial_box_continent.append(particles_initial_inside)
-        #particles_final_box_continent.append(particles_final_inside)
-        if len(particles_initial_inside) > 0 :
-            particles_initial_box_continent.append(particles_initial_inside)
-        else:
-            particles_initial_box_continent.append(None)
-        if len(particles_final_inside) > 0 :
-            particles_final_box_continent.append(particles_final_inside)
-        else:
-            particles_final_box_continent.append(None)
-
-
-
-
-# Islands
-
-particles_initial_box_islands_inshore = []
-particles_final_box_islands_inshore = []
-particles_initial_box_islands_offshore = []
-particles_final_box_islands_offshore = []
+# Weird operation needed here to check dimensions, since I used 2D lists for the boxes...
+n_boxes = np.max([len(boxes_lonlat),len(boxes_lonlat[0])])
 
 num_islands = 8
 num_last_blob_island = 4
-
-
 for island_dex in range(num_last_blob_island,num_islands+1):
-
-    # Set an index for the bounding point lists (the lists of particles used to split the coastlines and isolines)
-    bp_dex = island_dex-num_last_blob_island
 
     for inoffshore_switch in range(0,2):
 
@@ -157,55 +102,244 @@ for island_dex in range(num_last_blob_island,num_islands+1):
         else:
             bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
 
+        file = open(bounding_boxes_file_in,'rb')
+        boxes_lonlat = pickle.load(file)
+        file.close        
+
+        n_boxes = n_boxes + np.max([len(boxes_lonlat),len(boxes_lonlat[0])])
+
+# Store the raw binned data here
+pdf_raw = np.zeros((n_boxes,n_boxes))
+
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+
+
+
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+
+  
+# Determine the output frequency, n per day.
+# Determine the timestep at which the settlement window opens
+trajectory_status = status_all[0,:]
+trajectory_mask = trajectory_status == 0
+timesteps_per_day = trajectory_mask.sum()/run_length_days
+if timesteps_per_day%1 != 0: sys.exit('(run timesteps)/(run_length_days) was not an integer!')
+settlement_window_start = int(timesteps_per_day * first_settlement_day)
+
+# Determine the total number of timesteps in the settlement window
+total_number_timesteps = int(np.sum(trajectory_mask))
+timesteps_settlement_window = total_number_timesteps - settlement_window_start
+
+# Create array to store all trajectory locations of all particles during their settlement window
+drift_lons = np.zeros((num_particles,timesteps_settlement_window))
+drift_lats = np.zeros((num_particles,timesteps_settlement_window))
+
+
+starting_lons = []
+starting_lats = []
+
+#for particle_label in particle_labels:
+for particle_id in range(len(particle_labels)):
+    #---------------------------------------------------------------------
+    # indent here
+    
+    trajectory_status = status_all[particle_id,:]
+
+    trajectory_mask = trajectory_status == 0
+
+       
+    # Trim the trajectories to prepare for processing!
+    particle_lon = lon_all[particle_id,trajectory_mask]
+    particle_lat = lat_all[particle_id,trajectory_mask]
+
+    # Get the STARTING coordinates of each particle
+    starting_lons.append(particle_lon[0]) 
+    starting_lats.append(particle_lat[0]) 
+    
+    # Now that initial positions are known, cut out the "drifting window" and add as a row
+    # to <drift_lons>, <drift_lats>
+    drift_lons[particle_id,:] = particle_lon[settlement_window_start:]
+    drift_lats[particle_id,:] = particle_lat[settlement_window_start:]
+    #particle_lon = particle_lon[settlement_window_start:]
+    #particle_lat = particle_lat[settlement_window_start:]
+
+
+# prepare lists to hold the starting/ending box numbers for each particle
+initial_boxes = np.zeros(num_particles)
+settlement_boxes = np.zeros(num_particles)
+
+
+
+
+# FIRST MUST DETERMINE STARTING LOCATIONS
+
+# create empty list to store all of the (starting) lat/lon pairs as tuples
+points_lon_lat = []
+for ii in range(num_particles):
+    points_lon_lat.append((starting_lons[ii],starting_lats[ii]))
+points_lon_lat = np.array(points_lon_lat)
+
+# CONTINENT FIRST!!
+bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
+file = open(bounding_boxes_file_in,'rb')
+boxes_lonlat = pickle.load(file)
+file.close
+
+# Need a running "box_dex" index to keep track of box numbers across the calculations
+box_dex = 0
+
+for box_lonlat in boxes_lonlat:
+    path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
+    particles_inside_flags = path.contains_points(points_lon_lat)
+    initial_boxes = initial_boxes + (box_dex * particles_inside_flags)
+    box_dex += 1
+#print(np.sum(particles_inside_flags))    
+
+# NOW ISLANDS!
+num_islands = 8
+num_last_blob_island = 4
+
+for island_dex in range(num_last_blob_island,num_islands+1):
+
+    for inoffshore_switch in range(0,2):
+
+        if inoffshore_switch == 0:
+            bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_inshore.p'.format(island_dex)
+        else:
+            bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
 
         # Load the boxes
         file = open(bounding_boxes_file_in,'rb')
         boxes_lonlat = pickle.load(file)
         file.close        
 
-
         for box_lonlat in boxes_lonlat:
-            if box_lonlat is not None:
+            path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
+            particles_inside_flags = path.contains_points(points_lon_lat)
+            initial_boxes = initial_boxes + (box_dex * particles_inside_flags)
+            #print(np.sum(particles_inside_flags))    
+            box_dex += 1
 
+
+
+
+
+# NOW DETERMINE SETTLEMENT LOCATIONS!
+
+# create the "safety mask" that I'll use to make sure I only store the first box entered during the settlement window
+settlement_safety_mask = np.ones(num_particles)
+
+
+for time_dex in range(timesteps_settlement_window):
+
+    print("{}/{}".format(time_dex,timesteps_settlement_window))
+
+    #------------------------------------------------------
+    # INDENT HERE
+
+    # JUST FOR TESTING
+    #time_dex = 0  # TESTING
+
+    current_lons = drift_lons[:,time_dex] 
+    current_lats = drift_lats[:,time_dex] 
+
+    # create empty list to store all of the (current) lat/lon pairs as tuples
+    points_lon_lat = []
+    for ii in range(num_particles):
+        points_lon_lat.append((current_lons[ii],current_lats[ii]))
+
+    points_lon_lat = np.array(points_lon_lat)
+
+
+    # CONTINENT FIRST!!
+    bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
+    file = open(bounding_boxes_file_in,'rb')
+    boxes_lonlat = pickle.load(file)
+
+    # Need a running "box_dex" index to keep track of box numbers across the calculations
+    box_dex = 0
+
+    for box_lonlat in boxes_lonlat:
+        path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
+        particles_inside_flags = path.contains_points(points_lon_lat)
+
+        settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
+        # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
+        settlement_safety_mask = settlement_safety_mask * ~particles_inside_flags
+        
+        #print(np.sum(particles_inside_flags))
+        #print(num_particles- np.sum(settlement_safety_mask))
+        #print('\n')
+
+        box_dex += 1
+
+
+    # NOW ISLANDS!
+    num_islands = 8
+    num_last_blob_island = 4
+
+    for island_dex in range(num_last_blob_island,num_islands+1):
+
+        for inoffshore_switch in range(0,2):
+
+            if inoffshore_switch == 0:
+                bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_inshore.p'.format(island_dex)
+            else:
+                bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}_offshore.p'.format(island_dex)
+
+            # Load the boxes
+            file = open(bounding_boxes_file_in,'rb')
+            boxes_lonlat = pickle.load(file)
+            file.close        
+
+            for box_lonlat in boxes_lonlat:
                 path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
+                particles_inside_flags = path.contains_points(points_lon_lat)
                 
-                particles_initial_inside_flags = path.contains_points(particles_initial_lon_lat) 
-                particles_final_inside_flags = path.contains_points(particles_final_lon_lat) 
+                settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
+                # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
+                settlement_safety_mask = settlement_safety_mask * ~particles_inside_flags
                 
-                particles_initial_inside = particle_labels[particles_initial_inside_flags]
-                particles_final_inside = particle_labels[particles_final_inside_flags]
-                
-                
-                if inoffshore_switch == 0:
-                    #particles_initial_box_islands_inshore.append(particles_initial_inside)
-                    #particles_final_box_islands_inshore.append(particles_final_inside)
-                    if len(particles_initial_inside) > 0 :
-                        particles_initial_box_islands_inshore.append(particles_initial_inside)
-                    else:
-                        particles_initial_box_islands_inshore.append(None)
-                    if len(particles_final_inside) > 0 :
-                        particles_final_box_islands_inshore.append(particles_final_inside)
-                    else:
-                        particles_final_box_islands_inshore.append(None)
-                else:
-                    #particles_initial_box_islands_offshore.append(particles_initial_inside)
-                    #particles_final_box_islands_offshore.append(particles_final_inside)
-                    if len(particles_initial_inside) > 0 :
-                        particles_initial_box_islands_offshore.append(particles_initial_inside)
-                    else:
-                        particles_initial_box_islands_offshore.append(None)
-                    if len(particles_final_inside) > 0 :
-                        particles_final_box_islands_offshore.append(particles_final_inside)
-                    else:
-                        particles_final_box_islands_offshore.append(None)
+                #print(np.sum(particles_inside_flags))
+                #print(num_particles- np.sum(settlement_safety_mask))
+                #print('\n')
+
+                box_dex += 1
+
+
+# BIG ERROR: PARTICLES THAT DID NOT SETTLE GET A "ZERO" VALUE FOR THEIR SETTLEMENT BOX,
+# BUT ZERO IS A REAL SETTLEMENT BOX INDEX IN MY CODE!!!! SO NEED TO FIX THIS!!!
+
+# FOR NOW, I'M IGNORING BOX 0, JUST TO SEE IF THE GENERAL IDEA IS WORKING
+for ii in range(1,num_particles):
+
+    pdf_raw[int(initial_boxes[ii]),int(settlement_boxes[ii])] += 1
 
 
 
 
-# Combine all seed and settlement information... May want to have separate files for islands, but start here.
+fig,ax = plt.subplots()
 
-particles_initial_box_combined = particles_initial_box_islands_inshore + particles_initial_box_islands_offshore + particles_initial_box_continent
-particles_final_box_combined = particles_final_box_islands_inshore + particles_final_box_islands_offshore + particles_final_box_continent
+ax.pcolormesh(pdf_raw)
+
+plt.show()
+
+
+
+
+#file = open(particles_in_boxes_file_out_combined,'wb')
+#pickle.dump(particles_in_boxes_lonlat_combined,file)
+#file.close()
+
+#file = open(particles_in_boxes_file_out_combined_ij,'wb')
+#pickle.dump(particles_in_boxes_ij_combined,file)
+#file.close()
+
+
+
+
 
 
 
