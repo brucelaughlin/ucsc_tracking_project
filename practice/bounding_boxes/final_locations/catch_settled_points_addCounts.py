@@ -28,7 +28,6 @@ run_length_days = 91
 first_settlement_day = 30
 #---------------------------------------------------------------------
 
-
 point_type_field = 'rho'
 point_type_line = 'psi'
 
@@ -127,6 +126,17 @@ pdf_raw = np.zeros((n_boxes,n_boxes))
 #---------------------------------------------------------------------
 num_files = len(tracking_output_files)
 file_number = 0
+
+#---------------------------------------------------------------------
+# Need to have a way to see if I'm doing this right... without double counting errors, etc
+tracking_output_file = tracking_output_dir + tracking_output_files[0]
+dset = netCDF4.Dataset(tracking_output_file, 'r')
+particle_labels = dset.variables['trajectory'][:]
+dset.close()
+num_particles = len(particle_labels)
+counter_array=np.zeros((num_particles,num_files))
+#---------------------------------------------------------------------
+
 #---------------------------------------------------------------------
 # START THE MAIN LOOP!!!
 #---------------------------------------------------------------------
@@ -149,6 +159,7 @@ for tracking_output_file_pre in tracking_output_files:
     lat_all = dset.variables['lat'][:]
     #z_all = dset.variables['z'][:]
     status_all = dset.variables['status'][:]
+    dset.close()
 
     # Store the total number of particles
     num_particles = len(particle_labels)
@@ -225,7 +236,8 @@ for tracking_output_file_pre in tracking_output_files:
     num_islands = 8
     num_last_blob_island = 4
 
-    for island_dex in range(num_last_blob_island,num_islands+1):
+    for island_dex in range(num_islands,num_last_blob_island-1,-1):
+    #for island_dex in range(num_last_blob_island,num_islands+1):
 
         for inoffshore_switch in range(0,2):
 
@@ -307,7 +319,8 @@ for tracking_output_file_pre in tracking_output_files:
         num_islands = 8
         num_last_blob_island = 4
 
-        for island_dex in range(num_last_blob_island,num_islands+1):
+        for island_dex in range(num_islands,num_last_blob_island-1,-1):
+        #for island_dex in range(num_last_blob_island,num_islands+1):
 
             for inoffshore_switch in range(0,2):
 
@@ -328,8 +341,13 @@ for tracking_output_file_pre in tracking_output_files:
                     if box_lonlat is not None:
                         path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
                         particles_inside_flags = path.contains_points(points_lon_lat)
-                        
+
                         settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
+                        
+                        # Update the counter of settled particles.  For checking consistency
+                        #settleCount += sum(settlement_safety_mask * particles_inside_flags)
+                        counter_array[:,file_number-1] += particles_inside_flags * settlement_safety_mask
+
                         # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
                         settlement_safety_mask = settlement_safety_mask * ~particles_inside_flags
                         
@@ -352,6 +370,11 @@ for tracking_output_file_pre in tracking_output_files:
                 particles_inside_flags = path.contains_points(points_lon_lat)
 
                 settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
+                
+                # Update the counter of settled particles.  For checking consistency
+                #settleCount += sum(settlement_safety_mask * particles_inside_flags)
+                counter_array[:,file_number-1] += particles_inside_flags * settlement_safety_mask
+
                 # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
                 settlement_safety_mask = settlement_safety_mask * ~particles_inside_flags
                 
@@ -377,7 +400,8 @@ for tracking_output_file_pre in tracking_output_files:
 
 
 file = open(save_output_file,'wb')
-pickle.dump(pdf_raw,file)
+#pickle.dump(pdf_raw,file)
+pickle.dump([pdf_raw,counter_array],file)
 file.close()
 
 
