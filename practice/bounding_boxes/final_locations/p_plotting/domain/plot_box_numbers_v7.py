@@ -1,6 +1,10 @@
 # Want nice version for reports
 
-# V5: changing the arrows for islands
+# V7: now improving continent
+
+# V6: changing arrows for islands
+
+# V5: changing font sizes, when to print, having zoom for islands
 
 # V4: just cleaning up; too many commented-out test lines
 
@@ -78,11 +82,21 @@ cmap_custom.set_under('0.8')
 # Now I know the boxes of interest (taken from PDF plots)
 tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,77]
 #tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,78]
-tick_labels = ['SCl','C','SB','SN','SR','A','SC','SM','TJ','PV','PM','PC','PB','CBl','PR','PA','CM','CB']
+tick_labels = ['SCl','Ca','SB','SN','SR','An','SC','SM','TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
+#tick_labels = ['SCl','C','SB','SN','SR','A','SC','SM','TJ','PV','PM','PC','PB','CBl','PR','PA','CM','CB']
 tick_positions = [x+1 for x in tick_positions_orig]
 
-island_lats = [32.88,33.36,33.465,33.243,33.967,33.999,34.009,34.039]
-island_lons = [-118.483,-118.424,-119.033,-119.518,-120.117,-119.4,-119.774,-120.365]
+island_lats = [32.823,33.324,33.457,33.224,33.923,33.991,33.957,34.024]
+island_lons = [-118.396,-118.345,-119.033,-119.508,-120.138,-119.4,-119.730,-120.338]
+
+#island_lats = [32.828,33.334,33.463,33.226,33.935,33.997,33.961,34.033]
+#island_lons = [-118.396,-118.328,-119.033,-119.508,-120.138,-119.4,-119.730,-120.439]
+#island_lats = [32.934,33.396,33.463,33.264,33.935,33.997,34.037,34.033]
+#island_lons = [-118.513,-118.424,-119.033,-119.563,-120.138,-119.4,-119.702,-120.439]
+#island_lats = [32.934,33.396,33.463,33.245,33.935,33.997,34.037,34.033]
+#island_lons = [-118.513,-118.424,-119.033,-119.510,-120.138,-119.4,-119.702,-120.439]
+#island_lats = [32.88,33.36,33.465,33.243,33.967,33.999,34.009,34.039]
+#island_lons = [-118.483,-118.424,-119.033,-119.518,-120.117,-119.4,-119.774,-120.365]
 
 # ---------------------------------------------
 # Plot parameters
@@ -92,12 +106,19 @@ box_plot_mod_island = 1
 
 font_size_num_continent = 15
 font_size_num_island = 12
+font_size_labels = 17
 
 text_color = "blue"
-number_color = "yellow"
+#number_color = "gold"
+number_color = "mistyrose" # 7
+#number_color = "darkorchid"
+#number_color = "yellow"
 #number_color = "white"
 arrow_color = "white"
-arrow_color2 = "black"
+arrow_color2 = "plum"
+#arrow_color2 = "lightgray"
+#arrow_color2 = "black"
+arrow_width=4
 va_val = "center"
 offset = 100
 #offset = 72
@@ -110,20 +131,12 @@ bbox = dict(boxstyle ="round", fc ="0.95")
 #bbox = dict(boxstyle ="round", fc ="0.8")
 arrowprops = dict(
     arrowstyle = "->",
-    #relpos = relpos_tuple,
-    color=arrow_color,
-    connectionstyle = "angle, angleA = 0, angleB = 90, rad = 10")
+    lw=arrow_width,
+    color=arrow_color2)
+    #color=arrow_color)
 arrowprops2 = dict(
     arrowstyle = "->",
-    #relpos = relpos_tuple,
-    color=arrow_color)
-arrowprops3 = dict(
-    arrowstyle = "->",
-    relpos = relpos_tuple,
-    color=arrow_color2)
-arrowprops4 = dict(
-    arrowstyle = "->",
-    relpos = relpos_tuple2,
+    lw=arrow_width,
     color=arrow_color2)
 
 # ---------------------------------------------
@@ -155,9 +168,13 @@ box_num = 1
 tick_num = 0
 
 # -----------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
 # make switch to turn on/off island plotting
-switch_plot_islands = True
-#switch_plot_islands = False
+# -----------------------------------------------------------------------------------------
+#switch_plot_islands = True
+switch_plot_islands = False
+# -----------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------
 
 x_min = -121
@@ -194,45 +211,25 @@ for island_dex in range(num_islands,num_last_blob_island-1,-1):
             if box is not None:
                 ax.plot(box[0],box[1],c = 'white',linewidth=0.6)
                 if box_num == tick_positions[tick_num]:
-#tick_positions_orig = [1,5,8,10,13,16,17,19,23,29,32,37,41,47,56,60,67,78]
+#tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,77]
                     if switch_plot_islands:
                         xy_loc = [island_lons[tick_num], island_lats[tick_num]]
-                        #xy_loc = [np.mean(box[0]), np.mean(box[1])]
-                        if box_num in [2,11,14]:
-                            #ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = [np.mean(box[0]), np.mean(box[1])],
-                            ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                                xytext =(-.6 * offset, -.2 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va=va_val)
-                        elif box_num in [6]:
-                            ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                                xytext =(.4 * offset, -.25 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va=va_val)
-                        elif box_num in [17]:
-                            ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                                xytext =(-.5 * offset, -.4 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va=va_val)
-                        else:
-                            ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                                xytext =(-.6 * offset, .2 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va=va_val)
+
+                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                            xytext =(0, -.8 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
 
                     tick_num += 1
                     if tick_num == len(tick_labels):
                         tick_num = 0
 
                 if switch_plot_islands:
-                    if box_num % box_plot_mod == 0:
-                    #if box_num % box_plot_mod_island == 0:
-                        ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
+                    #if box_num % box_plot_mod == 0:
+                    if box_num % box_plot_mod_island == 0:
+                        ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
+                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
                         #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center")
                 box_num += 1
                 first_continent_box_dex += 1
-#        plt.show()
-#plt.show()
-
-#print("first continent box dex: {}".format(first_continent_box_dex))
-
-#plot_title = '300km^2 coastal boxes\n10km offshore distance as outer wall'
-#plt.title(plot_title)
-#
-#ax.axis('image')
-#plt.show()
 
 
 # Continent
@@ -253,29 +250,28 @@ for box in boxes_lonlat:
                 #if box_num in [33,38]:
                 #if box_num in [30,33,38]:
                 if not switch_plot_islands:
+                    xy_loc = [np.mean(box[0]), np.mean(box[1])]
                     if box_num in [24]:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = [np.mean(box[0]), np.mean(box[1])],
-                            #xytext =(0, .3 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops2, color=text_color)
-                            xytext =(0, .4 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops4, color=text_color)
+                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                            xytext =(0, .6 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
                     elif box_num in [30]:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = [np.mean(box[0]), np.mean(box[1])],
-                            xytext =(0, .3 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops4, color=text_color)
+                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                            xytext =(0, .5 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
                     elif box_num in [33]:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = [np.mean(box[0]), np.mean(box[1])],
-                            #xytext =(0, .4 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops3, color=text_color)
-                            xytext =(0, .4 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops4, color=text_color)
+                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                            xytext =(0, .7 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
                     else:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = [np.mean(box[0]), np.mean(box[1])],
-                            #xytext =(.3 * offset, 0), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops2, color=text_color, va=va_val)
-                            xytext =(-.7 * offset, 0), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops2, color=text_color, va=va_val)
+                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                            xytext =(-.9 * offset, .0), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops2, color=text_color, va="center", ha="center",fontsize=font_size_labels)
                 tick_num += 1
                 if tick_num == len(tick_labels):
                     tick_num = 0
                 
-            if not switch_plot_islands:
-                if (box_num+1) % box_plot_mod == 0:
-                #if box_num % box_plot_mod == 0:
-                    ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
+            #if not switch_plot_islands:
+            if (box_num+1) % box_plot_mod == 0:
+            #if box_num % box_plot_mod == 0:
+                ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
+                #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
         box_num += 1
         #plt.pause(1)
 
