@@ -1,5 +1,7 @@
 # Want nice version for reports
 
+# V8: trying to modify box numbers (and associated statistics) for islands (see previous plots... SM island was box 13 and 20, rather than 13 and 14, for ex)
+
 # V7: now improving continent
 
 # V6: changing arrows for islands
@@ -64,6 +66,15 @@ continent_dir = 'continent/'
 input_dir_islands = box_dir + islands_dir + 'z_output/'
 input_dir_continent = box_dir + continent_dir + 'z_output/'
 
+pdf_directory = 'practice/bounding_boxes/final_locations/z_output/'
+pdf_modified_file = base_path + pdf_directory + 'pdf_data_output_seasonal_test3_modified.p'
+
+file = open(pdf_modified_file,'rb')
+p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
+#pdf_raw,pdf_raw_djf,pdf_raw_mam,pdf_raw_jja,pdf_raw_son,counter_array = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
+file.close()
+
+
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
@@ -79,7 +90,7 @@ cmap_custom.set_under('0.8')
 #plt.ion()
 
 
-# Now I know the boxes of interest (taken from PDF plots)
+# Now I know the boxes of interest (taken from domain plots)
 tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,77]
 #tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,78]
 tick_labels = ['SCl','Ca','SB','SN','SR','An','SC','SM','TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
@@ -231,9 +242,8 @@ for island_dex in range(num_islands,num_last_blob_island-1,-1):
                 if switch_plot_islands:
                     #if box_num % box_plot_mod == 0:
                     if box_num % box_plot_mod_island == 0:
-                        ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
-                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
-                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center")
+                        ax.annotate(box_numbers_islands_mod[box_num-1]+1, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
+                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
                 box_num += 1
                 first_continent_box_dex += 1
 

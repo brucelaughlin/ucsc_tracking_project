@@ -1,5 +1,9 @@
 # Want nice version for reports
 
+# V9: now storing tick labels for islands in the "modify islands pdfs ..." script
+
+# V8: trying to modify box numbers (and associated statistics) for islands (see previous plots... SM island was box 13 and 20, rather than 13 and 14, for ex)
+
 # V7: now improving continent
 
 # V6: changing arrows for islands
@@ -64,6 +68,16 @@ continent_dir = 'continent/'
 input_dir_islands = box_dir + islands_dir + 'z_output/'
 input_dir_continent = box_dir + continent_dir + 'z_output/'
 
+pdf_directory = 'practice/bounding_boxes/final_locations/z_output/'
+pdf_modified_file = base_path + pdf_directory + 'pdf_data_output_seasonal_test3_modified.p'
+
+file = open(pdf_modified_file,'rb')
+p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod,tick_positions_islands = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
+#p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod,box_numbers_islands_print,tick_positions_islands = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
+#pdf_raw,pdf_raw_djf,pdf_raw_mam,pdf_raw_jja,pdf_raw_son,counter_array = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
+file.close()
+
+
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
@@ -79,24 +93,20 @@ cmap_custom.set_under('0.8')
 #plt.ion()
 
 
-# Now I know the boxes of interest (taken from PDF plots)
-tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,77]
-#tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,78]
-tick_labels = ['SCl','Ca','SB','SN','SR','An','SC','SM','TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
-#tick_labels = ['SCl','C','SB','SN','SR','A','SC','SM','TJ','PV','PM','PC','PB','CBl','PR','PA','CM','CB']
-tick_positions = [x+1 for x in tick_positions_orig]
+# Now I know the boxes of interest (taken from domain plots)
+tick_positions_continent_orig = [23,29,32,37,41,47,56,60,67,77]
+#tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,77]
+tick_labels = ['SCl','Ca','SB','SN','SM','SR','SC','An','TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
+#tick_labels = ['SCl','Ca','SB','SN','SR','An','SC','SM','TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
+#tick_positions = [x+1 for x in tick_positions_orig]
+#tick_positions = box_numbers_islands_print + [x+1 for x in tick_positions_continent_orig]
+tick_positions = tick_positions_islands + [x+1 for x in tick_positions_continent_orig]
 
-island_lats = [32.823,33.324,33.457,33.224,33.923,33.991,33.957,34.024]
-island_lons = [-118.396,-118.345,-119.033,-119.508,-120.138,-119.4,-119.730,-120.338]
+island_lats = [32.823,33.324,33.457,33.224,34.024,33.923,33.957,33.991]
+island_lons = [-118.396,-118.345,-119.033,-119.508,-120.338,-120.138,-119.730,-119.4]
 
-#island_lats = [32.828,33.334,33.463,33.226,33.935,33.997,33.961,34.033]
-#island_lons = [-118.396,-118.328,-119.033,-119.508,-120.138,-119.4,-119.730,-120.439]
-#island_lats = [32.934,33.396,33.463,33.264,33.935,33.997,34.037,34.033]
-#island_lons = [-118.513,-118.424,-119.033,-119.563,-120.138,-119.4,-119.702,-120.439]
-#island_lats = [32.934,33.396,33.463,33.245,33.935,33.997,34.037,34.033]
-#island_lons = [-118.513,-118.424,-119.033,-119.510,-120.138,-119.4,-119.702,-120.439]
-#island_lats = [32.88,33.36,33.465,33.243,33.967,33.999,34.009,34.039]
-#island_lons = [-118.483,-118.424,-119.033,-119.518,-120.117,-119.4,-119.774,-120.365]
+#island_lats = [32.823,33.324,33.457,33.224,33.923,33.991,33.957,34.024]
+#island_lons = [-118.396,-118.345,-119.033,-119.508,-120.138,-119.4,-119.730,-120.338]
 
 # ---------------------------------------------
 # Plot parameters
@@ -221,7 +231,9 @@ for island_dex in range(num_islands,num_last_blob_island-1,-1):
                     if switch_plot_islands:
                         xy_loc = [island_lons[tick_num], island_lats[tick_num]]
 
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                        #ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
+                        ax.annotate("{}: {}".format(tick_positions[tick_num],tick_labels[tick_num]), xy = xy_loc,
+                        #ax.annotate("{}: {}".format(box_numbers_islands_mod[box_num-1]+1,tick_labels[tick_num]), xy = xy_loc,
                             xytext =(0, -.8 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
 
                     tick_num += 1
@@ -231,9 +243,8 @@ for island_dex in range(num_islands,num_last_blob_island-1,-1):
                 if switch_plot_islands:
                     #if box_num % box_plot_mod == 0:
                     if box_num % box_plot_mod_island == 0:
-                        ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
-                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
-                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center")
+                        ax.annotate(box_numbers_islands_mod[box_num-1]+1, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
+                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
                 box_num += 1
                 first_continent_box_dex += 1
 
