@@ -1,3 +1,6 @@
+# v2: Need to add storage of data needed for other stats (want to calculate settlement time pdf/cdf)
+# - time to settle (also do this per release box)
+
 # create seasonal pdfs (djf, etc)
 
 # Error - think I need to use lat/lon, as in version 1 I just used i/j which
@@ -6,6 +9,20 @@
 
 # Note that "status" is 0 when the particle is active, and a large magnitude negative
 # number when not.  (strange!)
+
+
+# Save File
+#---------------------------------------------------------------------
+#save_output_file_name = 'pdf_data_output_seasonal_oneFileTest.p'
+save_output_file_name = 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
+#---------------------------------------------------------------------
+# Input Files
+#---------------------------------------------------------------------
+#tracking_output_dir = '/data03/blaughli/tracking_project_output/z_one_file_test/'
+tracking_output_dir = '/data03/blaughli/tracking_project_output/test3_physics_only/'
+#---------------------------------------------------------------------
+
+
 
 import datetime
 import netCDF4
@@ -55,13 +72,12 @@ bounding_boxes_continent_dir = bounding_boxes_base + 'continent/z_output/'
 bounding_boxes_islands_dir = bounding_boxes_base + 'aa_islands/z_output/'
 
 
-tracking_output_dir = '/data03/blaughli/tracking_project_output/test3_physics_only/'
 tracking_output_files = [f for f in listdir(tracking_output_dir) if isfile(join(tracking_output_dir,f))]
 tracking_output_files.sort()
 
 save_output_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
 #save_output_file = save_output_directory + 'pdf_data_output.p'
-save_output_file = save_output_directory + 'pdf_data_output_seasonal_test3.p'
+save_output_file = save_output_directory + save_output_file_name
 
 
 #---------------------------------------------------------------------
@@ -127,13 +143,28 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 pdf_raw = np.zeros((n_boxes,n_boxes))
 
 # Now seasonal too!
-pdf_raw_djf = np.zeros((n_boxes,n_boxes))
-pdf_raw_mam = np.zeros((n_boxes,n_boxes))
-pdf_raw_jja = np.zeros((n_boxes,n_boxes))
-pdf_raw_son = np.zeros((n_boxes,n_boxes))
+#pdf_raw_djf = np.zeros((n_boxes,n_boxes))
+#pdf_raw_mam = np.zeros((n_boxes,n_boxes))
+#pdf_raw_jja = np.zeros((n_boxes,n_boxes))
+#pdf_raw_son = np.zeros((n_boxes,n_boxes))
+
+pdf_list_connectivity = []
+for ii in range(5):
+    pdf_list_connectivity.append(np.zeros((n_boxes,n_boxes)))
+
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
+# settlement time pdfs
+#pdf_settleTime_full = np.zeros((n_boxes,timesteps_settlement_window))
+#pdf_settleTime_djf = np.zeros((n_boxes,timesteps_settlement_window))
+#pdf_settleTime_mam = np.zeros((n_boxes,timesteps_settlement_window))
+#pdf_settleTime_jja = np.zeros((n_boxes,timesteps_settlement_window))
+#pdf_settleTime_son = np.zeros((n_boxes,timesteps_settlement_window))
+
+pdf_list_settleTime = []
+for ii in range(5):
+    pdf_list_settleTime.append(np.zeros((n_boxes,timesteps_settlement_window)))
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -149,6 +180,18 @@ dset.close()
 num_particles = len(particle_labels)
 counter_array=np.zeros((num_particles,num_files))
 #---------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# TESTING ONLY
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+settlement_boxes_test_array = np.zeros((num_particles,timesteps_settlement_window))
+settlement_times_test_array = np.zeros((num_particles,timesteps_settlement_window))
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+
 
 #---------------------------------------------------------------------
 # START THE MAIN LOOP!!!
@@ -237,6 +280,8 @@ for tracking_output_file_pre in tracking_output_files:
     # prepare lists to hold the starting/ending box numbers for each particle
     initial_boxes = np.zeros(num_particles)
     settlement_boxes = np.zeros(num_particles)
+    # add settlement time storage
+    settlement_times = np.zeros(num_particles)
 
 
 
@@ -367,7 +412,20 @@ for tracking_output_file_pre in tracking_output_files:
                         particles_inside_flags = path.contains_points(points_lon_lat)
 
                         settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
-                        
+                        settlement_times = settlement_times + (time_dex * particles_inside_flags) * settlement_safety_mask
+        
+        #------------------------------------------------------
+        # TESTING
+        #------------------------------------------------------
+        #------------------------------------------------------
+                        settlement_boxes_test_array[:,time_dex] = (box_dex * particles_inside_flags) * settlement_safety_mask
+                        settlement_times_test_array[:,time_dex] = (time_dex * particles_inside_flags) * settlement_safety_mask
+                        #settlement_times_test_array[:,time_dex] = ((time_dex+1) * particles_inside_flags) * settlement_safety_mask
+        #------------------------------------------------------
+        #------------------------------------------------------
+        #------------------------------------------------------
+
+
                         # Update the counter of settled particles.  For checking consistency
                         #settleCount += sum(settlement_safety_mask * particles_inside_flags)
                         counter_array[:,file_number-1] += particles_inside_flags * settlement_safety_mask
@@ -394,6 +452,18 @@ for tracking_output_file_pre in tracking_output_files:
                 particles_inside_flags = path.contains_points(points_lon_lat)
 
                 settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
+                settlement_times = settlement_times + (time_dex * particles_inside_flags) * settlement_safety_mask
+        
+        #------------------------------------------------------
+        # TESTING
+        #------------------------------------------------------
+        #------------------------------------------------------
+                settlement_boxes_test_array[:,time_dex] = (box_dex * particles_inside_flags) * settlement_safety_mask
+                settlement_times_test_array[:,time_dex] = (time_dex * particles_inside_flags) * settlement_safety_mask
+                #settlement_times_test_array[:,time_dex] = ((time_dex+1) * particles_inside_flags) * settlement_safety_mask
+        #------------------------------------------------------
+        #------------------------------------------------------
+        #------------------------------------------------------
                 
                 # Update the counter of settled particles.  For checking consistency
                 #settleCount += sum(settlement_safety_mask * particles_inside_flags)
@@ -417,22 +487,40 @@ for tracking_output_file_pre in tracking_output_files:
         if int(initial_boxes[ii]) == 0 or int(settlement_boxes[ii]) == 0:
             continue
         else:
-            pdf_raw[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
-
+            #pdf_raw[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+            #pdf_settleTime_full[int(initial_boxes[ii])-1,int(settlement_times[ii])] += 1   
+            #pdf_settleTime_full[int(initial_boxes[ii])-1,int(settlement_times[ii])-1] += 1   
+            
+            pdf_list_connectivity[0][int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+            pdf_list_settleTime[0][int(initial_boxes[ii])-1,int(settlement_times[ii])] += 1   
+                
+            #MAM
             if seed_months[ii] >=3 and seed_months[ii] <=5 : 
-                pdf_raw_mam[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_connectivity[2][int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_settleTime[2][int(initial_boxes[ii])-1,int(settlement_times[ii])] += 1   
+                #pdf_raw_mam[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+            #JJA
             elif seed_months[ii] >=6 and seed_months[ii] <=8 : 
-                pdf_raw_jja[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_connectivity[3][int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_settleTime[3][int(initial_boxes[ii])-1,int(settlement_times[ii])] += 1   
+                #pdf_raw_jja[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+            #SON
             elif seed_months[ii] >=9 and seed_months[ii] <=11 : 
-                pdf_raw_son[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_connectivity[4][int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_settleTime[4][int(initial_boxes[ii])-1,int(settlement_times[ii])] += 1   
+                #pdf_raw_son[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+            #DJF
             else:
-                pdf_raw_djf[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_connectivity[1][int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
+                pdf_list_settleTime[1][int(initial_boxes[ii])-1,int(settlement_times[ii])] += 1   
+                #pdf_raw_djf[int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
 
 
 
 
 file = open(save_output_file,'wb')
-pickle.dump([pdf_raw,pdf_raw_djf,pdf_raw_mam,pdf_raw_jja,pdf_raw_son,counter_array],file)
+pickle.dump([pdf_list_connectivity,pdf_list_settleTime,settlement_boxes_test_array,settlement_times_test_array,counter_array],file)
+#pickle.dump([pdf_raw,pdf_raw_djf,pdf_raw_mam,pdf_raw_jja,pdf_raw_son,counter_array],file)
 file.close()
 
 #pickle.dump(pdf_raw,file)

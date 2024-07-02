@@ -1,5 +1,7 @@
 # Want nice version for reports
 
+# V10: now load updated numbers and labels
+
 # V9: now storing tick labels for islands in the "modify islands pdfs ..." script
 
 # V8: trying to modify box numbers (and associated statistics) for islands (see previous plots... SM island was box 13 and 20, rather than 13 and 14, for ex)
@@ -24,23 +26,14 @@
 # as if doing the box calculations for two separate coastlines and isolines
 
 
-# -----------------------------------------------------------------------------------------
-# -----------------------------------------------------------------------------------------
-# make switch to turn on/off island plotting
-# -----------------------------------------------------------------------------------------
-#switch_plot_islands = True
-switch_plot_islands = False
-# -----------------------------------------------------------------------------------------
-# -----------------------------------------------------------------------------------------
-# -----------------------------------------------------------------------------------------
-if switch_plot_islands:
-    plot_title = 'wc_15n model domain\n300km$^{2}$ coastal boxes\n10km offshore distance as outer wall\n(Southern California Bight detail)'
-    #plot_title = '300km^2 coastal boxes\n10km offshore distance as outer wall\nIslands detail'
-else:
-    plot_title = 'wc_15n model domain\n300km$^{2}$ coastal boxes\n10km offshore distance as outer wall'
-    #plot_title = '300km^2 coastal boxes\n10km offshore distance as outer wall'
-# -----------------------------------------------------------------------------------------
-# -----------------------------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# PDF file - contains labels
+#---------------------------------------------------------------------
+pdf_file_name_pre = 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
+pdf_file_name = pdf_file_name_pre[0:-2] + "_swapped.p"
+#---------------------------------------------------------------------
 
 
 
@@ -88,12 +81,11 @@ input_dir_islands = box_dir + islands_dir + 'z_output/'
 input_dir_continent = box_dir + continent_dir + 'z_output/'
 
 pdf_directory = 'practice/bounding_boxes/final_locations/z_output/'
-pdf_modified_file = base_path + pdf_directory + 'pdf_data_output_seasonal_test3_modified.p'
+pdf_swapped_file = base_path + pdf_directory + pdf_file_name
 
-file = open(pdf_modified_file,'rb')
-p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod,tick_positions_islands = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
-#p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod,box_numbers_islands_print,tick_positions_islands = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
-#pdf_raw,pdf_raw_djf,pdf_raw_mam,pdf_raw_jja,pdf_raw_son,counter_array = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
+file = open(pdf_swapped_file,'rb')
+
+pdf_list_connectivity_swapped,pdf_list_settleTime_swapped,settlement_boxes_test_array,settlement_times_test_array,counter_array,box_num_mod,tick_positions,tick_labels = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
 file.close()
 
 
@@ -120,6 +112,7 @@ tick_labels = ['SCl','Ca','SB','SN','SM','SR','SC','An','TJ','PV','PM','PC','PB'
 #tick_positions = [x+1 for x in tick_positions_orig]
 #tick_positions = box_numbers_islands_print + [x+1 for x in tick_positions_continent_orig]
 tick_positions = tick_positions_islands + [x+1 for x in tick_positions_continent_orig]
+
 
 island_lats = [32.823,33.324,33.457,33.224,34.024,33.923,33.957,33.991]
 island_lons = [-118.396,-118.345,-119.033,-119.508,-120.338,-120.138,-119.730,-119.4]
@@ -202,7 +195,16 @@ num_last_blob_island = 4
 box_num = 1
 tick_num = 0
 
-# Plot bounds for island plot
+# -----------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
+# make switch to turn on/off island plotting
+# -----------------------------------------------------------------------------------------
+switch_plot_islands = True
+#switch_plot_islands = False
+# -----------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
+
 x_min = -121
 x_max = -116.8
 y_min = 32.5
@@ -306,6 +308,10 @@ if switch_plot_islands:
     plt.axis([x_min, x_max, y_min, y_max])
 
 
+if switch_plot_islands:
+    plot_title = '300km^2 coastal boxes\n10km offshore distance as outer wall\nIslands detail'
+else:
+    plot_title = '300km^2 coastal boxes\n10km offshore distance as outer wall'
 plt.title(plot_title)
 
 plt.show()
