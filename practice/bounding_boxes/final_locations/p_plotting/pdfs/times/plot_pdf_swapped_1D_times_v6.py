@@ -1,5 +1,7 @@
 # Copied from "plot_pdf_seasonal_island_swap_v1.py"
 
+# V6: just use the labels i saved and load here... don't need the double layer axis labels
+
 # V5: fix labels, used correct swapped file
 
 # V4: v3 was close, but still not quite
@@ -18,8 +20,20 @@ pdf_file_name = pdf_file_name_pre[0:-2] + "_swapped.p"
 
 
 #------------------------------------------------------------------
+#fig_paramTitle = "\textit{wc_15n model,}$ $300km^{2}$ $\it{coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD}$"
+#fig_paramTitle = "$wc_15n$ $\it{model,}$ $300km^{2}$ $\it{coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD}$"
+#fig_paramTitle = "$wc_15n model, 300km^{2} coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD$"
+fig_paramTitle = "wc_15n model, 300km$^{2}$ coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD"
+fig_mainTitle = "PDFs of Settlement Time (y-axis) vs Release Location (x-axis).\nGrouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)"
+
+fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle
+
 #fig_supTitle = "PDFs of Settlement Time (Days since end of PLD) (y-axis) vs Release Location (x-axis).\n Grouped according to season of release.\nDay 1 PDF plotted below main plot as a line plot.\n3D, physics only"
-fig_supTitle = "PDFs of Settlement Time (y-axis) vs Release Location (x-axis).\n Grouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)\n30-day PLD"
+#fig_supTitle = "PDFs of Settlement Time (y-axis) vs Release Location (x-axis).\n Grouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)\n30-day PLD"
+#fig_supTitle = "PDFs of Settlement Time (y-axis) vs Release Location (x-axis).\n30-day PLD.\nGrouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)"
+#fig_supTitle = "wc_15n model, 300km$^{2}$ coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD\nPDFs of Settlement Time (y-axis) vs Release Location (x-axis).\nGrouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)"
+#fig_supTitle = "$\it{wc_15n model, 300km$^{2}$ coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD}$\nPDFs of Settlement Time (y-axis) vs Release Location (x-axis).\nGrouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)"
+#fig_supTitle = "$\it{wc_15n model, 300km^{2} coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD}$\nPDFs of Settlement Time (y-axis) vs Release Location (x-axis).\nGrouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)"
 
 yLabel = "Days since end of PLD"
 #------------------------------------------------------------------
@@ -120,7 +134,8 @@ fig,axs = plt.subplots(4,2, height_ratios = [v_scale,1,v_scale,1], constrained_l
 #plt.setp(axs,xticks=tick_positions,xticklabels=tick_labels_double_X, labelsize=10)
 #plt.setp(axs,xticks=tick_positions,xticklabels=tick_labels_double_X)
 
-label_fontSize = 8
+label_fontSize = 10
+#label_fontSize = 8
 
 for ii in range(1,len(pdf_list_settleTime)):
 
@@ -155,7 +170,8 @@ for ii in range(1,len(pdf_list_settleTime)):
         axs[0,0].yaxis.label.set(fontsize=15)
         #------------------------------------------------------------------
         axs[0,0].set_xticks(tick_positions)
-        axs[0,0].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
+        axs[0,0].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        #axs[0,0].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
         axs[1,0].set_xticks(tick_positions)
         axs[1,0].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
@@ -171,7 +187,8 @@ for ii in range(1,len(pdf_list_settleTime)):
         axs[0,1].yaxis.label.set(fontsize=15)
         #------------------------------------------------------------------
         axs[0,1].set_xticks(tick_positions)
-        axs[0,1].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
+        axs[0,1].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        #axs[0,1].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
         axs[1,1].set_xticks(tick_positions)
         axs[1,1].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
@@ -187,7 +204,8 @@ for ii in range(1,len(pdf_list_settleTime)):
         axs[2,0].yaxis.label.set(fontsize=15)
         #------------------------------------------------------------------
         axs[2,0].set_xticks(tick_positions)
-        axs[2,0].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
+        axs[2,0].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        ##axs[2,0].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
         axs[3,0].set_xticks(tick_positions)
         axs[3,0].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
@@ -203,7 +221,8 @@ for ii in range(1,len(pdf_list_settleTime)):
         axs[2,1].yaxis.label.set(fontsize=15)
         #------------------------------------------------------------------
         axs[2,1].set_xticks(tick_positions)
-        axs[2,1].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
+        axs[2,1].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        #axs[2,1].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
         axs[3,1].set_xticks(tick_positions)
         axs[3,1].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
@@ -212,7 +231,19 @@ for ii in range(1,len(pdf_list_settleTime)):
 
 fig.colorbar(mesh1, ax=axs.ravel().tolist())
 
-fig.suptitle(fig_supTitle)
+#fig.suptitle(f"$\it{fig_paramTitle}$ ~ {fig_mainTitle}")
+#fig.suptitle(f"{fig_supTitle}", style = "italic")
+#fig.suptitle(fig_supTitle)
+fig.suptitle(fig_fullTitle)
+
+#for a in fig.axes:
+#    # Shrink the axes
+#    box = a.get_position()
+#    a.set_position([box.x0, box.y0, box.width * 0.9, box.height * 0.95])
+
+#fig.text(s=f"{fig_paramTitle}", style = "italic",x=0.5, y=1.00, ha='center',va='center')
+#fig.text(s=f"{fig_paramTitle}", style = "italic",x=0.5, y=.95, ha='center',va='center')
+#fig.text(s=fig_mainTitle ,x=0.5, y=.90, ha='center',va='center')
 
 plt.show()
 

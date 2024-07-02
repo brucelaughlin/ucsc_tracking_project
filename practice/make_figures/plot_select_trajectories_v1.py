@@ -1,50 +1,44 @@
-# Want nice version for reports
-
-# V9: now storing tick labels for islands in the "modify islands pdfs ..." script
-
-# V8: trying to modify box numbers (and associated statistics) for islands (see previous plots... SM island was box 13 and 20, rather than 13 and 14, for ex)
-
-# V7: now improving continent
-
-# V6: changing arrows for islands
-
-# V5: changing font sizes, when to print, having zoom for islands
-
-# V4: just cleaning up; too many commented-out test lines
-
-# V3: remove or improve island labeling for full domain plot
-
-# lat/lon area calc taken from:
-# https://stackoverflow.com/questions/68118907/shapely-pyproj-find-area-in-m2-of-a-polygon-created-from-latitude-and-longi
-
-
-# Using the island coastlines, including the "blob" of islands 1-4, along with the rotated isolines (ie starting points of isolines
-# correspond with starting points of coastlines).
-# Idea: split each island into two halves, an upper and lower, using the "bounding points" previously determined.  Then proceed
-# as if doing the box calculations for two separate coastlines and isolines
-
 
 # -----------------------------------------------------------------------------------------
-save_plot_directory = "/home/blaughli/tracking_project/figures/meetings/will_240702/"
+#save_plot_directory = "/home/blaughli/tracking_project/figures/meetings/will_240702/"
 # -----------------------------------------------------------------------------------------
+
+
+particle_numbers_islands = list(range(10000,50000,10000))
+particle_numbers_full = list(range(50000,250000,50000))
+#particle_numbers_islands = list(range(10000,50000,10000))
+#particle_numbers_full = list(range(50000,200000,50000))
+
+colors_paths = ['skyblue','lime','violet','orange']
+#colors_paths = ['azure','lime','violet','orange']
+###colors_paths = ['plum','violet','orchid','magenta']
+
 
 # -----------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------
 # make switch to turn on/off island plotting
 # -----------------------------------------------------------------------------------------
-switch_plot_islands = True
-#switch_plot_islands = False
+#switch_plot_islands = True
+switch_plot_islands = False
 # -----------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------------------
-if switch_plot_islands:
-    plot_title = 'wc_15n model domain\n300km$^{2}$ coastal boxes\n10km offshore distance as outer wall\n(Southern California Bight detail)'
-    save_image_name = "domain_scb.png"
-else:
-    plot_title = 'wc_15n model domain\n300km$^{2}$ coastal boxes\n10km offshore distance as outer wall'
-    save_image_name = "domain_full.png"
+#if switch_plot_islands:
+#    plot_title = 'wc_15n model domain\n300km$^{2}$ coastal boxes\n10km offshore distance as outer wall\n(Southern California Bight detail)'
+#    save_image_name = "domain_scb.png"
+#else:
+#    plot_title = 'wc_15n model domain\n300km$^{2}$ coastal boxes\n10km offshore distance as outer wall'
+#    save_image_name = "domain_full.png"
+
+
+fig_paramTitle = "wc_15n model, 300km$^{2}$ coastal boxes, 10km offshore distance as outer wall, physics only, 3D advection, 30-day PLD"
+fig_mainTitle = "Sample trajectories"
+
+plot_title = fig_mainTitle + "\n" + fig_paramTitle
+
+
 # -----------------------------------------------------------------------------------------
-save_plot_file = save_plot_directory + save_image_name
+#save_plot_file = save_plot_directory + save_image_name
 # -----------------------------------------------------------------------------------------
 
 
@@ -59,10 +53,16 @@ from geopy.distance import great_circle
 import scipy.interpolate as spint
 import ast
 import time
+from os import listdir
+from os.path import isfile, join
+import sys
+import matplotlib.patches as mpatches
+from matplotlib.lines import Line2D
 
 from pyproj import Geod
 #from shapely.geometry import Polygon
 from shapely.geometry import LineString, Point, Polygon
+
 
 
 #-------------------- EDIT THESE -------------------------------------
@@ -100,6 +100,18 @@ p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod,tick_positions_islands = pi
 #p0,p1,p2,p3,p4,counter_array,box_numbers_islands_mod,box_numbers_islands_print,tick_positions_islands = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
 #pdf_raw,pdf_raw_djf,pdf_raw_mam,pdf_raw_jja,pdf_raw_son,counter_array = pickle.load(file)  # When the new calc is done, saved a counter_array for checking consistency
 file.close()
+
+
+
+# Input Files
+#---------------------------------------------------------------------
+#tracking_output_dir = '/data03/blaughli/tracking_project_output/z_one_file_test/'
+tracking_output_dir = '/data03/blaughli/tracking_project_output/test3_physics_only/'
+#---------------------------------------------------------------------
+
+tracking_output_files = [f for f in listdir(tracking_output_dir) if isfile(join(tracking_output_dir,f))]
+tracking_output_files.sort()
+
 
 
 #---------------------------------------------------------------------
@@ -216,8 +228,6 @@ y_max = 34.5
 # -----------------------------------------------------------------------------------------
 
 for island_dex in range(num_islands,num_last_blob_island-1,-1):
-#for island_dex in range(num_last_blob_island,num_islands+1):
-#for island_dex in range(num_last_blob_island,num_last_blob_island+1):
 
     # Set an index for the bounding point lists (the lists of points used to split the coastlines and isolines)
     bp_dex = island_dex-num_last_blob_island
@@ -237,32 +247,14 @@ for island_dex in range(num_islands,num_last_blob_island-1,-1):
         boxes_lonlat = pickle.load(file)
         file.close
 
-        #for box in boxes_lonlat:
         for box in reversed(boxes_lonlat):
             if box is not None:
                 ax.plot(box[0],box[1],c = 'white',linewidth=0.6)
-                if box_num == tick_positions[tick_num]:
-#tick_positions_orig = [1,5,9,10,13,16,17,19,23,29,32,37,41,47,56,60,67,77]
-                    if switch_plot_islands:
-                        xy_loc = [island_lons[tick_num], island_lats[tick_num]]
-
-                        #ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                        ax.annotate("{}: {}".format(tick_positions[tick_num],tick_labels[tick_num]), xy = xy_loc,
-                        #ax.annotate("{}: {}".format(box_numbers_islands_mod[box_num-1]+1,tick_labels[tick_num]), xy = xy_loc,
-                            xytext =(0, -.8 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
-
-                    tick_num += 1
-                    if tick_num == len(tick_labels):
-                        tick_num = 0
-
-                if switch_plot_islands:
-                    #if box_num % box_plot_mod == 0:
-                    if box_num % box_plot_mod_island == 0:
-                        ax.annotate(box_numbers_islands_mod[box_num-1]+1, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
-                        #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
+                #if switch_plot_islands:
+                    #if box_num % box_plot_mod_island == 0:
+                        #ax.annotate(box_numbers_islands_mod[box_num-1]+1, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
                 box_num += 1
                 first_continent_box_dex += 1
-
 
 # Continent
 
@@ -275,40 +267,120 @@ file.close
 
 for box in boxes_lonlat:
     if box is not None:
-        #plt.plot(box[0],box[1],c = 'white',linewidth=0.6)
         ax.plot(box[0],box[1],c = 'white',linewidth=0.6)
         if tick_num < len(tick_labels):
             if box_num == tick_positions[tick_num]:
-                #if box_num in [33,38]:
-                #if box_num in [30,33,38]:
-                if not switch_plot_islands:
-                    xy_loc = [np.mean(box[0]), np.mean(box[1])]
-                    if box_num in [24]:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                            xytext =(0, .6 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
-                    elif box_num in [30]:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                            xytext =(0, .5 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
-                    elif box_num in [33]:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                            xytext =(0, .7 * offset), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops, color=text_color, va="center", ha="center",fontsize=font_size_labels)
-                    else:
-                        ax.annotate("{}: {}".format(box_num,tick_labels[tick_num]), xy = xy_loc,
-                            xytext =(-.9 * offset, .0), textcoords ='offset points', bbox = bbox, arrowprops = arrowprops2, color=text_color, va="center", ha="center",fontsize=font_size_labels)
-                tick_num += 1
                 if tick_num == len(tick_labels):
                     tick_num = 0
                 
-            #if not switch_plot_islands:
-            if (box_num+1) % box_plot_mod == 0:
-            #if box_num % box_plot_mod == 0:
-                ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
-                #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent)
+            #if (box_num+1) % box_plot_mod == 0:
+                #ax.annotate(box_num, xy = [np.mean(box[0]), np.mean(box[1])], color=number_color, ha="center", va="center", fontsize=font_size_num_continent, weight="bold")
         box_num += 1
-        #plt.pause(1)
 
 if switch_plot_islands:
     plt.axis([x_min, x_max, y_min, y_max])
+
+
+
+
+#---------------------------------------------------------------------
+# Trajectories
+#---------------------------------------------------------------------
+
+#particle_numbers_islands = range(10000,50000,10000)
+#particle_numbers_full = range(50000,200000,50000)
+#colors_islands = ['plum','violet','orchid','magenta','hotpink']
+
+#particle_number = 10000
+
+particle_numbers = particle_numbers_full
+
+#num_files = len(tracking_output_files)
+
+#file_number = 0
+#file_step = 50
+#max_file_num = len(tracking_output_files) - (len(tracking_output_files) % file_step)
+#selected_files = list(range(0,max_file_num,file_step))
+#selected_files = list(range(0,len(tracking_output_files) - len(tracking_output_files) % 50)
+
+selected_files = [0,2,4,7] #W,S,Su,F
+
+#---------------------------------------------------------------------
+# Testing, when working indent and make loop
+#---------------------------------------------------------------------
+#for tracking_output_file_pre in tracking_output_files:
+
+tFiles = [tracking_output_files[jj] for jj in selected_files]
+
+#for tracking_output_file_pre in tFiles:
+for ii in range(len(tFiles)):
+#for ii in range(1):
+#for ii in range(1,2):
+#for ii in range(2,3):
+#---------------------------------------------------------------------
+#    ii = 0
+
+    #print(ii)
+
+    #file_number += 1
+    #if file_number % 20 == 0:
+
+    tracking_output_file_pre = tFiles[ii]
+    tracking_output_file = tracking_output_dir + tracking_output_file_pre
+
+    dset = netCDF4.Dataset(tracking_output_file, 'r')
+
+    lon_pre = dset.variables['lon'][particle_numbers]
+    lat_pre = dset.variables['lat'][particle_numbers]
+    z_pre = dset.variables['z'][particle_numbers]
+    status = dset.variables['status'][particle_numbers]
+    #lon_pre = dset.variables['lon'][particle_number]
+    #lat_pre = dset.variables['lat'][particle_number]
+    #z_pre = dset.variables['z'][particle_number]
+    #status = dset.variables['status'][particle_number]
+    dset.close()
+
+    trajectory_mask = status == 0
+
+    for jj in range(len(particle_numbers)):
+#---------------------------------------------------------------------
+#        jj = 0
+
+        lon = lon_pre[jj,trajectory_mask[jj]]
+        lat = lat_pre[jj,trajectory_mask[jj]]
+        z = z_pre[jj,trajectory_mask[jj]]
+        #lon = lon_pre[ii,trajectory_mask[jj]]
+        #lat = lat_pre[ii,trajectory_mask[jj]]
+        #z = z_pre[ii,trajectory_mask[jj]]
+
+
+
+        ax.plot(lon,lat,c = colors_paths[ii],linewidth=2)
+        ax.plot(lon[0],lat[0],'co')
+        ax.plot(lon[-1],lat[-1],'ro')
+        #ax.plot(lon[0],lat[0],'ro')
+        #ax.plot(lon[-1],lat[-1],'co')
+
+
+#colors_paths = ['azure','lime','violet','orange']
+
+handles, labels = plt.gca().get_legend_handles_labels()
+
+lineW = Line2D([0], [0], label='Winter trajectory', color=colors_paths[0])
+lineS = Line2D([0], [0], label='Spring trajectory', color=colors_paths[1])
+lineSu = Line2D([0], [0], label='Summer trajectory', color=colors_paths[2])
+lineF = Line2D([0], [0], label='Fall trajectory', color=colors_paths[3])
+
+pointS = Line2D([0], [0], label='starting location', marker='o', markersize=10, color='c' ,linestyle='')
+                 #markeredgecolor='r', markerfacecolor='k', linestyle='')
+
+pointF = Line2D([0], [0], label='ending location', marker='o', markersize=10, color='r' ,linestyle='')
+
+# add manual symbols to auto legend
+handles.extend([lineW,lineS,lineSu,lineF,pointS,pointF])
+
+plt.legend(handles=handles)
+
 
 
 plt.title(plot_title)
