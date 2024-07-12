@@ -1,0 +1,16 @@
+Steps:
+
+
+
+
+
+Note1: in version 1 (in "aa_islands/"), I wrote the script "determine_offshore_onshore_isoline_endpoints.py" (and version 2).  The purpose of this
+script was to determine the nearest isoline point to the hand-picked coastline "boundary points", ie the points which define the two halves of the
+islands (now north and south, previously onshore and offshore).  However, with Will's clarification that we really want to be looking at the north
+and south halves of the islands, I have decided it's easier to plot the isolines and coastlines, with the numbers of their respective points printed
+at each point, and then hand-select the "starting points" of the coastline and the "boundary points" of isolines.  The selected pairs of points are stored
+in the files "island_coast_starting_coordinates.txt" and "island_isoline_bounding_points.txt", respectively.  
+
+Note2: Following Note2, I believe the approach outlined in Note1 will remove the need to rotate the isolines
+
+
