@@ -19,16 +19,22 @@
 
 # INPUT Files
 #---------------------------------------------------------------------
-tracking_output_dir = '/data03/blaughli/tracking_project_output/z_ten_file_test/' ######################### TESTING ############################
+#tracking_output_dir = '/data03/blaughli/tracking_project_output/z_ten_file_test/' ######################### TESTING ############################
 #tracking_output_dir = '/data03/blaughli/tracking_project_output/z_one_file_test/' ######################### TESTING ############################
 #tracking_output_dir = '/data03/blaughli/tracking_project_output/test3_physics_only/'
+tracking_output_dir_pre = 'test4_physics_only_AKs_1en5/'
 #---------------------------------------------------------------------
+
+save_output_file_name = "pdf_data_output_seasonal_rangeO2_v4_" + tracking_output_dir_pre[0:-1] + ".p"
+
+tracking_output_base = "/data03/blaughli/tracking_project_output/"
+tracking_output_dir = tracking_output_base + tracking_output_dir_pre
 
 # OUTPUT File
 #---------------------------------------------------------------------
 #save_output_file_name = 'pdf_data_output_seasonal_rangeO2_v4_run_test3.p' 
 #save_output_file_name = 'pdf_data_output_seasonal_rangeO2_v4_oneFileTest.p' ######################### TESTING ############################
-save_output_file_name = 'pdf_data_output_seasonal_rangeO2_v4_tenFileTest.p' ######################### TESTING ############################
+#save_output_file_name = 'pdf_data_output_seasonal_rangeO2_v4_tenFileTest.p' ######################### TESTING ############################
 #save_output_file_name = 'pdf_data_output_seasonal_v3_tenFileTest.p' ######################### TESTING ############################
 #save_output_file_name = 'pdf_data_output_seasonal_v3_oneFileTest.p' ######################### TESTING ############################
 #save_output_file_name = 'pdf_data_output_seasonal_oneFileTest.p' ######################### TESTING ############################
@@ -83,8 +89,6 @@ oxygen_limit_list = [2.2,3.1,4.1,6]
 
 point_type_field = 'rho'
 point_type_line = 'psi'
-
-
 
 base_path = '/home/blaughli/tracking_project/'
 grid_directory = 'grid_data/'
