@@ -1,17 +1,23 @@
+# v3: copy what worked in the temperature plots (v5) - double label for colorbar, x-ticks..
+
 # V2: Try the line plots for the day 0 data again
 
 #------------------------------------------------------------------
 #pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_oneFileTest_swapped.p"
 #pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_tenFileTest_swapped.p"
 #pdf_file_name_pre = "pdf_data_output_releaseLoc_vs_settleTime_test3_swapped.p"
-pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_run_test3_swapped.p"
+#pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_run_test3_swapped.p"
+pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_test4_physics_only_AKs_1en5_swapped.p"
 #------------------------------------------------------------------
 
 # -------------------------------------------------------------------
 # Testing - choose 0-3 for test dex, corresponding to entries from 
 #oxygen_limit_list = [2.2,3.1,4.1,6] # REMOVE THIS AFTER RUNNING CATCH SCRIPT AGAIN
-test_dex = 2
+test_dex = 0
 #------------------------------------------------------------------
+
+
+
 
 
 #pdf_file_name = pdf_file_name_pre[0:-2] + "_swapped.p"
@@ -68,6 +74,8 @@ pdf_list_exposure_T_source_swapped,pdf_list_of_lists_O2_source_swapped,pdf_list_
 file.close()
 
 
+
+
 # -------------------------------------------------------------------
 # -------------------------------------------------------------------
 # -------------------------------------------------------------------
@@ -82,30 +90,14 @@ pdf_list_exposure_oxygen_source = pdf_list_of_lists_O2_source_swapped[test_dex]
 
 # -------------------------------------------------------------------
 # Dynamic title and labels
-#fig_main_title = fig_main_title_pre.format(oxygen_limit_list[test_dex])
-
-#fig_main_title = fig_main_title_pre.format("$\bf{{{x}}}$".format(x=oxygen_limit_list[test_dex]))
-#fig_main_title = "$\bf{{{x}}}$".format(x=oxygen_limit_list[test_dex])
 
 fig_main_title_pre_p1 = "PDFs of cumulative number of days settled larvae were exposed to DO2 concentrations below "
 fig_main_title_pre_p2 = r'$\bf{{{a}}}$'.format(a=oxygen_limit_list[test_dex])
 fig_main_title_pre_p3 = " mg/L (y-axis) vs Release Location (x-axis).\nGrouped according to season of release.\n(Day 1 PDF plotted below main plot as a line plot)"
-#fig_main_title_pre_p3 = " mg/L (y-axis) vs Release Location (x-axis).\nGrouped according to season of release."
-
 fig_main_title = fig_main_title_pre_p1 + fig_main_title_pre_p2 + fig_main_title_pre_p3
-
-
-
-#plt.rc('text', usetex=True)
-#fig_main_title = r"This is text. I want the word '\textbf{blah}' to be Bold."
-
-
+fig_fullTitle = fig_main_title + "\n" + fig_param_title
 
 y_label = y_label_pre.format(oxygen_limit_list[test_dex])
-
-
-# -------------------------------------------------------------------
-fig_fullTitle = fig_main_title + "\n" + fig_param_title
 # -------------------------------------------------------------------
 
 
@@ -157,11 +149,6 @@ for pdf in pdf_list_exposure_oxygen_source[1:]:
 
 
 
-
-
-# Determined elsewhere (see/run "check_box_numbers.py")
-#first_continent_box_dex = 17
-#first_continent_box_dex = 20
 num_dummy_lines = 1
 
 n_rows = int(np.shape(pdf_list_exposure_oxygen_source[0])[0]) + num_dummy_lines
@@ -178,11 +165,6 @@ y_tick_day1_round = 3
 y_ticks_day1 = [round(t,y_tick_day1_round) for t in y_ticks_day1]
 
 
-#cbar_tick_labels_pre = [float(t.get_text().replace('−','-')) for t in cbar.ax.get_yticklabels()]
-#cbar_round = 4
-#cbar_tick_labels = [round(10**t, cbar_round) for t in cbar_tick_labels_pre]
-#cbar.set_ticklabels(cbar_tick_labels)
-
 day_1_twin_label = "0 days"
 days_fullM1_twin_label = "1-60 days"
 
@@ -194,14 +176,50 @@ day_1_60_titles = []
 for ii in range(len(seasons)):
     day_1_60_titles.append("{}     {}".format(day_1_60_title_pre2,seasons[ii]))
 
-#extra_ticks = [1]
-#axs[0,0].set_yticks(list(plt.xticks()[0]) + extra_ticks)
+
+
+#Modify "tick_positions" for plotting (we add an empty bin before the first continent box)
+tick_positions_modified = tick_positions.copy()
+for ii in range(len(tick_positions_modified)):
+    if tick_positions_modified[ii] >= first_continent_box_dex:
+        tick_positions_modified[ii] += num_dummy_lines
+
+
+tick_labels_single_X = tick_positions_modified.copy()
+for ii in range(len(tick_labels_single_X)):
+    if tick_labels_single_X[ii] < first_continent_box_dex:
+        tick_labels_single_X[ii] += 1
+
+
+stagger_dex = 0
+tick_labels_double_X = []
+for ii in range(len(tick_labels)):
+    stagger_dex += 1
+    if (tick_positions[ii] < first_continent_box_dex) and (stagger_dex % 2 == 0):
+        tick_labels_double_X.append("{}\n\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
+    else:
+        tick_labels_double_X.append("{}\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
+
+
+#------------------------------------------------------------------
+# These tick number determining values are dependent on which O2 level we're measuring
+#------------------------------------------------------------------
+if test_dex < 3:
+    y_tick_day1_spacing = .02
+    y_ticks_day1 = np.arange(pdf_min_val_day1,pdf_max_val_day1, y_tick_day1_spacing)
+    cbar_nBins = 15
+else:
+    y_tick_day1_spacing = .1
+    y_ticks_day1 = np.arange(pdf_min_val_day1,pdf_max_val_day1, y_tick_day1_spacing)
+    cbar_nBins = 10
+#------------------------------------------------------------------
+
+
 
 
 v_scale = 6
 
 fig,axs = plt.subplots(4,2, height_ratios = [v_scale,1,v_scale,1], constrained_layout=True)
-#fig,axs = plt.subplots(2,2)
 
 label_fontSize = 10
 #label_fontSize = 8
@@ -231,7 +249,6 @@ for ii in range(len(pdf_list_full)):
     #if ii == 1:
         mesh1 = axs[0,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
         axs[0,0].title.set_text(day_1_60_titles[ii])
-        #axs[0,0].title.set_text("Winter (Dec,Jan,Feb)")
         axs[0,0].set_ylabel(y_label)
         axs[0,0].yaxis.label.set(fontsize=15)
         axs[1,0].plot(pdf_day1_separated)
@@ -242,17 +259,16 @@ for ii in range(len(pdf_list_full)):
         axs[1,0].title.set_text(day_0_title)
         axs[1,0].set_ylabel(cbar_label)
         #------------------------------------------------------------------
-        #axs[0,0].set_xticks(tick_positions)
-        #axs[0,0].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        axs[0,0].set_xticks(tick_positions_modified)
+        axs[0,0].set_xticklabels(tick_labels, fontsize=label_fontSize)
         ##axs[0,0].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
-        #axs[1,0].set_xticks(tick_positions)
-        #axs[1,0].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
+        axs[1,0].set_xticks(tick_positions_modified)
+        axs[1,0].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
     elif ii == 1:
     #elif ii == 2:
         mesh1 = axs[0,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
         axs[0,1].title.set_text(day_1_60_titles[ii])
-        #axs[0,1].title.set_text("Spring (Mar,Apr,May)")
         axs[0,1].set_ylabel(y_label)
         axs[0,1].yaxis.label.set(fontsize=15)
         axs[1,1].plot(pdf_day1_separated)
@@ -268,17 +284,16 @@ for ii in range(len(pdf_list_full)):
         #ax2 = axs[1,1].twinx()
         #ax2.set_ylabel(day_1_twin_label, fontsize=15)
         #------------------------------------------------------------------
-        #axs[0,1].set_xticks(tick_positions)
-        #axs[0,1].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        axs[0,1].set_xticks(tick_positions_modified)
+        axs[0,1].set_xticklabels(tick_labels, fontsize=label_fontSize)
         ##axs[0,1].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
-        #axs[1,1].set_xticks(tick_positions)
-        #axs[1,1].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
+        axs[1,1].set_xticks(tick_positions_modified)
+        axs[1,1].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
     elif ii == 2:
     #elif ii == 3:
         mesh1 = axs[2,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
         axs[2,0].title.set_text(day_1_60_titles[ii])
-        #axs[2,0].title.set_text("Summer (Jun,Jul,Aug)")
         axs[2,0].set_ylabel(y_label)
         axs[2,0].yaxis.label.set(fontsize=15)
         axs[3,0].plot(pdf_day1_separated)
@@ -289,16 +304,15 @@ for ii in range(len(pdf_list_full)):
         axs[3,0].title.set_text(day_0_title)
         axs[3,0].set_ylabel(cbar_label)
         #------------------------------------------------------------------
-        #axs[2,0].set_xticks(tick_positions)
-        #axs[2,0].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        axs[2,0].set_xticks(tick_positions_modified)
+        axs[2,0].set_xticklabels(tick_labels, fontsize=label_fontSize)
         ##axs[2,0].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
-        #axs[3,0].set_xticks(tick_positions)
-        #axs[3,0].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
+        axs[3,0].set_xticks(tick_positions_modified)
+        axs[3,0].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
     else:
         mesh1 = axs[2,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
         axs[2,1].title.set_text(day_1_60_titles[ii])
-        #axs[2,1].title.set_text("Fall (Sep,Oct,Nov)")
         axs[2,1].set_ylabel(y_label)
         axs[2,1].yaxis.label.set(fontsize=15)
         axs[3,1].plot(pdf_day1_separated)
@@ -314,78 +328,62 @@ for ii in range(len(pdf_list_full)):
         #ax2 = axs[3,1].twinx()
         #ax2.set_ylabel(day_1_twin_label, fontsize=15)
         #------------------------------------------------------------------
-        #axs[2,1].set_xticks(tick_positions)
-        #axs[2,1].set_xticklabels(tick_labels, fontsize=label_fontSize)
+        axs[2,1].set_xticks(tick_positions_modified)
+        axs[2,1].set_xticklabels(tick_labels, fontsize=label_fontSize)
         ##axs[2,1].set_xticklabels(tick_labels_double_X, fontsize=label_fontSize)
-        #axs[3,1].set_xticks(tick_positions)
-        #axs[3,1].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
+        axs[3,1].set_xticks(tick_positions_modified)
+        axs[3,1].set_xticklabels(tick_labels_single_X, fontsize=label_fontSize)
         #------------------------------------------------------------------
-
-
-
-
-
-#    if ii == 1:
-#        mesh1 = axs[0,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
-#        #axs[0,0].title.set_text("Winter (Dec,Jan,Feb)")
-#        axs[0,0].set_ylabel(y_label)
-#        axs[0,0].yaxis.label.set(fontsize=15)
-#        #------------------------------------------------------------------
-#        #------------------------------------------------------------------
-#    elif ii == 2:
-#        mesh1 = axs[0,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
-#        #axs[0,1].title.set_text("Spring (Mar,Apr,May)")
-#        axs[0,1].set_ylabel(y_label)
-#        axs[0,1].yaxis.label.set(fontsize=15)
-#        #------------------------------------------------------------------
-#        #------------------------------------------------------------------
-#    elif ii == 3:
-#        mesh1 = axs[1,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
-#        #axs[1,0].title.set_text("Summer (Jun,Jul,Aug)")
-#        axs[1,0].set_ylabel(y_label)
-#        axs[1,0].yaxis.label.set(fontsize=15)
-#        #------------------------------------------------------------------
-#        #------------------------------------------------------------------
-#    else:
-#        mesh1 = axs[1,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
-#        #axs[1,1].title.set_text("Fall (Sep,Oct,Nov)")
-#        axs[1,1].set_ylabel(y_label)
-#        axs[1,1].yaxis.label.set(fontsize=15)
-#        #------------------------------------------------------------------
-#        #------------------------------------------------------------------
-
-
-
-
 
 
 #------------------------------------------------------------------
 # Colorbar
 #------------------------------------------------------------------
+
+
+cbar_label = "Log base 10 of probability"
+cbar_fontSize = 15
+#cbar_nBins = 20
+
+
 cbar = plt.colorbar(mesh1, ax=axs.ravel().tolist())
 cbar.ax.set_ylabel(cbar_label, fontsize = cbar_fontSize)
-cbar.ax.yaxis.set_label_position('left')
-cbar.ax.locator_params(nbins=cbar_nBins)
 cbar_tick_labels_pre = [float(t.get_text().replace('−','-')) for t in cbar.ax.get_yticklabels()]
 cbar_round = 4
 cbar_tick_labels = [round(10**t, cbar_round) for t in cbar_tick_labels_pre]
-cbar.set_ticklabels(cbar_tick_labels)
+
+cbar_label_2 = "probability"
+
+# define functions that relate the two colorbar scales
+# e.g., Celcius to Fahrenheit and vice versa
+def logP_to_P(x):
+    val = 10**(np.ma.masked_invalid(x))
+    return np.ma.masked_invalid(val)
+def P_to_logP(x):
+    val = np.log10(np.ma.masked_invalid(x))
+    return np.ma.masked_invalid(val)
+
+# create a second axes
+cbar2 = cbar.ax.secondary_yaxis('left',functions=(logP_to_P,P_to_logP))
+cbar2.set_ylabel(cbar_label_2, fontsize = cbar_fontSize, y=0.87)
+
+cbar2.locator_params(nbins=cbar_nBins)
+
+
+
+
+
+#cbar = plt.colorbar(mesh1, ax=axs.ravel().tolist())
+#cbar.ax.set_ylabel(cbar_label, fontsize = cbar_fontSize)
+#cbar.ax.yaxis.set_label_position('left')
+#cbar.ax.locator_params(nbins=cbar_nBins)
+#cbar_tick_labels_pre = [float(t.get_text().replace('−','-')) for t in cbar.ax.get_yticklabels()]
+#cbar_round = 4
+#cbar_tick_labels = [round(10**t, cbar_round) for t in cbar_tick_labels_pre]
+#cbar.set_ticklabels(cbar_tick_labels)
 #------------------------------------------------------------------
 
-
-#fig.suptitle(f"$\it{fig_param_title}$ ~ {fig_main_title}")
-#fig.suptitle(f"{fig_supTitle}", style = "italic")
-#fig.suptitle(fig_supTitle)
 fig.suptitle(fig_fullTitle)
-
-#for a in fig.axes:
-#    # Shrink the axes
-#    box = a.get_position()
-#    a.set_position([box.x0, box.y0, box.width * 0.9, box.height * 0.95])
-
-#fig.text(s=f"{fig_param_title}", style = "italic",x=0.5, y=1.00, ha='center',va='center')
-#fig.text(s=f"{fig_param_title}", style = "italic",x=0.5, y=.95, ha='center',va='center')
-#fig.text(s=fig_main_title ,x=0.5, y=.90, ha='center',va='center')
 
 plt.show()
 

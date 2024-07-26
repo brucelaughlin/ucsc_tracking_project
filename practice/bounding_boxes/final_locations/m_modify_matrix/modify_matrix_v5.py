@@ -18,7 +18,8 @@
 #pdf_file_name = 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
 #pdf_file_name = 'pdf_data_output_seasonal_v3_tenFileTest.p'
 #pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_oneFileTest.p'
-pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_tenFileTest.p'
+#pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_tenFileTest.p'
+pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_run_test3.p'
 # -------------------------------------------------------
 
 
@@ -68,10 +69,13 @@ for ii in range(len(pdf_list_of_lists_O2_source)):
 #swap_src1 = [1,2]
 
 # ISLANDS 4-8
-dx2_og =  [9,10,11,12,13,14,15,16]
-dx2_new = [9,16,10,15,11,14,12,13]
+dx2_og =  [8,9,10,11,12,13,14,15]
+#dx2_og =  [9,10,11,12,13,14,15,16]
+dx2_new = [8,15,9,14,10,13,11,12]
+#dx2_new = [9,16,10,15,11,14,12,13]
 
-unchanged_boxes = [0,1,2,3,4,5,6,7,8]
+unchanged_boxes = [0,1,2,3,4,5,6,7]
+#unchanged_boxes = [0,1,2,3,4,5,6,7,8]
 # -------------------------------------------------------
 
 #print(dx1)
@@ -146,33 +150,38 @@ for box in boxes_lonlat:
 # Saving ticks, labels, box numbers, so it's all in one place.  Save, load, use...
 # -------------------------------------------------------
 
-box_num_islands_mod = unchanged_boxes + dx2_new
+#dx2_new = [8,15,9,14,10,13,11,12]
+
+# Just manually determining this... 
+blob_new_numbers_print = [8,10,12,14,15,13,11,9]
+#blob_new_numbers_print = [9,11,13,15,16,14,12,10]
+
+box_num_islands_mod = unchanged_boxes + blob_new_numbers_print
+#box_num_islands_mod = unchanged_boxes + dx2_new
 box_num_mod = box_num_islands_mod + list(range(max(box_num_islands_mod) + 1, box_num))
 
 
 # May as well save the box numbers to use for labels here
 #dx2_new = [9,16,10,15,11,14,12,13]
-box_num_labels_islands_print = [1,3,5,7,9,11,13,15]
-#box_num_labels_islands_print = [2,6,9,11,13,15,17,20]
-box_num_labels_continent_print = [20,26,29,34,38,44,53,57,64,74]
-#box_num_labels_continent_print = [24,30,33,38,42,48,57,61,68,78]
+#box_num_labels_islands_print = [0,2,4,6,8,10,12,14]
+box_num_labels_islands_print = [1,3,5,7,9,11,13,15] # one off? (one too large)
+###box_num_labels_islands_print = [2,6,9,11,13,15,17,20] # Old island boxes
+#box_num_labels_continent_print = [19,25,30,33,37,43,52,56,63,73] # fixed the one off?
+box_num_labels_continent_print = [20,26,31,34,38,44,53,57,64,74] # one off?
+###box_num_labels_continent_print = [24,30,33,38,42,48,57,61,68,78] # old island boxes
 
 box_num_labels_print = box_num_labels_islands_print + box_num_labels_continent_print
 
 
 
-#tick_positions_continent =  [23,29,32,37,41,47,56,60,67,78]
-#tick_positions_islands = box_num_labels_islands_print
-#tick_positions_islands = [x-1 for x in box_num_labels_print]
 tick_labels_continent = ['TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
 tick_labels_islands = ['SCl','Ca','SB','SN','SM','SR','SC','An']
-#tick_labels_islands = ['SCl','Ca','SB','SN','SR','An','SC','SM']
-#tick_labels_islands = ['SC','C','SB','SN','SR','A','SC','SM']
 
-tick_positions = [x -1 for x in box_num_labels_print]
-#tick_positions = box_num_labels_print
-#tick_positions = tick_positions_islands + tick_positions_continent
 tick_labels = tick_labels_islands + tick_labels_continent
+
+# Wait, maybe this is what I want
+tick_positions = box_num_labels_print
+#tick_positions = [x -1 for x in box_num_labels_print]
 
 # -------------------------------------------------------
 # -------------------------------------------------------

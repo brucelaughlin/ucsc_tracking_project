@@ -1,6 +1,6 @@
 # Turn off vertical migration for now; start with just physics
 
-# Same as V1, except adding deactivation after 90 days.  See the update method
+# v2: try to add shoreward swimming.  Ideally, not in fixed direction, but actually to nearest coast
 
 #import datetime
 #import numpy as np
@@ -11,17 +11,30 @@
 import sys
 from datetime import datetime, timedelta
 import numpy as np
-#from scipy.interpolate import interp1d
+import pickle
+from scipy import spatial
+import netCDF4
 import logging; logger = logging.getLogger(__name__)
 from opendrift.models.oceandrift import Lagrangian3DArray, OceanDrift
 from opendrift.config import CONFIG_LEVEL_ESSENTIAL, CONFIG_LEVEL_BASIC, CONFIG_LEVEL_ADVANCED
-
 
 #---------------------------------------------------------------------------------
 # At some point may want to define a class for the particles, like:
 
 # class LarvalElement(Lagrangian3DArray):
 #---------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------
+# Swim data
+swim_data_file = '/home/blaughli/tracking_project/practice/onshore_swim_work/swim_data.p'
+
+file = open(swim_data_file,'rb')
+mask_flat,coord_array,direction_x,direction_y = pickle.load(file)
+file.close()
+
+#---------------------------------------------------------------------------------
+
+
 
 # Define the particle deactivation time (seconds).
 drift_days = 150
@@ -150,6 +163,13 @@ class LarvalDispersal(OceanDrift):
 
         #self.elements.z[larvae] = np.minimum(0, self.elements.z[larvae] + direction*max_migration_per_timestep)
         self.elements.z = np.minimum(0, self.elements.z + direction*max_migration_per_timestep)
+
+
+    def larvae_onshore_swimming(self):
+       #mask_flat,coord_array,direction_x,direction_y 
+
+        
+
 
     def update(self):
 
