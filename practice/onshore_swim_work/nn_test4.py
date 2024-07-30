@@ -59,6 +59,12 @@ mask = np.divide(mask,mask,out=np.zeros_like(mask),where=mask!=0)
 mask = mask.astype('int')
 mask = np.where((mask==0)|(mask==1),mask^1,mask)
 
+# Want to avoid swimming over the boundary - so just mask out the edges...
+mask[0,:] = 0
+mask[-1,:] = 0
+mask[:,0] = 0
+mask[:,-1] = 0
+
 mask_flat = mask.flatten()
 #mask_flat = mask_rho.flatten()
 lon_flat = lon_field.flatten()
@@ -73,12 +79,22 @@ pt = [-120.6219,34.6277]
 
 #distance,index = spatial.KDTree(coord_array).query(pt)
 
-lons = np.arange(-120.0,-119.5,.1)
-lats = np.arange(33,34,.2)
-points = np.vstack([lons,lats])
+lons = np.arange(-120.0,-119.5,.1).reshape(-1,1)
+lats = np.arange(33,34,.2).reshape(-1,1)
+#lons = np.arange(-120.0,-119.5,.1)
+#lats = np.arange(33,34,.2)
 
-distances,indeces = spatial.KDTree(coord_array).query(points)
+lonlatpairs = np.concatenate((lons,lats), axis=1)
 
+#points = np.hstack([lons,lats])
+#points = np.vstack([lons,lats])
+
+
+
+distances,indices = spatial.KDTree(coord_array).query(lonlatpairs)
+#distances,indices = spatial.KDTree(coord_array).query(points)
+
+print(mask_flat[indices])
 #print(mask_flat[index])
 
 #fig,ax = plt.subplots(1,2)

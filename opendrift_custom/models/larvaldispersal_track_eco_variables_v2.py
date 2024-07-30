@@ -26,11 +26,39 @@ from opendrift.config import CONFIG_LEVEL_ESSENTIAL, CONFIG_LEVEL_BASIC, CONFIG_
 
 #---------------------------------------------------------------------------------
 # Swim data
-swim_data_file = '/home/blaughli/tracking_project/practice/onshore_swim_work/swim_data.p'
+swim_data_file = '/home/blaughli/tracking_project/practice/onshore_swim_work/z_production/swim_data.p'
 
 file = open(swim_data_file,'rb')
-mask_flat,coord_array,direction_x,direction_y = pickle.load(file)
+mask,mask_flat,coord_array,onshore_swim_component_x,onshore_swim_component_y,neg_grad_norm_map_x,neg_grad_norm_map_y = pickle.load(file)
+#mask,mask_flat,coord_array,onshore_swim_component_x,onshore_swim_component_y = pickle.load(file)
+#mask_flat,coord_array,onshore_swim_component_x,onshore_swim_component_y = pickle.load(file)
 file.close()
+
+# Need to know how much distance is covered by a degree of lat and lon, since my swim data
+# ranges in values from -1 to 1.  So I think I want to have swimming happen in a direction, and
+# the distance will depend on a "swim speed" parameter, which should probably be based on length of larvae.
+
+# For now, just set latitude to be 38 (halfway between 32 and 44, the rough extremes in the domain).
+# Perhaps the exact latitude doesn't matter for the scales we're talking about?
+
+model_lat_avg = 38 # CHANGE IF WE NEED TO BE MORE ACCURATE (ie make specific to each particle... ugh!)
+
+meters_per_degree_lat = 111111
+meters_per_degree_lon = meters_per_degree_lat * np.cos(np.radians(model_lat_avg))
+
+# Also for now, just set a constant max swim speed (later should make it dependent on larvae size)
+# From Kashef paper, speeds for rockfish larvae: at parturation: 0.5-1.8 cm/s;"newly settled": 8.6 to 53.5cm/s
+
+#swim_speed_max = 10 #5m/s  FOR TESTING; ALL PARTICLES SHOULD REMAIN WITHIN TWO GRID CELLS OF A COASTLINE
+#swim_speed_max = 100 #5m/s  FOR TESTING; ALL PARTICLES SHOULD REMAIN WITHIN TWO GRID CELLS OF A COASTLINE
+#swim_speed_max = 5 #5m/s  FOR TESTING; ALL PARTICLES SHOULD REMAIN WITHIN TWO GRID CELLS OF A COASTLINE
+swim_speed_max = 0.01 #10cm/s
+#swim_speed_max = 0.1 #10cm/s
+#swim_speed_max = -0.1 #10cm/s
+
+test_file_out_0 = "/home/blaughli/tracking_project/practice/onshore_swim_work/particle_data_0.p"
+test_file_out_1 = "/home/blaughli/tracking_project/practice/onshore_swim_work/particle_data_1.p"
+test_save_dex = 0 # Save when equals 5 (5 timesteps in, right?)
 
 #---------------------------------------------------------------------------------
 
@@ -166,10 +194,36 @@ class LarvalDispersal(OceanDrift):
 
 
     def larvae_onshore_swimming(self):
-       #mask_flat,coord_array,direction_x,direction_y 
-
+       #mask_flat,coord_array,onshore_swim_component_x,onshore_swim_component_y 
         
+        global test_save_dex # "NOT GOOD PRACTICE", just for a test
+        
+        lons = self.elements.lon.reshape(-1,1)
+        lats = self.elements.lat.reshape(-1,1)
+        lonlatpairs = np.concatenate((lons,lats), axis=1)
+        distances,indices = spatial.KDTree(coord_array).query(lonlatpairs)
 
+        if test_save_dex == 0:
+            file = open(test_file_out_0,'wb')
+            pickle.dump([self.elements.lon,self.elements.lat],file)
+            file.close()
+        if test_save_dex == 1:
+            file = open(test_file_out_1,'wb')
+            pickle.dump([self.elements.lon,self.elements.lat],file)
+            file.close()
+
+        test_save_dex = test_save_dex + 1
+
+
+        # Change the swim speed to depend on size; currently using "max" just for testing
+        #self.elements.lon = self.elements.lon + mask_flat[indices]*(onshore_swim_component_y[indices]*swim_speed_max/meters_per_degree_lon*self.time_step.total_seconds())
+        #self.elements.lat = self.elements.lat + mask_flat[indices]*(onshore_swim_component_x[indices]*swim_speed_max/meters_per_degree_lat*self.time_step.total_seconds())
+        self.elements.lon = self.elements.lon + mask_flat[indices]*(onshore_swim_component_x[indices]*swim_speed_max/meters_per_degree_lon*self.time_step.total_seconds())
+        self.elements.lat = self.elements.lat + mask_flat[indices]*(onshore_swim_component_y[indices]*swim_speed_max/meters_per_degree_lat*self.time_step.total_seconds())
+        #self.elements.lon = self.elements.lon + mask_flat[indices]*(onshore_swim_component_x[indices]*swim_speed_max/meters_per_degree_lon)
+        #self.elements.lat = self.elements.lat + mask_flat[indices]*(onshore_swim_component_y[indices]*swim_speed_max/meters_per_degree_lat)
+
+        #---------------------------------------------------------------------------------
 
     def update(self):
 
@@ -184,6 +238,8 @@ class LarvalDispersal(OceanDrift):
         
         # Turn off for now, just physics
         #self.larvae_vertical_migration()
+
+        self.larvae_onshore_swimming()
 
         # Deactivate floats after 90 days
         self.deactivate_elements(self.elements.age_seconds > drift_seconds, reason='age > {} days'.format(drift_days))
