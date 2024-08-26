@@ -1,3 +1,5 @@
+# v2: no longer have inshore/offshore boxes for islands
+
 # Add storage of the [i,j] coordinates for later use
 
 # Now that I'm doing everything in Lat/Lon from the get-go, I don't think I need

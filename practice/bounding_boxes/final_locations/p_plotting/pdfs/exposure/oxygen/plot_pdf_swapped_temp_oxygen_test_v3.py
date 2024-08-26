@@ -13,7 +13,8 @@ pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_test4_physics_only_AKs_
 # -------------------------------------------------------------------
 # Testing - choose 0-3 for test dex, corresponding to entries from 
 #oxygen_limit_list = [2.2,3.1,4.1,6] # REMOVE THIS AFTER RUNNING CATCH SCRIPT AGAIN
-test_dex = 0
+#test_dex = 0
+test_dex = 3
 #------------------------------------------------------------------
 
 

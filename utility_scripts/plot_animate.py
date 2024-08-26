@@ -1,46 +1,33 @@
 #!/usr/bin/env python3
 
+# Written by Bruce Laughlin, blaughli@ucsc.edu
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import os
 from pathlib import Path
-sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
-from larvaldispersal_track_eco_variables import LarvalDispersal
 import opendrift
 import netCDF4
+from pathlib import Path
 
-#base_dir = '/home/blaughli/tracking_project/practice/experiments/practice_1/sanity_check/z_output/'
+# Create the output directory "figures" if it doesn't exist already
+current_directory = os.getcwd()
+figures_directory = current_directory + '/figures/'
+Path(figures_directory).mkdir(parents=True, exist_ok=True)
 
-
+# Read in the name of the file to process from stdin
 tracking_output_file = sys.argv[1]
 
-
-#itracking_output_file = 'test_output_01_01_01_run_1_of_1.nc'
-#o = opendrift.open(tracking_output_file)
-
+# Prepare the names of the output files
 output_file_split = tracking_output_file.split('.')
-#output_file_pre = 'z_media/' + output_file_split[0]
-output_file_pre = output_file_split[0]
-
-dset = netCDF4.Dataset(tracking_output_file, 'r')
-
-h_pre = dset['z']
-h = np.array(h_pre)
-
-o = opendrift.open(tracking_output_file)
-
-#output_png_file = 'overhead_plot_all.png'
-#output_z_png_file = 'z_plot_all.png'
-#output_mp4_file = 'overhead_animation_all.mp4'
-
+output_file_pre = figures_directory + output_file_split[0]
 output_png_file = output_file_pre + '.png'
 output_mp4_file = output_file_pre + '.mp4'
 
-#o.plot(filename=output_png_file)
+# Load the model; required for plotting (does magic)
+o = opendrift.open(tracking_output_file)
+
+# Create the plot and animation
 o.plot(filename=output_png_file,linecolor="z",fast = True)
-#o.plot_property('z',filename=output_z_png_file)
 o.animation(filename=output_mp4_file,linecolor="z",fast = True)
-
-
-

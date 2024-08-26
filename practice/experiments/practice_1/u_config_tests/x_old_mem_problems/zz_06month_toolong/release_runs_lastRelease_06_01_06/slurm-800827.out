@@ -1,1 +1,0 @@
-/var/spool/slurmd/job800827/slurm_script: line 11: 165202 Killed                  python opendrift_run_store_eco_variables_1_of_1.py &>z_output/log_1.txt

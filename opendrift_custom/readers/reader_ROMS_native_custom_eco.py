@@ -82,7 +82,7 @@ class Reader(BaseReader, StructuredReader):
             # Removing (temoprarily) land_binary_mask from ROMS-variables,
             # as this leads to trouble with linearNDFast interpolation
             'mask_rho': 'land_binary_mask',
-            'mask_psi': 'land_binary_mask',
+            #'mask_psi': 'land_binary_mask',  # why is this done twice?
             'h': 'sea_floor_depth_below_sea_level',
             'zeta': 'sea_surface_height',
             'u': 'x_sea_water_velocity',

@@ -14,7 +14,9 @@
 
 #------------------------------------------------------------------
 pdf_file_name_pre = "pdf_data_output_releaseLoc_vs_settleTime_test3.p"
+#pdf_file_name_pre = "pdf_data_output_seasonal_rangeO2_v4_test4_physics_only_AKs_1en5.p"
 #------------------------------------------------------------------
+
 
 #------------------------------------------------------------------
 pdf_file_name = pdf_file_name_pre[0:-2] + "_swapped.p"
@@ -56,6 +58,7 @@ import datetime
 base_path = '/home/blaughli/tracking_project/'
 pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
 
+#pdf_raw_file = pdf_raw_directory + 'x_drift_30_noSwim/' + pdf_file_name
 pdf_raw_file = pdf_raw_directory + pdf_file_name
 #------------------------------------------------------------------
 

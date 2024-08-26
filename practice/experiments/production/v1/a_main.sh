@@ -46,8 +46,8 @@ echo "$outputDir"
 
 idleNodeRegex="([^\/]+$)"
 
-maxNodes=4
-#maxNodes=6
+#maxNodes=4
+maxNodes=6
 
 nSeed=20
 
@@ -56,7 +56,8 @@ seedSpacing=2
 dayNudgeRun=$(( $nSeed*$seedSpacing ))
 #echo "$dayNudgeRun"
 
-numRunsPerJob=6
+numRunsPerJob=5
+#numRunsPerJob=6
 dayNudgeJob=$(( $dayNudgeRun*$numRunsPerJob ))
 #echo "$dayNudgeJob"
 

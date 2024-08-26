@@ -111,15 +111,51 @@ num_diff_z =  np.sum(z_diff > 0) + np.sum(z_diff < 0)
 fraction_diff_z = num_diff_z/num_data
 
 
-plt.pcolormesh(z_diff)
-plt.title("Differences in depth between runs with fallback AKs of 0.1 and 0.00001 m$^{2}$/s, single output file (1 out of 208)")
-plt.ylabel("particle number")
-plt.xlabel("output timestep (days)")
+diff_indices = z_diff != 0
 
-clb = plt.colorbar()
-clb.ax.set_ylabel("depth difference (m)")
+num_particles = np.shape(z_diff)[0]
+full_length_run = np.shape(z_diff)[1]
 
-plt.show()
+coord_diff_list = np.zeros((num_particles,2))
+
+for ii in range(num_particles):
+    for jj in range(full_length_run):
+        if diff_indices[ii,jj]:
+            coord_diff_list[ii,0] = lon_all_1[ii,jj] 
+            coord_diff_list[ii,1] = lat_all_1[ii,jj] 
+            break
+
+
+test_array = coord_diff_list[:,0]
+good_indices = test_array != 0
+
+coords_plot = coord_diff_list[good_indices,:]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#plt.pcolormesh(z_diff)
+#plt.title("Differences in depth between runs with fallback AKs of 0.1 and 0.00001 m$^{2}$/s, single output file (1 out of 208)")
+#plt.ylabel("particle number")
+#plt.xlabel("output timestep (days)")
+
+#clb = plt.colorbar()
+#clb.ax.set_ylabel("depth difference (m)")
+
+#plt.show()
 
 
 

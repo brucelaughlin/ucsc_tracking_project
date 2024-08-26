@@ -1,8 +1,0 @@
-18:50:23 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
-18:50:23 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
-18:50:23 INFO    opendrift.models.basemodel:528: OpenDriftSimulation initialised (version 1.11.0 / v1.11.0-29-g9db7160-dirty)
-18:56:42 WARNING opendrift.readers.basereader.structured:44: No proj string or projection could be derived, using 'fakeproj'. This assumes that the variables are structured and gridded approximately equidistantly on the surface (i.e. in meters). This must be guaranteed by the user. You can get rid of this warning by supplying a valid projection to the reader.
-18:56:42 INFO    opendrift.readers.basereader.structured:59: Making interpolator for lon,lat to x,y conversion...
-18:56:44 WARNING opendrift.readers.basereader.structured:44: No proj string or projection could be derived, using 'fakeproj'. This assumes that the variables are structured and gridded approximately equidistantly on the surface (i.e. in meters). This must be guaranteed by the user. You can get rid of this warning by supplying a valid projection to the reader.
-18:56:44 INFO    opendrift.readers.basereader.structured:59: Making interpolator for lon,lat to x,y conversion...
-slurmstepd: error: *** JOB 802685 ON node12 CANCELLED AT 2024-04-09T18:57:02 ***

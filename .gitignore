@@ -22,3 +22,8 @@ practice/seed_input_files/**/*.txt
 *.p
 *.p\.*
 *slurm-*.out
+*.npz
+*.npz*
+*.npz_*
+*.npz\.*
+

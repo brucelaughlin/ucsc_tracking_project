@@ -4,8 +4,9 @@
 # Now "number_of_seeds" is an input argument 
 
 #n_days_run = 90
-particle_lifetime = 20
-#particle_lifetime = 150
+#particle_lifetime = 20
+particle_lifetime = 150
+
 #particle_lifetime = 90
 
 # Temporal spacing (days) between seeds
@@ -28,7 +29,8 @@ import os
 from pathlib import Path
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
-from larvaldispersal_track_eco_variables_v2 import LarvalDispersal
+from larvaldispersal_track_eco_variables_v2_10 import LarvalDispersal
+#from larvaldispersal_track_eco_variables_v2 import LarvalDispersal
 #from larvaldispersal_track_eco_variables import LarvalDispersal
 from reader_ROMS_native_custom_eco import Reader
 
