@@ -39,6 +39,8 @@ class LarvalDispersal(OceanDrift):
     #max_speed = 1  # m/s     # Why was this here??? Did I have a specific reason, or did I copy it from OceanDrift???
 
     required_variables = {
+        #'zeta': {'fallback': 0},
+        'sea_surface_height': {'fallback': 0},
         'x_sea_water_velocity': {'fallback': 0},
         'y_sea_water_velocity': {'fallback': 0},
         'x_wind': {'fallback': 0},
@@ -79,7 +81,7 @@ class LarvalDispersal(OceanDrift):
 
 
 
-    required_profiles_z_range = [0, -50]  # The depth range (in m) which profiles should cover
+    #required_profiles_z_range = [0, -50]  # The depth range (in m) which profiles should cover
 
     def __init__(self, *args, **kwargs):
 
@@ -96,6 +98,8 @@ class LarvalDispersal(OceanDrift):
         #    })
 
         self._set_config_default('drift:vertical_mixing', True)
+        #self._set_config_default('drift:profile_depth', 50)  # The depth range (in m) which profiles should cover
+        ###self._set_config_default('drift:profile_depth', [0, -50])  # The depth range (in m) which profiles should cover
 
     # ---------------------------------------------------------------------------------------------
     # Will we want to update properties of the larvae?  See LarvalFish for what was here

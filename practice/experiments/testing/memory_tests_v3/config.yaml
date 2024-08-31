@@ -1,0 +1,53 @@
+runCalc:
+  60
+runSave:
+  1440
+bufferLength:
+  100
+numberOfSeeds:
+  40
+outputDir:
+  /data/blaughli/tracking_project_output_projections/memory_tests/memory_test_nRunsPerNode_05_nSeed_40
+jobDirList:
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1990
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1990
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1990
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1990
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1990
+startNudgeList:
+  - 0
+  - 80
+  - 160
+  - 240
+  - 320
+dirListTotal:
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1990
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1991
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1992
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1993
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1994
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1995
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1996
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1997
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1998
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_1999
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2000
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2001
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2002
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2003
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2004
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2005
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2006
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2007
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2008
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2009
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2010
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2011
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2012
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2013
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2014
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2015
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2016
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2017
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2018
+  - /data/blaughli/jerome_projections/WC15N_GFDLTV/Run_2019

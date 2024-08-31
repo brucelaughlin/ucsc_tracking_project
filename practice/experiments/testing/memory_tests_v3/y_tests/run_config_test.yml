@@ -1,0 +1,15 @@
+his_dirs:
+  - "blah1"
+  - "blah2"
+  - "blah3"
+offsets:
+  - 0
+  - 10
+  - 20
+  - 30
+sameFileSwitch:
+  - 0
+  - 0
+  - 0
+  - 1
+  
