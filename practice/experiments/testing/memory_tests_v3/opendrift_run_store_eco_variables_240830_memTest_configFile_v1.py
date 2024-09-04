@@ -54,22 +54,22 @@ config_file = args.configfile
 job_run_number = args.jobrunnumber
 
 stream = open(config_file,'r')
-cd = yaml.safe_load(stream)    # "cd" is short for "config_dictionary"
+config_dict = yaml.safe_load(stream)    
 
-run_calc = cd["runCalc"]
-run_save = cd["runSave"]
-buffer_length = cd["bufferLength"]
-number_of_seeds = cd["numberOfSeeds"]
+run_calc = config_dict["runCalc"]
+run_save = config_dict["runSave"]
+buffer_length = config_dict["bufferLength"]
+number_of_seeds = config_dict["numberOfSeeds"]
 
-his_dir_1 = cd["jobDirList"][job_run_number]
+his_dir_1 = config_dict["jobDirList"][job_run_number]
 
-if (cd["dirListTotal"].index(his_dir_1) == len(cd["dirListTotal"])):
+if (config_dict["dirListTotal"].index(his_dir_1) == len(config_dict["dirListTotal"])):
     his_dir_2 = his_dir_1
 else:
-    his_dir_2 = cd["dirListTotal"][cd["dirListTotal"].index(his_dir_1)+1]
+    his_dir_2 = config_dict["dirListTotal"][config_dict["dirListTotal"].index(his_dir_1)+1]
 
-start_nudge = cd["startNudgeList"][job_run_number]
-output_dir = cd["outputDir"]
+start_nudge = config_dict["startNudgeList"][job_run_number]
+output_dir = config_dict["outputDir"]
 
 stream.close()
 
@@ -77,6 +77,12 @@ run_string = 'calcDT_{b:03d}_saveDT_{c:04d}_buffer_{d:03d}_nSeed_{e:03d}_startNu
 
 print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
 print('USER PRINT STATEMENT: {}'.format(run_string),flush=True)
+#print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
+#print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
+print('USER PRINT STATEMENT: ',flush=True)
+#print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
+print('USER PRINT STATEMENT: his_dir_1: {}'.format(his_dir_1),flush=True)
+print('USER PRINT STATEMENT: his_dir_2: {}'.format(his_dir_2),flush=True)
 print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 #-------------------------------------------------
 
@@ -122,8 +128,6 @@ his_file_2 = his_dir_2 + '/' + his_file_wildcard
 #his_file_1 = his_dir_1 + his_file_wildcard
 #his_file_2 = his_dir_2 + his_file_wildcard
 
-#print(his_file_1)
-#print(his_file_2)
 
 #----------Output netCDF File---------------------
 tracking_output_pre = 'tracking_output_{}.nc'.format(run_string)
