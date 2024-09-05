@@ -1,7 +1,5 @@
 
-# V2: Paul helping with argparse 
-
-# V1:  Now "number_of_seeds" is an input argument 
+# v2: I need to iterate over the "job_dirs" specified in the config file
 
 #n_days_run = 90
 particle_lifetime = 150

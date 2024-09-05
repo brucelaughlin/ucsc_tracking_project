@@ -22,6 +22,7 @@ his_file_name_pre = "wc15n_"
 
 experimentDir_pre="memory_test"
 
+#projectionDirectories=["WC15N_HADTV"]
 projectionDirectories=["WC15N_GFDLTV"]
 #projectionDirectories=["WC15N_GFDLTV" "WC15N_HADTV" "WC15N_IPSLTV"]
 
@@ -53,12 +54,14 @@ maxNodes=12
 seedSpacing=2
 
 
-#numRunsPerJobList=[5]
-numRunsPerJobList=[5,6,10,15,20]
+numRunsPerJobList=[5,10,15,20,30,35,40]
+#numRunsPerJobList=[1,5,10]
+#numRunsPerJobList=[5,6,10,15,20,35,40]
 #numRunsPerJobList=(15 20 25 30 35 40)
 #numRunsPerJobList=(4 5 6 7 8 9 10)
 #nSeedList=[40]
 nSeedList=[20,30,40]
+#nSeedList=[100,20,10]
 
 #for projectionNumber in range(len(projectionDirectories)):
 

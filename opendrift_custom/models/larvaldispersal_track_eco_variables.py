@@ -24,7 +24,8 @@ from opendrift.config import CONFIG_LEVEL_ESSENTIAL, CONFIG_LEVEL_BASIC, CONFIG_
 #---------------------------------------------------------------------------------
 
 # Define the particle deactivation time (seconds).
-drift_days = 150
+drift_days = 5
+#drift_days = 150
 drift_seconds = (drift_days) * 24 * 60 * 60 
 
 
@@ -39,7 +40,7 @@ class LarvalDispersal(OceanDrift):
     #max_speed = 1  # m/s     # Why was this here??? Did I have a specific reason, or did I copy it from OceanDrift???
 
     required_variables = {
-        #'zeta': {'fallback': 0},
+        'zeta': {'fallback': 0},
         'sea_surface_height': {'fallback': 0},
         'x_sea_water_velocity': {'fallback': 0},
         'y_sea_water_velocity': {'fallback': 0},
