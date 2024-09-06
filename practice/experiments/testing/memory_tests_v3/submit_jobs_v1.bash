@@ -58,18 +58,23 @@ do
     do
         configFile=${configFiles[$jj]}
        
-        jobRunNum=$jj
+        #jobRunNum=$jj
+        configFileNum=$jj
 
         #echo "$configFile"
 
         #echo "$jj"
 
         #(( counter ++ ))
+       
+        slurmOutFilePre="slurmInfo_runDir_$(printf %02d ${ii})_configFile_$(printf %02d ${jj}).out"
+        slurmOutFile="${runDir}/z_slurmOut/$(basename $slurmOutFilePre)"
 
-        logFilePre="${configFile/config.yaml/}driftlog"
-        #logFile="${configFile/yaml/}driftlog"
+        #logFilePre1="${configFile/config.yaml/}driftlog"
+        ###logFilePre="${configFile/.config.yaml/}_$(printf %02d ${jobRunNum})_.driftlog"
+        ###logFile="${configFile/yaml/}driftlog"
 
-        logFile="${runDir}/z_logs/$(basename $logFilePre)"
+        #logFilePre2="${runDir}/z_logs/$(basename $logFilePre1)"
 
         #echo "$logFile"
 
@@ -83,7 +88,16 @@ do
         ##jobNum=$(($counter+42))                # and this
         
         
-        jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,jobRunNum=$jobRunNum,callingDir=$callingDir" --output="$logFile" sbatch_testCall.bash)                
+        jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,configFileNum=$configFileNum,runDir=$runDir" --output="$slurmOutFile" sbatch_call.bash) 
+
+
+
+        #jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,configFileNum=$configFileNum" --output="$slurmOutFile" sbatch_call.bash)                
+        #jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,logFilePre=$logFilePre2,configFileNum=$configFileNum" --output="$slurmOutFile" sbatch_call.bash)                
+        #jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,logFile=$logFilePre2,configFileNum=$configFileNum" sbatch_testCall.bash)                
+        #jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir" --output="$logFile" sbatch_testCall.bash)                
+        
+        #jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,jobRunNum=$jobRunNum,callingDir=$callingDir" --output="$logFile" sbatch_testCall.bash)                
         
         
         ####jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,jobRunNum=$jobRunNum" --output="$logFile" sbatch_testCall.bash)                

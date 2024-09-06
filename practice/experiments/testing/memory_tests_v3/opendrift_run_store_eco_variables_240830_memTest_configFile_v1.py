@@ -1,8 +1,4 @@
 
-# V2: Paul helping with argparse 
-
-# V1:  Now "number_of_seeds" is an input argument 
-
 #n_days_run = 90
 particle_lifetime = 150
 #particle_lifetime = 90

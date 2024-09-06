@@ -54,14 +54,16 @@ maxNodes=12
 seedSpacing=2
 
 
-numRunsPerJobList=[5,10,15,20,30,35,40]
-#numRunsPerJobList=[1,5,10]
+#numRunsPerJobList=[5,10,15,20,30,35,40]
+numRunsPerJobList=[1,5,10]
+
 #numRunsPerJobList=[5,6,10,15,20,35,40]
 #numRunsPerJobList=(15 20 25 30 35 40)
 #numRunsPerJobList=(4 5 6 7 8 9 10)
 #nSeedList=[40]
-nSeedList=[20,30,40]
-#nSeedList=[100,20,10]
+
+#nSeedList=[20,30,40]
+nSeedList=[100,20,10]
 
 #for projectionNumber in range(len(projectionDirectories)):
 
@@ -105,6 +107,9 @@ for hh in range(len(numRunsPerJobList)):
         ## -------------------------------------------------------------------
         ## Perhaps this should not be in the config creation script....
         path = Path(outputDir + "/z_logs")
+        path.mkdir(parents=True, exist_ok=True)
+        
+        path = Path(outputDir + "/z_slurmOut")
         path.mkdir(parents=True, exist_ok=True)
         
         path = Path(outputDir + "/z_config_files")
@@ -224,7 +229,8 @@ for hh in range(len(numRunsPerJobList)):
 
             logString="$(printf %02d ${dtCalc})_$(printf %04d ${dtSave})_$(printf %03d ${bufferLength})_$(printf %02d ${nSeed})_$(printf %02d ${nRuns})_$(printf %06d ${ii})"
             
-            config_file_name = "config_file_nRunsPerNode_{a:02d}_nSeed_{b:02d}_{c:03d}.config.yaml".format(a=numRunsPerJob, b=nSeed, c=ii)
+            #config_file_name = "config_file_nRunsPerNode_{a:02d}_nSeed_{b:02d}_{c:03d}.config.yaml".format(a=numRunsPerJob, b=nSeed, c=ii)
+            config_file_name = "nRunsPerNode_{a:02d}_nSeed_{b:02d}_{c:03d}.config.yaml".format(a=numRunsPerJob, b=nSeed, c=ii)
 
             config_file = config_dir + "/" + config_file_name
 
