@@ -1,7 +1,6 @@
 
-#n_days_run = 90
+#particle_lifetime = 10
 particle_lifetime = 150
-#particle_lifetime = 90
 
 # Temporal spacing (days) between seeds
 days_between_seeds = 2
@@ -254,7 +253,7 @@ t_run_start = time.time()
 o.run(duration=timedelta(hours=run_duration_hours), time_step=run_dt, time_step_output=save_dt, outfile = tracking_output_file, export_variables = export_variables_list, export_buffer_length=buffer_length)
 
 # plot memory usage, safe figure
-o.plot_memory_usage(filename=output_png_file)
+#o.plot_memory_usage(filename=output_png_file)
 
 t_run_end = time.time()
 total_runtime = t_run_end-t_run_start

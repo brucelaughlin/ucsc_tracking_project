@@ -1,4 +1,8 @@
-from opendrift.readers.reader_ROMS_native import Reader
+import sys
+import os
+
+sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
+from reader_ROMS_native_h5netcdf_mod import Reader
 
 
 class ReaderEco(Reader):

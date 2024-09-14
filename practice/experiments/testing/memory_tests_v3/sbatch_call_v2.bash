@@ -27,8 +27,8 @@ for jobRunNum in "${!jobDirList[@]}"; do
 
     echo "$(hostname)" > "$logFile"
 
-    python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
-    #python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum &> "$logFile" &
+    python opendrift_run_store_eco_variables_240830_memTest_configFile_v2.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
+    #python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
 
 
 

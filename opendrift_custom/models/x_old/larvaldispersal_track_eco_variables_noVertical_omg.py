@@ -42,19 +42,20 @@ class LarvalDispersal(OceanDrift):
     #max_speed = 1  # m/s     # Why was this here??? Did I have a specific reason, or did I copy it from OceanDrift???
 
     required_variables = {
+        'zeta': {'fallback': 0},
+        'sea_surface_height': {'fallback': 0},
         'x_sea_water_velocity': {'fallback': 0},
         'y_sea_water_velocity': {'fallback': 0},
-        'sea_surface_height': {'fallback': 0},
         'x_wind': {'fallback': 0},
         'y_wind': {'fallback': 0},
-        'upward_sea_water_velocity': {'fallback': 0},
+        'sea_floor_depth_below_sea_level': {'fallback': 100},
         'ocean_vertical_diffusivity': {'fallback': 0.00001, 'profiles': True},
+        'ocean_mixed_layer_thickness': {'fallback': 50},
+        'upward_sea_water_velocity': {'fallback': 0},
         'surface_downward_x_stress': {'fallback': 0},
         'surface_downward_y_stress': {'fallback': 0},
         'turbulent_kinetic_energy': {'fallback': 0},
         'turbulent_generic_length_scale': {'fallback': 0},
-        'ocean_mixed_layer_thickness': {'fallback': 50},
-        'sea_floor_depth_below_sea_level': {'fallback': 10000},
         'land_binary_mask': {'fallback': None},
         'sea_water_temperature': {'fallback': 10, 'profiles': True},
         'sea_water_salinity': {'fallback': 34, 'profiles': True},
@@ -98,11 +99,8 @@ class LarvalDispersal(OceanDrift):
         #         'description': 'Fraction of timestep swimming',
         #         'level': CONFIG_LEVEL_ADVANCED},
         #    })
-        
-        self._set_config_default('drift:vertical_advection', True)
-        self._set_config_default('drift:vertical_mixing', True)
-        self._set_config_default('general:coastline_action', 'previous')
 
+        self._set_config_default('drift:vertical_mixing', True)
         #self._set_config_default('drift:profile_depth', 50)  # The depth range (in m) which profiles should cover
         ###self._set_config_default('drift:profile_depth', [0, -50])  # The depth range (in m) which profiles should cover
 
@@ -160,35 +158,22 @@ class LarvalDispersal(OceanDrift):
         #self.elements.z[larvae] = np.minimum(0, self.elements.z[larvae] + direction*max_migration_per_timestep)
         self.elements.z = np.minimum(0, self.elements.z + direction*max_migration_per_timestep)
 
-
-
     def update(self):
-        """Update positions and properties of elements."""
-        # copied from "OceanDrift", with the addition of the deactivation
 
-        # Simply move particles with ambient current
+        #self.update_larvae() # Not implemented, not wanted?
         self.advect_ocean_current()
-
-        # Advect particles due to surface wind drag,
-        # according to element property wind_drift_factor
-        #self.advect_wind()
 
         # Stokes drift
         #self.stokes_drift()
 
-        # Turbulent Mixing
-        if self.get_config('drift:vertical_mixing') is True:
-            self.update_terminal_velocity()
-            self.vertical_mixing()
-        else:  # Buoyancy
-            self.vertical_buoyancy()
+        #self.update_terminal_velocity()
+        self.vertical_mixing()
+        
+        # Turn off for now, just physics
+        #self.larvae_vertical_migration()
 
-        # Vertical advection
-        if self.get_config('drift:vertical_advection') is True:
-            self.vertical_advection()
-
-        # Deactivate floats after "drift_days" has passed
+        # Deactivate floats after 90 days
         self.deactivate_elements(self.elements.age_seconds > drift_seconds, reason='age > {} days'.format(drift_days))
-
+        #self.deactivate_elements(self.elements.age_seconds > 7776000, reason='age > 90 days')
 
 

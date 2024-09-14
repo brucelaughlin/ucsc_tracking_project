@@ -20,12 +20,15 @@ callingDir="$(pwd)"
 
 # can pass job name to this call, overwriting "job-name' in the sbatch script
 
+#runBaseDir="/data/blaughli/tracking_project_output_projections/production"
 runBaseDir="/data/blaughli/tracking_project_output_projections/memory_tests"
+#runBaseDir="/data/blaughli/tracking_project_output_projections/memory_tests_32node"
+#runBaseDir="/data/blaughli/tracking_project_output_projections/memory_tests_32v1_race"
 
 # This directory is populated by running the python script that generates the config files
 runDirs=($runBaseDir/*)
 
-testArr=(1)
+#testArr=(1)
 
 for ii in "${!runDirs[@]}"
 #for ii in "${!testArr[@]}"
@@ -67,8 +70,8 @@ do
 
         #(( counter ++ ))
        
-        slurmOutFilePre="slurmInfo_runDir_$(printf %02d ${ii})_configFile_$(printf %02d ${jj}).out"
-        slurmOutFile="${runDir}/z_slurmOut/$(basename $slurmOutFilePre)"
+        #slurmOutFilePre="slurmInfo_runDir_$(printf %02d ${ii})_configFile_$(printf %02d ${jj}).out"
+        #slurmOutFile="${runDir}/z_slurmOut/$(basename $slurmOutFilePre)"
 
         #logFilePre1="${configFile/config.yaml/}driftlog"
         ###logFilePre="${configFile/.config.yaml/}_$(printf %02d ${jobRunNum})_.driftlog"
@@ -88,7 +91,8 @@ do
         ##jobNum=$(($counter+42))                # and this
         
         
-        jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,configFileNum=$configFileNum,runDir=$runDir" --output="$slurmOutFile" sbatch_call.bash) 
+        #jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,configFileNum=$configFileNum,runDir=$runDir" --output="$slurmOutFile" sbatch_call.bash) 
+        jobNum=$(sbatch --parsable --export="ALL,configFile=$configFile,callingDir=$callingDir,configFileNum=$configFileNum,runDir=$runDir" sbatch_call.bash) 
 
 
 

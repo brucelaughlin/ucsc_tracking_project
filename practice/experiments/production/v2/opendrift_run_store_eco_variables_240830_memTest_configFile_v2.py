@@ -1,10 +1,10 @@
 #v2: reader has a way to specify new variables, so don't need custom reader!
 
 #particle_lifetime = 10
-particle_lifetime = 150
+#particle_lifetime = 150
 
 # Temporal spacing (days) between seeds
-days_between_seeds = 2
+#days_between_seeds = 2
 
 
 import yaml
@@ -79,6 +79,8 @@ run_calc = config_dict["runCalc"]
 run_save = config_dict["runSave"]
 buffer_length = config_dict["bufferLength"]
 number_of_seeds = config_dict["numberOfSeeds"]
+days_between_seeds = config_dict["seedSpacing"]
+particle_lifetime = config_dict["particleLifetime"]
 
 his_dir_1 = config_dict["jobDirList"][job_run_number]
 

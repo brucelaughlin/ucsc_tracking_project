@@ -29,6 +29,8 @@ projectionDirectories=["WC15N_GFDLTV"]
 baseInputDir_pre="/data/blaughli/jerome_projections/"
 #baseInputDir=baseInputDir_pre/projectionDirectories[projectionNumber]
 
+#baseOutputDir="/data/blaughli/tracking_project_output_projections/memory_tests_32v1_race/"
+#baseOutputDir="/data/blaughli/tracking_project_output_projections/memory_tests_32node/"
 baseOutputDir="/data/blaughli/tracking_project_output_projections/memory_tests/"
 #baseOutputDir="/data/blaughli/tracking_project_output_projections"
 
@@ -54,8 +56,13 @@ maxNodes=12
 seedSpacing=2
 
 
+#numRunsPerJobList=[16,32]
+numRunsPerJobList=[32]
+#numRunsPerJobList=[10,15,20]
 #numRunsPerJobList=[5,10,15,20,30,35,40]
-numRunsPerJobList=[1,5,10]
+#numRunsPerJobList=[1,5,10]
+#numRunsPerJobList=[4,5,10,20]
+#numRunsPerJobList=[20,21,22,23,24,25,30]
 
 #numRunsPerJobList=[5,6,10,15,20,35,40]
 #numRunsPerJobList=(15 20 25 30 35 40)
@@ -63,7 +70,12 @@ numRunsPerJobList=[1,5,10]
 #nSeedList=[40]
 
 #nSeedList=[20,30,40]
-nSeedList=[100,20,10]
+#nSeedList=[100,20,10]
+#nSeedList=[5,50,100]
+#nSeedList=[25,30,35,40,45]
+#nSeedList=[25,30,35,40]
+#nSeedList=[10,15,20]
+nSeedList=[2,3,4]
 
 #for projectionNumber in range(len(projectionDirectories)):
 
@@ -99,7 +111,7 @@ for hh in range(len(numRunsPerJobList)):
         numRunsPerJob=numRunsPerJobList[hh]
         nSeed=nSeedList[kk]
         #experimentDir="${experimentDir_pre}_nRunsPerNode_$(printf %02d ${numRunsPerJob})_nSeed_$(printf %02d ${nSeed})"
-        experimentDir = "{a}_nRunsPerNode_{b:02d}_nSeed_{c:02d}".format(a=experimentDir_pre, b=numRunsPerJob, c=nSeed)
+        experimentDir = "{a}_nRunsPerNode_{b:02d}_nSeed_{c:03d}".format(a=experimentDir_pre, b=numRunsPerJob, c=nSeed)
         outputDir=baseOutputDir + experimentDir
 
         
@@ -109,8 +121,8 @@ for hh in range(len(numRunsPerJobList)):
         path = Path(outputDir + "/z_logs")
         path.mkdir(parents=True, exist_ok=True)
         
-        path = Path(outputDir + "/z_slurmOut")
-        path.mkdir(parents=True, exist_ok=True)
+        #path = Path(outputDir + "/z_slurmOut")
+        #path.mkdir(parents=True, exist_ok=True)
         
         path = Path(outputDir + "/z_config_files")
         path.mkdir(parents=True, exist_ok=True)
