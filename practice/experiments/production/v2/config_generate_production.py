@@ -12,6 +12,12 @@ import os
 from pathlib import Path
 import numpy as np
 
+
+experiment_description = "dielMigration_v1"
+#experiment_description = "physicsOnly"
+
+
+
 config_template_file = "/home/blaughli/tracking_project/practice/experiments/testing/memory_tests_v3/config_template.config.yaml"
 
 cwd = os.getcwd() 
@@ -22,10 +28,10 @@ nSeed=20
 baseOutputDir="/data/blaughli/tracking_project_output_projections/production_n{}_s{}/".format(numRunsPerJob,nSeed)
 
 
-projectionDirectories=["WC15N_HADTV", "WC15N_IPSLTV"]
+#projectionDirectories=["WC15N_HADTV", "WC15N_IPSLTV"]
 #projectionDirectories=["WC15N_HADTV"]
 #projectionDirectories=["WC15N_GFDLTV"]
-#projectionDirectories=["WC15N_GFDLTV" "WC15N_HADTV" "WC15N_IPSLTV"]
+projectionDirectories=["WC15N_GFDLTV", "WC15N_HADTV", "WC15N_IPSLTV"]
 
 baseInputDir_pre="/data/blaughli/jerome_projections/"
 
@@ -40,8 +46,6 @@ bufferLength=100
 seedSpacing=2
 
 particleLifetime = 150
-
-experiment_description = "physicsOnly"
 
 his_file_name_pre = "wc15n_"
 
