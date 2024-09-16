@@ -27,18 +27,9 @@ for jobRunNum in "${!jobDirList[@]}"; do
 
     echo "$(hostname)" > "$logFile"
 
-    python opendrift_run_store_eco_variables_240830_memTest_configFile_v2.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
-    #python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
-
-
-
-    ##python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum > {"$logfile"} &
-    ###python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum &> $logfile &
-    #####python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum 
+    python opendrift_run_store_eco_variables_240830_memTest_configFile_dielMigration_v1.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
+    #python opendrift_run_store_eco_variables_240830_memTest_configFile_v2.py --configfile $configFile --jobrunnumber $jobRunNum &>> "$logFile" &
 
 done
 wait # I don't know why I was using "wait" here.  I think the "&" above is required to make the python calls run in parallel
-
-#python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile $configFile --jobrunnumber $jobRunNum &> $logFile &
-#python opendrift_run_store_eco_variables_240830_memTest_configFile_v1.py --configfile config.yaml --jobrunnumber 0 &> z_testLog.txt &
 
