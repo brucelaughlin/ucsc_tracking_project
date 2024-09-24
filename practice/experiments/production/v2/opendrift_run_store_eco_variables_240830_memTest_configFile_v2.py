@@ -116,9 +116,9 @@ seed_window_length = (number_of_seeds - 1) * days_between_seeds + 1
 save_dt = run_save * 60;
 run_dt = run_calc * 60
 
-# All times reference Jan 1, 1988 (perhaps this shouldn't be hardcoded....)
-base_datetime = datetime.datetime(1990,1,1,12,0,0)
-#base_datetime = datetime.datetime(1988,1,1,12,0,0)
+# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES 
+#base_datetime = datetime.datetime(1990,1,1,12,0,0)
+base_datetime = datetime.datetime(1988,1,1,12,0,0)
 # -----------------------------------------------------------------------------
 
 

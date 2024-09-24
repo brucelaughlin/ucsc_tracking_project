@@ -1,30 +1,27 @@
 #!/usr/bin/env python3
 
-import numpy as np
-import matplotlib.pyplot as plt
 import sys
 import os
 from pathlib import Path
-sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
-from larvaldispersal_track_eco_variables import LarvalDispersal
 import opendrift
-import netCDF4
 
+# Create the output directory "figures" if it doesn't exist already
+current_directory = os.getcwd()
+figures_directory = current_directory + '/figures/'
+Path(figures_directory).mkdir(parents=True, exist_ok=True)
+
+# Read in the name of the file to process from stdin
 tracking_output_file = sys.argv[1]
 
+# Prepare the names of the output files
 output_file_split = tracking_output_file.split('.')
-output_file_pre = output_file_split[0]
+output_file_pre = figures_directory + output_file_split[0]
+output_png_file = output_file_pre + '_depth.png'
 
-#dset = netCDF4.Dataset(tracking_output_file, 'r')
-#h_pre = dset['z']
-#dset.close
-#h = np.array(h_pre)
-
+# Load the model; required for plotting (does magic)
 o = opendrift.open(tracking_output_file)
 
-output_png_file = output_file_pre + '_depth.png'
-#output_mp4_file = output_file_pre + '.mp4'
-
+# Create the plot
 #o.plot_property('z',filename=output_png_file,fast = True)
 o.plot_property('z',filename=output_png_file)
 
