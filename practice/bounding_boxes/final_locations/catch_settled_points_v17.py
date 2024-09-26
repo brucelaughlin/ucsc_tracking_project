@@ -52,7 +52,8 @@ last_settlement_day = 149
 #---------------------------------------------------------------------
 
 # CHANGE THIS ONCE YOU'RE RE-ARRANGED THE OUTPUT DIRECTORY STRUCTURE
-tracking_output_base = "/home/blaughli/tracking_project/zz_output/tracking_project_output_projections/y_projections_1990_2020_KEEP/"
+#tracking_output_base = "/home/blaughli/tracking_project/zz_output/tracking_project_output_projections/y_projections_1990_2020_KEEP/"
+tracking_output_base = "/data/blaughli/copiedFiles/y_projections_1990_2020_KEEP/"
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
