@@ -1,5 +1,7 @@
 # Use the modified pdf files, which have an extra variable for the new box numbers
 
+# v4: save figures, don't show.  eventually process entire directory
+
 # v3: using .npz files, and make input variable
 
 # V1 copied from ....   Why was I doing transpose before plotting?  That now just feels more confusing.
@@ -26,6 +28,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.ticker as tkr
 import argparse
+import os
+from pathlib import Path
 
 #---------------------------------------------------------------------
 # PDF file - contains labels
@@ -41,16 +45,17 @@ pdf_file_name = args.settlefile
 
 #pdf_file_name = pdf_file_name_pre[0:-2] + "_swapped.p"
 
-fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + pdf_file_name
+fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + os.path.splitext(pdf_file_name.split('/')[-1])[0]
+#fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + pdf_file_name.split('/')[-1]
+#fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + pdf_file_name
 
 
 base_path = '/home/blaughli/tracking_project/'
-pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_pre_swap/z_swapped/'
-#pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_swapped/'
-#pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
+pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_swapped/'
 
-pdf_raw_file = pdf_raw_directory + pdf_file_name
-#pdf_raw_file = pdf_raw_directory + 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
+#pdf_raw_file = pdf_raw_directory + pdf_file_name
+
+pdf_raw_file = pdf_file_name
 
 
 d = np.load(pdf_raw_file)
@@ -117,7 +122,11 @@ for ii in range(len(tick_labels)):
         tick_labels_double_Y.append("{} {}".format(tick_labels[ii],tick_positions[ii]+1))
     
 
-fig,axs = plt.subplots(2,2)
+
+fig_size = (16,9)
+
+fig,axs = plt.subplots(2,2, figsize = fig_size)
+#fig,axs = plt.subplots(2,2)
 plt.setp(axs,xticks=tick_positions,xticklabels=tick_labels_double_X,yticks=tick_positions,yticklabels=tick_labels_double_Y)
 
     
@@ -187,7 +196,21 @@ plt.setp(cbar.ax.get_yticklabels()[0:last_tick_keep], visible=False)
 
 fig.suptitle(fig_fullTitle)
 
-plt.show()
+# Create the output directory "figures" if it doesn't exist already
+
+base = os.path.splitext(pdf_raw_file)[0]
+
+figures_directory = base.rsplit('/', 1)[0] + '/figures/'
+
+###figures_directory = pdf_raw_file.split('/')[-2] + '/figures/'
+
+Path(figures_directory).mkdir(parents=True, exist_ok=True)
+
+fig_file = figures_directory + base.split('/')[-1]  + ".png"
+
+plt.savefig(fig_file)
+
+###plt.show()
 
 
 

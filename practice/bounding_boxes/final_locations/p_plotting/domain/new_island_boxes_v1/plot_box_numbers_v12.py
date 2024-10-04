@@ -101,9 +101,17 @@ input_dir_continent = box_dir + continent_dir + 'z_output/'
 pdf_directory = 'practice/bounding_boxes/final_locations/z_output/z_pre_swap/z_swapped/'
 pdf_modified_file = base_path + pdf_directory + pdf_input_file
 
-file = open(pdf_modified_file,'rb')
-pdf_list_exposure_T_source_swapped,pdf_list_of_lists_O2_source_swapped,pdf_list_connectivity_swapped,pdf_list_settleTime_swapped,settlement_boxes_test_array,settlement_times_test_array,counter_array,box_num_mod,tick_positions,tick_labels,first_continent_box_dex,oxygen_limit_list = pickle.load(file)
-file.close()
+#file = open(pdf_modified_file,'rb')
+#pdf_list_exposure_T_source_swapped,pdf_list_of_lists_O2_source_swapped,pdf_list_connectivity_swapped,pdf_list_settleTime_swapped,settlement_boxes_test_array,settlement_times_test_array,counter_array,box_num_mod,tick_positions,tick_labels,first_continent_box_dex,oxygen_limit_list = pickle.load(file)
+#file.close()
+
+d = np.load(pdf_modified_file)
+
+#pdf_arrays_connectivity = d['pdf_arrays_connectivity']
+tick_positions = d['tick_positions']
+tick_labels = d['tick_labels']
+box_num_mod = d['box_num_mod']
+#first_continent_box_dex = d['first_continent_box_num']
 
 
 #---------------------------------------------------------------------

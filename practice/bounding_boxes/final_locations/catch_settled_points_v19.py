@@ -1,3 +1,4 @@
+# v19: incorrectly used savez - it saves arrays, so we can only pass a dictionary of arrays as **kwargs (not just arbitrary things like nested dictionaries)
 
 # v18: want to handle all PLD's in one execution
 
@@ -53,7 +54,7 @@ from os import listdir
 from os.path import isfile, join
 import sys
 import argparse
-#import scipy.stats as stats
+from pathlib import Path
 
 
 #---------------------------------------------------------------------
@@ -101,23 +102,15 @@ base_datetime = datetime.datetime(base_year,1,1,0,0,0)
 
 
 ## KELP BASS
-#first_settlement_day = 20
-#last_settlement_day = 29
 pld_kelp_bass = [20,29]
 
 ## CALIFORNIA SHEEPHEAD
-#first_settlement_day = 30
-#last_settlement_day = 59
 pld_ca_sheephead = [30,59]
 
 ## KELP ROCKFISH
-#first_settlement_day = 60
-#last_settlement_day = 89
 pld_kelp_rockfish = [60,89]
 
 ## BLUE ROCKFISH, BLACK ROCKFISH
-#first_settlement_day = 90
-#last_settlement_day = 149
 pld_blue_black_rockfish = [90, 149]
 
 
@@ -160,16 +153,10 @@ bounding_boxes_islands_dir = bounding_boxes_base + 'modify_islands/z_output/'
 tracking_output_files = [f for f in listdir(tracking_output_dir) if isfile(join(tracking_output_dir,f))]
 tracking_output_files.sort()
 
-
-#save_output_file_name_pre = "pdf_data_output_seasonal_ranges_O2_pH_dictionaries_baseYear_{}_".format(base_year)
-#save_output_file_name = save_output_file_name_pre + tracking_output_dir.split('/')[-1]
+# I always do this - is it bad practice?
+tracking_output_dir = tracking_output_dir + "/"
 
 save_output_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
-save_output_file = save_output_directory + save_output_file_name
-
-print(save_output_file_name)
-
-tracking_output_dir = tracking_output_dir + "/"
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -208,77 +195,26 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 # number of pdfs per feild (4 seasonal and 1 overall = 5)
 n_pdfs = 5
 
+# Need to have a way to see if I'm doing this right... without double counting errors, etc
 tracking_output_file = tracking_output_dir + tracking_output_files[0]
 dset = netCDF4.Dataset(tracking_output_file, 'r')
 #status_all = dset.variables['status'][:]
 particle_labels = dset.variables['trajectory'][:]
 dset.close()
+num_particles = len(particle_labels)
+num_files = len(tracking_output_files)
+counter_array=np.zeros((num_particles,num_files))
 
-species_dictionary_list = []
-
-for ii in range(len(pld_array)):
-
-    d = {}
-
-    d["first_settlement_day"] = pld_array[ii,0]
-    d["last_settlement_day"] = pld_array[ii,1]
-
-
-    # THIS is the v5 adjustment: need to only use data from the pld, which begins after "first_settlement_day" and ends after "last_settlement_day"
-    d["pld_length_days"] = d["last_settlement_day"] - d["first_settlement_day"] + 1
-
-
-    d["timesteps_settlement_window"] = d["pld_length_days"] * timesteps_per_day
-    d["timesteps_full_run"] = (d["last_settlement_day"]+1) * timesteps_per_day + 1
-
-
-    d["first_settle_dex"] = d["first_settlement_day"] * timesteps_per_day +1
-    d["last_settle_dex"] = (d["last_settlement_day"]+1) * timesteps_per_day + 1
-
-
-    #---------------------------------------------------------------------
-    # Create lists to store statistics for full run and seasonal subsets
-    #---------------------------------------------------------------------
-
-    # Connectivity (release box number vs settlement box number)
-    d["pdf_arrays_connectivity"] = np.zeros((n_pdfs,n_boxes,n_boxes))
-
-    # Time after PLD until settlement (saving only release location) (release box number vs settlement time)
-    d["pdf_arrays_settleTime"] = np.zeros((n_pdfs,n_boxes,d["timesteps_settlement_window"]))
-
-    # Number of days eposed to DO levels below 2.2 (saving only settlement location) (release box number vs exposure time)
-    # note: Think the time dimension needs to be one bigger than the number of possible timesteps (ie need to include an option for "zero") 
-    d["pdf_arrays_O2"] = np.zeros((len(O2_limit_list),n_pdfs,n_boxes,d["timesteps_full_run"]))
-
-    # Same idea for pH
-    d["pdf_arrays_pH"] = np.zeros((len(pH_limit_list),n_pdfs,n_boxes,d["timesteps_full_run"]))
-
-    # Histogram of average temperature experienced - just estimating range, since I don't know it without processing
-    #---------------------
-    # Make sure these match (0.1 = 1, 0.01 = 2, etc)
-    T_step = 0.1
-    n_decimals_round = 1
-    T_scale_factor = int(1/T_step)
-    #---------------------
-    T_min = 0
-    T_max = 30
-    n_T_steps = len(np.arange(T_min,T_max+1,T_step))
-    d["pdf_arrays_T"] = np.zeros((n_pdfs,n_boxes,n_T_steps))
-
-    #---------------------------------------------------------------------
-    #---------------------------------------------------------------------
-    num_files = len(tracking_output_files)
-
-    #---------------------------------------------------------------------
-    # Need to have a way to see if I'm doing this right... without double counting errors, etc
-    num_particles = len(particle_labels)
-    d["counter_array"] = np.zeros((num_particles,num_files))
-    #---------------------------------------------------------------------
-
-    species_dictionary_list.append(d)
-    
-
-
+# For the histogram of average temperature experienced - just estimating range, since I don't know it without processing
+#---------------------
+# Make sure these match (0.1 = 1, 0.01 = 2, etc)
+T_step = 0.1
+n_decimals_round = 1
+T_scale_factor = int(1/T_step)
+#---------------------
+T_min = 0
+T_max = 30
+n_T_steps = len(np.arange(T_min,T_max+1,T_step))
 
 
 
@@ -286,77 +222,97 @@ for ii in range(len(pld_array)):
 # START THE MAIN LOOP!!!
 #---------------------------------------------------------------------
 
-file_number = 0
 
-for tracking_output_file_pre in tracking_output_files:
-   
-    #print(file_number)
-
-    #file_number += 1
-    
-    ###TESTING
-    #if file_number != 177:
-#    if file_number not in [155,156,157]:
-    #if file_number != 2:
-     #   continue
-    
-    #file_number -= 1
-
+for pld_dex in range(len(pld_array)):
         
-    tracking_output_file = tracking_output_dir + tracking_output_file_pre
+    ###TESTING
+    #if pld_dex > 0:
+    #    break
 
-    dset = netCDF4.Dataset(tracking_output_file, 'r')
-
-    particle_labels = dset.variables['trajectory'][:]
-    lon_all = dset.variables['lon'][:]
-    lat_all = dset.variables['lat'][:]
-    #z_all = dset.variables['z'][:]
-    status_all = dset.variables['status'][:]
-    time = np.array(dset['time'])
-    # Exposure variables 
-    O2_all = dset.variables['oxygen'][:]
-    pH_all = dset.variables['pH'][:]
-    temp_all = dset.variables['sea_water_temperature'][:]
-
-    dset.close()
-
-    O2_all *= conversion_factor
+    first_settlement_day = pld_array[pld_dex,0]
+    last_settlement_day = pld_array[pld_dex,1]
 
 
-    # Prepare the list of possible seed months for the run
-    run_seed_months_list = []
-    for t in time:
-        run_seed_months_list.append(datetime.datetime.strptime(str(base_datetime+datetime.timedelta(seconds=t)), '%Y-%m-%d %H:%M:%S').month)
+    # THIS is the v5 adjustment: need to only use data from the pld, which begins after "first_settlement_day" and ends after "last_settlement_day"
+    pld_length_days = last_settlement_day - first_settlement_day + 1
 
 
-    # Store the total number of particles
-    num_particles = len(particle_labels)
-      
-    # Determine the output frequency, n per day.
-    # Determine the timestep at which the settlement window opens
-    trajectory_status = status_all[0,:]
-    trajectory_mask = trajectory_status == 0
+    timesteps_settlement_window = pld_length_days * timesteps_per_day
+    timesteps_full_run = (last_settlement_day+1) * timesteps_per_day + 1
 
 
+    first_settle_dex = first_settlement_day * timesteps_per_day +1
+    last_settle_dex = (last_settlement_day+1) * timesteps_per_day + 1
 
-    for dnum in range(len(species_dictionary_list)):
 
-        d = species_dictionary_list[dnum]
+    #---------------------------------------------------------------------
+    # Create lists to store statistics for full run and seasonal subsets
+    #---------------------------------------------------------------------
 
-        # This is not clean, but I don't want to modify all of these variable names in the script to be dictionary keys
-        first_settlement_day = d["first_settlement_day"]
-        last_settlement_day = d["last_settlement_day"]
-        pld_length_days = d["pld_length_days"]
-        timesteps_settlement_window = d["timesteps_settlement_window"]
-        timesteps_full_run = d["timesteps_full_run"]
-        first_settle_dex = d["first_settle_dex"]
-        last_settle_dex = d["last_settle_dex"]
-        pdf_arrays_connectivity = d["pdf_arrays_connectivity"]
-        pdf_arrays_settleTime = d["pdf_arrays_settleTime"]
-        pdf_arrays_O2 = d["pdf_arrays_O2"]
-        pdf_arrays_pH = d["pdf_arrays_pH"]
-        pdf_arrays_T = d["pdf_arrays_T"]
-        counter_array = d["counter_array"]
+    # Connectivity (release box number vs settlement box number)
+    pdf_arrays_connectivity = np.zeros((n_pdfs,n_boxes,n_boxes))
+
+    # Time after PLD until settlement (saving only release location) (release box number vs settlement time)
+    pdf_arrays_settleTime = np.zeros((n_pdfs,n_boxes,timesteps_settlement_window))
+
+    # Number of days eposed to DO levels below 2.2 (saving only settlement location) (release box number vs exposure time)
+    # note: Think the time dimension needs to be one bigger than the number of possible timesteps (ie need to include an option for "zero") 
+    pdf_arrays_O2 = np.zeros((len(O2_limit_list),n_pdfs,n_boxes,timesteps_full_run))
+
+    # Same idea for pH
+    pdf_arrays_pH = np.zeros((len(pH_limit_list),n_pdfs,n_boxes,timesteps_full_run))
+
+    # Histogram of average temperature experienced - just estimating range, since I don't know it without processing
+    pdf_arrays_T = np.zeros((n_pdfs,n_boxes,n_T_steps))
+
+    #---------------------------------------------------------------------
+    #---------------------------------------------------------------------
+
+    file_number = 0
+
+    for tracking_output_file_pre in tracking_output_files:
+       
+        ###TESTING
+        #if file_number > 9:
+        #    break
+        
+
+            
+        tracking_output_file = tracking_output_dir + tracking_output_file_pre
+
+        dset = netCDF4.Dataset(tracking_output_file, 'r')
+
+        particle_labels = dset.variables['trajectory'][:]
+        lon_all = dset.variables['lon'][:]
+        lat_all = dset.variables['lat'][:]
+        #z_all = dset.variables['z'][:]
+        status_all = dset.variables['status'][:]
+        time = np.array(dset['time'])
+        # Exposure variables 
+        O2_all = dset.variables['oxygen'][:]
+        pH_all = dset.variables['pH'][:]
+        temp_all = dset.variables['sea_water_temperature'][:]
+
+        dset.close()
+
+        O2_all *= conversion_factor
+
+
+        # Prepare the list of possible seed months for the run
+        run_seed_months_list = []
+        for t in time:
+            run_seed_months_list.append(datetime.datetime.strptime(str(base_datetime+datetime.timedelta(seconds=t)), '%Y-%m-%d %H:%M:%S').month)
+
+
+        # Store the total number of particles
+        num_particles = len(particle_labels)
+          
+        # Determine the output frequency, n per day.
+        # Determine the timestep at which the settlement window opens
+        trajectory_status = status_all[0,:]
+        trajectory_mask = trajectory_status == 0
+
+
 
 
         # Create array to store all trajectory locations of all particles during their settlement window
@@ -593,44 +549,19 @@ for tracking_output_file_pre in tracking_output_files:
                         box_dex += 1
                         if box_lonlat is not None:
                             path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
-                            #particles_inside_flags = path.contains_points(points_lon_lat).astype(int)
-                            #particles_inside_flags = path.contains_points(points_lon_lat)
                             particles_inside_flags = path.contains_points(points_lon_lat)
                             particles_inside_flags_int = particles_inside_flags.astype(int)
 
                             settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags_int) * settlement_safety_mask
-                            #settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
                             settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask
-                            #settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags) * settlement_safety_mask
-                            #settlement_times = settlement_times + (settle_window_dex * particles_inside_flags) * settlement_safety_mask
-                            #settlement_times = settlement_times + (time_dex * particles_inside_flags) * settlement_safety_mask
                             
                             # Update the counter of settled particles.  For checking consistency
-                            #settleCount += sum(settlement_safety_mask * particles_inside_flags)
                             counter_array[:,file_number] += particles_inside_flags_int * settlement_safety_mask
-                            #counter_array[:,file_number] += particles_inside_flags * settlement_safety_mask
-                            #counter_array[:,file_number] += particles_inside_flags * settlement_safety_mask * timestep_bio_window_mask
                             
                         
-                            #breakpoint()
-
-
-    #                        print('\n')
-    #                        print(num_particles)
-    #                        print(settle_window_dex)
-    #                        print(box_dex)
-    #                        print(np.sum(particles_inside_flags_int)) 
-    #                        print(np.sum(settlement_safety_mask))
-    #                        print(np.sum(particles_inside_flags_int * settlement_safety_mask)) 
-    #                        print(np.sum(((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask)) 
-                            #print('hi')
-
                             # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
                             safety_mask_modifyer = ~particles_inside_flags
-                            #safety_mask_modifyer = ~particles_inside_flags + ~timestep_bio_window_mask
                             settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer.astype(int)
-                            #settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer
-                            #settlement_safety_mask = settlement_safety_mask * ~particles_inside_flags
                             
 
 
@@ -644,38 +575,19 @@ for tracking_output_file_pre in tracking_output_files:
                     box_dex += 1
                     if box_lonlat is not None:
                         path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
-                        #particles_inside_flags = path.contains_points(points_lon_lat).astype(int)
                         particles_inside_flags = path.contains_points(points_lon_lat)
                         particles_inside_flags_int = particles_inside_flags.astype(int)
 
                         settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags_int) * settlement_safety_mask
                         settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask
-                        #settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags) * settlement_safety_mask
-                        #settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags) * settlement_safety_mask
-                        #settlement_times = settlement_times + (time_dex * particles_inside_flags) * settlement_safety_mask
                 
                         # Update the counter of settled particles.  For checking consistency
                         counter_array[:,file_number] += particles_inside_flags_int * settlement_safety_mask
-                        #counter_array[:,file_number] += particles_inside_flags * settlement_safety_mask
-                        #counter_array[:,file_number] += particles_inside_flags * settlement_safety_mask * timestep_bio_window_mask
                             
-    #                    print('\n')
-    #                    print(num_particles)
-    #                    print(settle_window_dex)
-    #                    print(box_dex)
-    #                    print(np.sum(particles_inside_flags_int)) 
-    #                    print(np.sum(settlement_safety_mask))
-    #                    print(np.sum(particles_inside_flags_int * settlement_safety_mask)) 
-    #                    print(np.sum(((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask)) 
-
                         # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
                         safety_mask_modifyer = ~particles_inside_flags
-                        #safety_mask_modifyer = ~particles_inside_flags + ~timestep_bio_window_mask
                         settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer.astype(int)
-                        #settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer
-                        #settlement_safety_mask = settlement_safety_mask * ~particles_inside_flags
                         
-                #bio_window_opening_distribution[time_dex] = np.sum(settlers_assigned_bio_windows == ii)
 
 
         # Compute average temperature along trajectories
@@ -724,49 +636,30 @@ for tracking_output_file_pre in tracking_output_files:
 
 
        
-        # I'm overwriting the dictionary with every iteration, which I don't love...
-        d["first_settlement_day"] = first_settlement_day
-        d["last_settlement_day"] = last_settlement_day
-        d["pld_length_days"] = pld_length_days
-        d["timesteps_settlement_window"] =timesteps_settlement_window
-        d["timesteps_full_run"] = timesteps_full_run
-        d["first_settle_dex"] = first_settle_dex
-        d["last_settle_dex"] = last_settle_dex
-        d["pdf_arrays_connectivity"] = pdf_arrays_connectivity
-        d["pdf_arrays_settleTime"] = pdf_arrays_settleTime
-        d["pdf_arrays_O2"] = pdf_arrays_O2
-        d["pdf_arrays_pH"] = pdf_arrays_pH
-        d["pdf_arrays_T"] = pdf_arrays_T
-        d["counter_array"] = counter_array
 
-        species_dictionary_list[dnum] = d
+        file_number += 1
 
+
+    d = {}
+    d['pdf_arrays_T'] = pdf_arrays_T
+    d['pdf_arrays_O2'] = pdf_arrays_O2
+    d['pdf_arrays_pH'] = pdf_arrays_pH
+    d['pdf_arrays_connectivity'] = pdf_arrays_connectivity
+    d['pdf_arrays_settleTime'] = pdf_arrays_settleTime
+    d['counter_array'] = counter_array
+    d['O2_limit_list'] = O2_limit_list
+    d['pH_limit_list'] = pH_limit_list
+
+    save_output_file_name_pre = "pdf_data_seasonal_ranges_O2_pH_baseYear_{}_".format(base_year)
+    #save_output_file_name_pre = "pdf_data_seasonal_ranges_O2_pH_baseYear_{}_pld_{}_{}".format(base_year,pld_array[pld_dex,0],pld_array[pld_dex,1])
+    save_output_file_name = save_output_file_name_pre + tracking_output_dir.split('/')[-2]
+    save_output_full_path = save_output_directory + save_output_file_name + "_pld_{}_{}".format(pld_array[pld_dex,0],pld_array[pld_dex,1])
     
-    file_number += 1
+    np.savez(save_output_full_path, **d)
 
 
-    save_output_file_name_pre = "pdf_data_output_seasonal_ranges_O2_pH_dictionaries_baseYear_{}_".format(base_year)
-    save_output_file_name = save_output_file_name_pre + tracking_output_dir.split('/')[-1]
-
-    np.savez(save_output_file, **species_dictionary_list)
-    
-    
 
 
-#d = {}
-##d['settlers_timestep_settled'] = settlers_timestep_settled
-##d['settlers_assigned_bio_windows'] = settlers_assigned_bio_windows
-##d['bio_window_opening_distribution'] = bio_window_opening_distribution
-#d['pdf_arrays_T'] = pdf_arrays_T
-##d['pdf_arrays_T'] = pdf_arrays_T
-#d['pdf_arrays_O2'] = pdf_arrays_O2
-#d['pdf_arrays_pH'] = pdf_arrays_pH
-#d['pdf_arrays_connectivity'] = pdf_arrays_connectivity
-#d['pdf_arrays_settleTime'] = pdf_arrays_settleTime
-#d['counter_array'] = counter_array
-#d['O2_limit_list'] = O2_limit_list
-#d['pH_limit_list'] = pH_limit_list
-#
-#np.savez(save_output_file, **d)
+
 
 

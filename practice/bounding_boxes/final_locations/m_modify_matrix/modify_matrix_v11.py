@@ -20,21 +20,6 @@
 # [9,10,11,12,13,14,15,16] -> [9,16,10,15,11,14,12,13]
 
 
-# -------------------------------------------------------
-# Input file
-# -------------------------------------------------------
-#pdf_file_name = 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
-#pdf_file_name = 'pdf_data_output_seasonal_v3_tenFileTest.p'
-#pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_oneFileTest.p'
-#pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_tenFileTest.p'
-#pdf_file_name = 'pdf_data_output_seasonal_rangeO2_v4_run_test3.p'
-#pdf_file_name = "pdf_data_output_seasonal_rangeO2_v4_test4_physics_only_AKs_1en5.p"
-#pdf_file_name = "pdf_data_output_seasonal_rangeO2_pld_20_30_z_two_file_test.p"
-#pdf_file_name = "pdf_data_output_seasonal_rangeO2_pld_20_30_z_two_file_test.npz"
-#pdf_file_name = "pdf_data_output_seasonal_ranges_O2_pH___pld_20_30_z_two_file_test.npz"
-#pdf_file_name = "pdf_data_output_seasonal_ranges_O2_pH___pld_20_29_z_two_file_test.npz"
-#pdf_file_name = "pdf_data_output_seasonal_ranges_O2_pH___pld_90_149_drift_150_physics_only_AKs_1en5_v1.npz"
-# -------------------------------------------------------
 
 import pickle
 import numpy as np
@@ -53,10 +38,21 @@ pdf_file_name = args.input_file
 base_path = '/home/blaughli/tracking_project/'
 pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
 
-pdf_raw_file = pdf_raw_directory + pdf_file_name
+#pdf_raw_file = pdf_raw_directory + pdf_file_name
 
-pdf_file_swapped_name = os.path.splitext(pdf_file_name)[0] + "_swapped"
-pdf_swapped_file_out = pdf_raw_directory + pdf_file_swapped_name
+pdf_raw_file = pdf_file_name
+
+base = os.path.splitext(pdf_raw_file)[0]
+
+swapped_directory = base.rsplit('/', 1)[0] + '/z_swapped/'
+
+pdf_file_swapped_name = swapped_directory + base.split('/')[-1] + "_swapped"
+#pdf_file_swapped_name = swapped_directory + base.split('/')[-1] 
+#pdf_file_swapped_name = swapped_directory + base.split('/')[-1] + ".npz"
+
+#pdf_file_swapped_name = os.path.splitext(pdf_file_name)[0] + "_swapped"
+
+pdf_swapped_file_out = pdf_file_swapped_name
 
 box_dir = base_path + 'practice/bounding_boxes/create_boxes/'
 islands_dir = 'modify_islands/'
@@ -239,12 +235,18 @@ box_num_mod = box_num_islands_mod + list(range(max(box_num_islands_mod) + 1, box
 #box_num_mod = box_num_islands_mod + list(range(max(box_num_islands_mod) + 1, box_num))
 
 
+# REMEMBER - WHEN LOOKING AT THE DOMAIN PLOT, THE FIRST BOX HAS NUMBER 1.  HERE, THE FIRST BOX HAS INDEX 0.  SO SUBTRACT
+# 1 FROM WHAT YOU SEE ON THE DOMAIN PLOT!!!
+
 # May as well save the box numbers to use for labels here
 #dx2_new = [9,16,10,15,11,14,12,13]
 box_num_labels_islands_print = [0,2,4,6,8,10,12,14]
 #box_num_labels_islands_print = [1,3,5,7,9,11,13,15] # one off? (one too large)
 ###box_num_labels_islands_print = [2,6,9,11,13,15,17,20] # Old island boxes
-box_num_labels_continent_print = [19,25,30,33,37,43,52,56,63,73] # fixed the one off?
+
+
+box_num_labels_continent_print = [19,25,30,33,37,42,52,56,63,73,77] # fixed the one off?
+#box_num_labels_continent_print = [19,25,30,33,37,43,52,56,63,73] # fixed the one off?
 #box_num_labels_continent_print = [20,26,31,34,38,44,53,57,64,74] # one off?
 ###box_num_labels_continent_print = [24,30,33,38,42,48,57,61,68,78] # old island boxes
 
@@ -252,7 +254,9 @@ box_num_labels_print = box_num_labels_islands_print + box_num_labels_continent_p
 
 
 
-tick_labels_continent = ['TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
+tick_labels_continent = ['TJ','PV','PM','PC','PB','PS','PR','PA','CM','CB','HB']
+#tick_labels_continent = ['TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
+
 tick_labels_islands = ['SCl','Ca','SB','SN','SM','SR','SC','An']
 
 tick_labels = tick_labels_islands + tick_labels_continent
@@ -289,6 +293,8 @@ d['first_continent_box_num'] = first_continent_box_num
 
 np.savez(pdf_swapped_file_out, **d)
 
+
+#print(pdf_swapped_file_out)
 
 print(np.shape(pdf_arrays_O2_swapped))
 

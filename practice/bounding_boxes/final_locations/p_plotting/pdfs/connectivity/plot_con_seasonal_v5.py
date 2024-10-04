@@ -1,5 +1,9 @@
 # Use the modified pdf files, which have an extra variable for the new box numbers
 
+# v5: add 1-1 line
+
+# v4: save figures, don't show.  eventually process entire directory
+
 # v3: using .npz files, and make input variable
 
 # V1 copied from ....   Why was I doing transpose before plotting?  That now just feels more confusing.
@@ -23,9 +27,11 @@ fig_mainTitle = "Connectivity pdfs (vertical columns integrate to 1).  x-axis = 
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib as mpl
 import matplotlib.ticker as tkr
 import argparse
+import os
+from pathlib import Path
 
 #---------------------------------------------------------------------
 # PDF file - contains labels
@@ -41,16 +47,17 @@ pdf_file_name = args.settlefile
 
 #pdf_file_name = pdf_file_name_pre[0:-2] + "_swapped.p"
 
-fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + pdf_file_name
+fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + os.path.splitext(pdf_file_name.split('/')[-1])[0]
+#fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + pdf_file_name.split('/')[-1]
+#fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + pdf_file_name
 
 
 base_path = '/home/blaughli/tracking_project/'
-pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_pre_swap/z_swapped/'
-#pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_swapped/'
-#pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
+pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_swapped/'
 
-pdf_raw_file = pdf_raw_directory + pdf_file_name
-#pdf_raw_file = pdf_raw_directory + 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
+#pdf_raw_file = pdf_raw_directory + pdf_file_name
+
+pdf_raw_file = pdf_file_name
 
 
 d = np.load(pdf_raw_file)
@@ -117,7 +124,11 @@ for ii in range(len(tick_labels)):
         tick_labels_double_Y.append("{} {}".format(tick_labels[ii],tick_positions[ii]+1))
     
 
-fig,axs = plt.subplots(2,2)
+
+fig_size = (16,9)
+
+fig,axs = plt.subplots(2,2, figsize = fig_size)
+#fig,axs = plt.subplots(2,2)
 plt.setp(axs,xticks=tick_positions,xticklabels=tick_labels_double_X,yticks=tick_positions,yticklabels=tick_labels_double_Y)
 
     
@@ -145,9 +156,27 @@ for pdf_plot in pdf_list[1:]:
     X = np.arange(-0.5, n_boxes_settled, 1)
     Y = np.arange(-0.5, n_boxes_seeded, 1)
 
+#    if ii == 1:
+#        axes_obj = axs[0,0]
+#        axes_title = "Winter (DJF)"
+#    if ii == 2:
+#        axes_obj = axs[0,1]
+#        axes_title = "Spring (MAM)"
+#    if ii == 3:
+#        axes_obj = axs[1,0]
+#        axes_title = "Summer (JJA)"
+#    else:
+#        axes_obj = axs[1,1]
+#        axes_title = "Fall (SON)"
+#
+#    mesh1 = axes_obj.pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+#    axes_obj.plot([0,np.shape(pdf_separated)[1]],[0,np.shape(pdf_separated)[0]],color="black")
+#    axes_obj.title.set_text(axes_title)
+#
 
     if ii == 1:
         mesh1 = axs[0,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+        axs[0,0].plot([0,np.shape(pdf_separated)[1]],[0,np.shape(pdf_separated)[0]],color="black")
         axs[0,0].title.set_text("Winter (DJF)")
     elif ii == 2:
         mesh2 = axs[0,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
@@ -160,7 +189,12 @@ for pdf_plot in pdf_list[1:]:
         axs[1,1].title.set_text("Fall (SON)")
 
 
+### hidden plot of overall pdf (not seasonal) for the overall colorbar)
+#fig_hide,axs_hide = plt.subplots(1,1, figsize = fig_size)
+#mesh_hide = axs_hide.pcolormesh(pdf_list[0].T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+#fig_hide.set_visible(False)
 
+    
 
 
 
@@ -178,14 +212,31 @@ def logP_to_P(x,pos):
     val = round(10**(float(np.ma.masked_invalid(x))),3)
     return val
 
-fmt = matplotlib.ticker.FuncFormatter(logP_to_P)
+fmt = mpl.ticker.FuncFormatter(logP_to_P)
+#cbar = plt.colorbar(mpl.cm.ScalarMappable(pdf_list[0]), ax=axs.ravel().tolist(), format=fmt)
 cbar = plt.colorbar(mesh1, ax=axs.ravel().tolist(), format=fmt)
+#cbar = plt.colorbar(mesh_hide, ax=axs.ravel().tolist(), format=fmt)
+
 cbar.ax.set_ylabel(cbar_label, fontsize = cbar_fontSize)
 cbar.ax.locator_params(nbins=cbar_nBins_2)
 #cbar.ax.yaxis.set_label_position('left')
 plt.setp(cbar.ax.get_yticklabels()[0:last_tick_keep], visible=False)
 
 fig.suptitle(fig_fullTitle)
+
+# Create the output directory "figures" if it doesn't exist already
+
+base = os.path.splitext(pdf_raw_file)[0]
+
+figures_directory = base.rsplit('/', 1)[0] + '/figures/'
+
+###figures_directory = pdf_raw_file.split('/')[-2] + '/figures/'
+
+Path(figures_directory).mkdir(parents=True, exist_ok=True)
+
+fig_file = figures_directory + base.split('/')[-1]  + ".png"
+
+#plt.savefig(fig_file)
 
 plt.show()
 

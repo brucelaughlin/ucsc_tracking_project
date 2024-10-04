@@ -87,6 +87,10 @@ for hist in pdf_arrays_connectivity:
     if np.amin(np.ma.masked_invalid(pdf)) < pdf_min_val:
         pdf_min_val = np.amin(np.ma.masked_invalid(pdf))
 
+# New approach: set min val to log(0.0001), so 0.0001 is our smallest colorbar tick. indicate that in colorbar tick labels
+pdf_min_val = np.log10(0.0001)
+
+
 print(pdf_max_val)
 print(pdf_min_val)
 
@@ -94,33 +98,43 @@ print(pdf_min_val)
 #first_continent_box_dex = 20
 num_dummy_lines = 1
 
+# Handling labels and ticks.  Since the box indices are 0-based, and that's how I saved "tick positions", I need to add 1.  
 
 stagger_dex = 0
 tick_labels_double_X = []
 for ii in range(len(tick_labels)):
     stagger_dex += 1
     if (tick_positions[ii]+1 < first_continent_box_dex) and (stagger_dex % 2 == 0):
-    #if (tick_positions[ii]+1 >= 11) and (tick_positions[ii]+1 <= 17) and (stagger_dex % 2 == 0):
         tick_labels_double_X.append("{}\n\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
     else:
         tick_labels_double_X.append("{}\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
     
 
+#AND, for everything above "first_continent_box_dex", where I'm adding and empty row/col, I need to add 2!!! - where do I handle that??
 stagger_dex = 0
 tick_labels_double_Y = []
 for ii in range(len(tick_labels)):
     stagger_dex += 1
     if (tick_positions[ii]+1 < first_continent_box_dex) and (stagger_dex % 2 == 0):
-    #if (tick_positions[ii]+1 >= 11) and (tick_positions[ii]+1 <= 17) and (stagger_dex % 2 == 0):
         tick_labels_double_Y.append("{}       {}".format(tick_labels[ii],tick_positions[ii]+1))
     else:
         tick_labels_double_Y.append("{} {}".format(tick_labels[ii],tick_positions[ii]+1))
+        tick_positions[ii] = tick_positions[ii] + 1
     
+
+
+
+### hidden plot of overall pdf (not seasonal) for the overall colorbar)
+fig_hide,axs_hide = plt.subplots(1,1)
+mesh_hide = axs_hide.pcolormesh(pdf_list[0].T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+fig_hide.set_visible(False)
+plt.close()
+
+
+
 
 fig,axs = plt.subplots(2,2)
 plt.setp(axs,xticks=tick_positions,xticklabels=tick_labels_double_X,yticks=tick_positions,yticklabels=tick_labels_double_Y)
-
-    
 
 
 ii = 0
@@ -146,19 +160,24 @@ for pdf_plot in pdf_list[1:]:
     Y = np.arange(-0.5, n_boxes_seeded, 1)
 
 
+
+    # WHY DOES THE BLACK LINE GO BEYOND THE PLOT?  I HAVE TO REMOVE THE LAST ELEMENTS...????
     if ii == 1:
         mesh1 = axs[0,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+        axs[0,0].plot([0,np.shape(pdf_separated)[1]-1],[0,np.shape(pdf_separated)[0]-1],color="black",linewidth=0.5)
         axs[0,0].title.set_text("Winter (DJF)")
     elif ii == 2:
         mesh2 = axs[0,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+        axs[0,1].plot([0,np.shape(pdf_separated)[1]-1],[0,np.shape(pdf_separated)[0]-1],color="black",linewidth=0.5)
         axs[0,1].title.set_text("Spring (MAM)")
     elif ii == 3:
         mesh3 = axs[1,0].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+        axs[1,0].plot([0,np.shape(pdf_separated)[1]-1],[0,np.shape(pdf_separated)[0]-1],color="black",linewidth=0.5)
         axs[1,0].title.set_text("Summer (JJA)")
     else:
         mesh4 = axs[1,1].pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
+        axs[1,1].plot([0,np.shape(pdf_separated)[1]-1],[0,np.shape(pdf_separated)[0]-1],color="black",linewidth=0.5)
         axs[1,1].title.set_text("Fall (SON)")
-
 
 
 
@@ -166,8 +185,8 @@ for pdf_plot in pdf_list[1:]:
 
 cbar_fontSize = 20
 
-cbar_nBins_2 = 50
-#cbar_nBins_2 = 15
+#cbar_nBins_2 = 50
+cbar_nBins_2 = 20
 #cbar_nBins_2 = 10
 
 last_tick_keep = 10
@@ -175,15 +194,38 @@ last_tick_keep = 10
 cbar_label = "probability"
 
 def logP_to_P(x,pos):
-    val = round(10**(float(np.ma.masked_invalid(x))),3)
+    val = round(10**(float(np.ma.masked_invalid(x))),4)
+    #val = round(10**(float(np.ma.masked_invalid(x))),3)
     return val
 
 fmt = matplotlib.ticker.FuncFormatter(logP_to_P)
-cbar = plt.colorbar(mesh1, ax=axs.ravel().tolist(), format=fmt)
+cbar = plt.colorbar(mesh_hide, ax=axs.ravel().tolist(), format=fmt)
+#cbar = plt.colorbar(mesh1, ax=axs.ravel().tolist(), format=fmt)
 cbar.ax.set_ylabel(cbar_label, fontsize = cbar_fontSize)
 cbar.ax.locator_params(nbins=cbar_nBins_2)
 #cbar.ax.yaxis.set_label_position('left')
-plt.setp(cbar.ax.get_yticklabels()[0:last_tick_keep], visible=False)
+
+#plt.setp(cbar.ax.get_yticklabels()[0:last_tick_keep], visible=False)
+
+# for some reason there's an "extra" tick for "0" (which becomes 1), which doesn't plot on the cbar initially but shows up
+# when I use custom labels 
+cbar_ticks = list(cbar.get_ticks())
+#cbar_ticks = cbar.get_ticks()
+cbar_ticks = cbar_ticks[0:-1]
+
+cbar_ticks.append(pdf_max_val)
+#cbar_ticks.append(round(10**(float(np.ma.masked_invalid(pdf_max_val))),4))
+
+# change the last label by adding "<=" in front of it
+cbar_tick_labels_pre = cbar.ax.get_yticklabels()
+cbar_tick_labels = [label.get_text() for label in cbar_tick_labels_pre]
+cbar_tick_labels[0] = "<= {}".format(cbar_tick_labels[0])
+cbar_tick_labels = cbar_tick_labels[0:-1]
+cbar_tick_labels.append(round(10**(float(np.ma.masked_invalid(pdf_max_val))),4))
+
+cbar.ax.set_yticklabels(cbar_tick_labels)
+
+cbar.set_ticks(cbar_ticks,labels = cbar_tick_labels)
 
 fig.suptitle(fig_fullTitle)
 
