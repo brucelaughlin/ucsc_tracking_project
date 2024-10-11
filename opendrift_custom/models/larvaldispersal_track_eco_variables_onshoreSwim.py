@@ -15,6 +15,36 @@ import numpy as np
 import logging; logger = logging.getLogger(__name__)
 from opendrift.models.oceandrift import Lagrangian3DArray, OceanDrift
 from opendrift.config import CONFIG_LEVEL_ESSENTIAL, CONFIG_LEVEL_BASIC, CONFIG_LEVEL_ADVANCED
+from scipy import spatial
+
+
+
+#---------------------------------------------------------------------------------
+# Swim data
+#---------------------------------------------------------------------------------
+swim_data_file = '/home/blaughli/tracking_project/practice/onshore_swim_work/z_production/swim_data_simple_v2.npz'
+
+d = np.load(swim_data_file)
+onshore_swim_component_x = d['onshore_swim_component_x']
+onshore_swim_component_y = d['onshore_swim_component_y']
+coord_array = d['coord_array']
+
+model_lat_avg = 38 # CHANGE IF WE NEED TO BE MORE ACCURATE (ie make specific to each particle... ugh!)
+
+meters_per_degree_lat = 111111
+meters_per_degree_lon = meters_per_degree_lat * np.cos(np.radians(model_lat_avg))
+
+# Also for now, just set a constant max swim speed (later should make it dependent on larvae size)
+# From Kashef paper, speeds for rockfish larvae: at parturation: 0.5-1.8 cm/s;"newly settled": 8.6 to 53.5cm/s
+
+#swim_speed_max = 0 # 0 cm/s  ???? Why do i keep stranding particles?
+#swim_speed_max = 0.0001 #.1cm/s  ???? Why do i keep stranding particles?
+#swim_speed_max = 0.001 #.1cm/s  ???? Why do i keep stranding particles?
+#swim_speed_max = 0.01 #1cm/s  ???? Why do i keep stranding particles?
+swim_speed_max = 0.1 #10cm/s
+#swim_speed_max = 10 #10cm/s  WHY NOT, nothing is working anyway
+
+
 
 
 #---------------------------------------------------------------------------------
@@ -99,7 +129,11 @@ class LarvalDispersal(OceanDrift):
         #         'description': 'Fraction of timestep swimming',
         #         'level': CONFIG_LEVEL_ADVANCED},
         #    })
+       
         
+        #self._set_config_default('behavior:onshore_swimming', False)
+        ##self._set_config_default('behavior:onshore_swimming', True)
+
         self._set_config_default('drift:vertical_advection', True)
         self._set_config_default('drift:vertical_mixing', True)
         self._set_config_default('general:coastline_action', 'previous')
@@ -129,46 +163,40 @@ class LarvalDispersal(OceanDrift):
     # ---------------------------------------------------------------------------------------------
 
     # Copied from LarvalFish 
-    def larvae_vertical_migration(self):
+    def larvae_onshore_swim(self):
+        
+        lons = self.elements.lon.reshape(-1,1)
+        lats = self.elements.lat.reshape(-1,1)
+        lonlatpairs = np.concatenate((lons,lats), axis=1)
+        distances,indices = spatial.KDTree(coord_array).query(lonlatpairs)
 
-        # Note: hardcoding a guessed average length (1mm) of the larvae; is this how we want to do things?
-        larvae_length = 1
-        # Note: length is in mm:
-        # https://opendrift.github.io/_modules/opendrift/models/larvalfish.html#LarvalFish.larvae_vertical_migration
+#        print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
+#        print('USER PRINT STATEMENT: number of floats FOUND BY KDTree: {} '.format(len(indices)),flush=True)
+#        print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
 
+        self.elements.lon = self.elements.lon + onshore_swim_component_x[indices]*swim_speed_max/meters_per_degree_lon*self.time_step.total_seconds()
+        self.elements.lat = self.elements.lat + onshore_swim_component_y[indices]*swim_speed_max/meters_per_degree_lat*self.time_step.total_seconds()
 
-        # Vertical migration of Larvae
-        # Swim function from Peck et al. 2006
+        # TEST
+        #self.elements.lon = self.elements.lon - onshore_swim_component_x[indices]*swim_speed_max
+        #self.elements.lat = self.elements.lat - onshore_swim_component_y[indices]*swim_speed_max
+        
+        
+        # TEST
+        #self.elements.lon = self.elements.lon - swim_speed_max
+        #self.elements.lat = self.elements.lat - swim_speed_max
 
-        #L = self.elements.length[larvae] # I don't have this implemented, so I hack it:
-        L = np.ones(len(self.elements))*larvae_length
-       
+#        vx = np.ones_like(self.elements.lon)*swim_speed_max
+#        vy = np.ones_like(self.elements.lon)*swim_speed_max
 
-        # Below, with fraction_of_timestep_swimming = 0.15 (see above), this means
-        # that max_migration_per_timestep = 1.75cm... is that too small?
-
-        swim_speed = (0.261*(L**(1.552*L**(-0.08))) - 5.289/L) / 1000
-        f = self.get_config('IBM:fraction_of_timestep_swimming')
-        max_migration_per_timestep = f*swim_speed*self.time_step.total_seconds()
-
-        # Using here UTC hours. Should be changed to local solar time,
-        # although a phase shift of some hours should not make much difference
-        if self.time.hour < 12:
-            direction = -1  # Swimming down when light is increasing
-        else:
-            direction = 1  # Swimming up when light is decreasing
-
-        #self.elements.z[larvae] = np.minimum(0, self.elements.z[larvae] + direction*max_migration_per_timestep)
-        self.elements.z = np.minimum(0, self.elements.z + direction*max_migration_per_timestep)
-
-
+#        self.update_positions(vx, vy)
 
     def update(self):
         """Update positions and properties of elements."""
         # copied from "OceanDrift", with the addition of the deactivation
 
         # Simply move particles with ambient current
-        self.advect_ocean_current()
+#        self.advect_ocean_current()
 
         # Advect particles due to surface wind drag,
         # according to element property wind_drift_factor
@@ -177,19 +205,37 @@ class LarvalDispersal(OceanDrift):
         # Stokes drift
         #self.stokes_drift()
 
-        # Turbulent Mixing
-        if self.get_config('drift:vertical_mixing') is True:
-            self.update_terminal_velocity()
-            self.vertical_mixing()
-        else:  # Buoyancy
-            self.vertical_buoyancy()
+#        # Turbulent Mixing
+#        if self.get_config('drift:vertical_mixing') is True:
+#            self.update_terminal_velocity()
+#            self.vertical_mixing()
+#        else:  # Buoyancy
+#            self.vertical_buoyancy()
 
-        # Vertical advection
-        if self.get_config('drift:vertical_advection') is True:
-            self.vertical_advection()
+#        # Vertical advection
+#        if self.get_config('drift:vertical_advection') is True:
+#            self.vertical_advection()
+        
+        ### Swimming
+        ##self.get_config('behavior:onshore_swimming' is True:
+        self.larvae_onshore_swim()
+
+
+        #vx = np.ones_like(self.elements.lon)*swim_speed_max
+        #vy = np.ones_like(self.elements.lon)*swim_speed_max
+
+        #vx = np.ones(1)*10
+        #vy = np.ones(1)*10
+
+        #self.update_positions(vx, vy)
+        
+        # TEST
+        #self.elements.lon = self.elements.lon + 0.1
+        #self.elements.lat = self.elements.lat + 0.1
+
 
         # Deactivate floats after "drift_days" has passed
-        self.deactivate_elements(self.elements.age_seconds > drift_seconds, reason='age > {} days'.format(drift_days))
+#        self.deactivate_elements(self.elements.age_seconds > drift_seconds, reason='age > {} days'.format(drift_days))
 
 
 

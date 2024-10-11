@@ -27,7 +27,8 @@ from opendrift.config import CONFIG_LEVEL_ESSENTIAL, CONFIG_LEVEL_BASIC, CONFIG_
 #drift_days = 30
 #drift_days = 10
 #drift_days = 5
-drift_days = 150
+#drift_days = 150
+drift_days = 180
 drift_seconds = (drift_days) * 24 * 60 * 60 
 
 # Copied from "larvalfish.py" in opendrift models

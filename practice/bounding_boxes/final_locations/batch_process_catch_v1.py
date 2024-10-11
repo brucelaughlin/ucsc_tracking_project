@@ -15,28 +15,35 @@
 #baseYear=1990
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
-runBaseDir="/data/blaughli/copiedFiles/y_projections_1990_2020_KEEP/y_complete_1988"
-baseYear=1988
+#runBaseDir="/data/blaughli/tracking_output/"
+#baseYear=1988
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
 #--------------------------------------------------------------------------
 
 
+#baseYearDir=$1
+#baseYearDirSplit=(${baseYearDir/_/ })
+#baseYear=${baseYearDirSplit[1]}
+
+baseYear=$1
+
+runBaseDir="/data/blaughli/tracking_output/baseYear_$baseYear"
+#runBaseDir="/data/blaughli/tracking_output/$baseYearDir"
+#baseYear=$2
+
+echo "$runBaseDir"
+echo "$baseYear"
 
 #callingDir="$(pwd)"
 runDirArray=($runBaseDir/*)
    
-#tA=(0)
-
-#for runDir in "${runDirArray[@]}"; do
-#for ii in "${!tA[@]}"; do
 for ii in "${!runDirArray[@]}"; do
-
-    screen -dmS "run_$ii" python catch_settled_points_v19.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
-    #screen -dmS "run_$ii" python catch_settled_points_v18.py --trackingdir $runDirArray[$ii] --baseyear $baseYear &
-    #python catch_settled_points_v18.py --trackingdir $runDir --baseyear $baseYear &
-    
-
+    screen -dmS "run_$ii" python catch_settled_points_rememberAllReleases_v2.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
+    #python catch_settled_points_rememberAllReleases_v2.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
+    echo "${runDirArray[$ii]}"
 done
-wait # I don't know why I was using "wait" here.  I think the "&" above is required to make the python calls run in parallel
+wait
+
+#wait # I don't know why I was using "wait" here.  I think the "&" above is required to make the python calls run in parallel
 
