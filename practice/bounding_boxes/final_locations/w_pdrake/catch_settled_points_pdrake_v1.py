@@ -1,7 +1,7 @@
 # rememberAllReleases - A new normalization to match Patrick's papers - we calulate the fraction of all released from a location that settled at a given
 # location, rather then dividing only by the number of total settled
 
-# v1: copied from v19 of the old normalization method
+# v1: copied from my "remembarAll" v2 script; modifying to work with Patrick's tracking output.  want to reproduce his connectivity
 
 
 
@@ -47,14 +47,11 @@ from pathlib import Path
 #---------------------------------------------------------------------
 # PARAMETERS and CONSTANTS
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--trackingdir", type=str)
-parser.add_argument("--baseyear", type=int)
-args = parser.parse_args()
-tracking_output_dir = args.trackingdir
-#tracking_output_dir = args.trackingdir + "/"
-#tracking_output_dir_pre = args.trackingdir + "/"
-base_year = args.baseyear
+# fix the tracking data directory and base year, since we only have one set of files from patrick
+#tracking_output_dir = '/home/blaughli/tracking_project/y_pdrake_data/fwd_data/sub_set/one_file'
+#tracking_output_dir = '/home/blaughli/tracking_project/y_pdrake_data/fwd_data/sub_set'
+tracking_output_dir = '/home/blaughli/tracking_project/y_pdrake_data/fwd_data'
+base_year = 1999
 
 #---------------------------------------------------------------------
 # Need to know the number of DAYS of each particle's life (fixed unless I change the 
@@ -70,10 +67,6 @@ base_year = args.baseyear
 #mu, sigma, lower, upper  = 120, 10, 90, 150
 
 
-# Need to hardcode this for now, previous method of "calculating it" based on the input file doesn't work if we're
-# using one input file for different maximum PLDs.
-timesteps_per_day = 1
-
 
 # WTF IS GOING ON HERE WITH THE TIMES???????
 
@@ -88,21 +81,26 @@ base_datetime = datetime.datetime(base_year,1,1,0,0,0)
 
 
 ## KELP BASS
-pld_kelp_bass = [20,29]
+#pld_kelp_bass = [20,29]
 
 ## CALIFORNIA SHEEPHEAD
-pld_ca_sheephead = [30,59]
+#pld_ca_sheephead = [30,59]
 
 ## KELP ROCKFISH
-pld_kelp_rockfish = [60,89]
+#pld_kelp_rockfish = [60,89]
 
 ## BLUE ROCKFISH, BLACK ROCKFISH
-pld_blue_black_rockfish = [90, 149]
+#pld_blue_black_rockfish = [90, 149]
 
 
 #pld_array=np.array([pld_kelp_bass,pld_ca_sheephead,pld_kelp_rockfish,pld_blue_black_rockfish])
 
-pld_array=np.array([pld_kelp_rockfish])
+#pld_array=np.array([pld_kelp_rockfish])
+
+pld_array = np.array([[5,6],[10,11],[15,17],[20,22],[30,33],[45,49],[60,65],[90,98],[120,131],[150,164],[180,197]])
+
+# choose one pld to compare, for now
+pld_chosen_dex = 5
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -149,6 +147,15 @@ save_output_directory = base_path + 'practice/bounding_boxes/final_locations/z_o
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
+
+
+extrema_lon = [np.min(lon_field),np.max(lon_field)]
+extrema_lat = [np.min(lat_field),np.max(lat_field)]
+
+
+
+
+
 # Prepare the data structure (2D array) for saving the pdf data
 
 bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_psi_coastline_wc15n_continent.p'
@@ -182,18 +189,36 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 # Also set up constants used throughout the runtime.
 
 # number of pdfs per feild (4 seasonal and 1 overall = 5)
-n_pdfs = 5
+# JUST MAKE THE ANNUAL FILE
+n_pdfs = 1
+#n_pdfs = 5
 
 
 # Need to have a way to see if I'm doing this right... without double counting errors, etc
 tracking_output_file = tracking_output_dir + tracking_output_files[0]
 dset = netCDF4.Dataset(tracking_output_file, 'r')
-#status_all = dset.variables['status'][:]
-particle_labels = dset.variables['trajectory'][:]
+#particle_labels = dset.variables['drifter'][:]
+#particle_labels = dset.variables['trajectory'][:]
+ocean_time = dset.variables['ocean_time'][:]
+lon = dset.variables['lon'][:]
 dset.close()
-num_particles = len(particle_labels)
+num_particles = np.shape(lon)[1]
+#num_particles = len(particle_labels)
 num_files = len(tracking_output_files)
 counter_array=np.zeros((num_particles,num_files))
+
+
+print('NUMBER OF PARTICLES: {}'.format(num_particles))
+
+
+timesteps_per_day = int(1/((ocean_time[1]-ocean_time[0])/86400))
+
+# For now, exit if output is less than daily...
+if timesteps_per_day < 1:
+    sys.exit('This code is dumb and currently wants a save timestep of <= 1 day.  Should be an easy fix')
+
+
+
 
 # For the histogram of average temperature experienced - just estimating range, since I don't know it without processing
 #---------------------
@@ -216,23 +241,28 @@ n_T_steps = len(np.arange(T_min,T_max+1,T_step))
 for pld_dex in range(len(pld_array)):
         
     ###TESTING
-    #if pld_dex > 0:
-    #    break
+    # test the 45-49 day pld
+    if pld_dex != pld_chosen_dex:
+        continue
+        #break
 
     first_settlement_day = pld_array[pld_dex,0]
     last_settlement_day = pld_array[pld_dex,1]
 
+    print('pld: {}-{}'.format(first_settlement_day,last_settlement_day))
 
     # THIS is the v5 adjustment: need to only use data from the pld, which begins after "first_settlement_day" and ends after "last_settlement_day"
     pld_length_days = last_settlement_day - first_settlement_day + 1
 
 
     timesteps_settlement_window = pld_length_days * timesteps_per_day
-    timesteps_full_run = (last_settlement_day+1) * timesteps_per_day + 1
+#    timesteps_full_run = (last_settlement_day+1) * timesteps_per_day + 1 # why isn't this just taken from the dimensions of the files?
 
 
-    first_settle_dex = first_settlement_day * timesteps_per_day +1
-    last_settle_dex = (last_settlement_day+1) * timesteps_per_day + 1
+    #first_settle_dex = first_settlement_day * timesteps_per_day + 1
+    first_settle_dex = first_settlement_day * timesteps_per_day  # Why was I adding 1 here????
+    last_settle_dex = (last_settlement_day+1) * timesteps_per_day # And here????
+    #last_settle_dex = (last_settlement_day+1) * timesteps_per_day + 1
 
 
     #---------------------------------------------------------------------
@@ -251,13 +281,13 @@ for pld_dex in range(len(pld_array)):
 
     # Number of days eposed to DO levels below 2.2 (saving only settlement location) (release box number vs exposure time)
     # note: Think the time dimension needs to be one bigger than the number of possible timesteps (ie need to include an option for "zero") 
-    pdf_arrays_O2 = np.zeros((len(O2_limit_list),n_pdfs,n_boxes,timesteps_full_run))
+    #pdf_arrays_O2 = np.zeros((len(O2_limit_list),n_pdfs,n_boxes,timesteps_full_run))
 
     # Same idea for pH
-    pdf_arrays_pH = np.zeros((len(pH_limit_list),n_pdfs,n_boxes,timesteps_full_run))
+    #pdf_arrays_pH = np.zeros((len(pH_limit_list),n_pdfs,n_boxes,timesteps_full_run))
 
     # Histogram of average temperature experienced - just estimating range, since I don't know it without processing
-    pdf_arrays_T = np.zeros((n_pdfs,n_boxes,n_T_steps))
+    #pdf_arrays_T = np.zeros((n_pdfs,n_boxes,n_T_steps))
 
     #---------------------------------------------------------------------
     #---------------------------------------------------------------------
@@ -271,82 +301,70 @@ for pld_dex in range(len(pld_array)):
         #    break
         
 
+        print(tracking_output_file_pre)
+
             
         tracking_output_file = tracking_output_dir + tracking_output_file_pre
 
         dset = netCDF4.Dataset(tracking_output_file, 'r')
 
-        particle_labels = dset.variables['trajectory'][:]
+        #particle_labels = dset.variables['trajectory'][:]
         lon_all = dset.variables['lon'][:]
         lat_all = dset.variables['lat'][:]
         #z_all = dset.variables['z'][:]
-        status_all = dset.variables['status'][:]
-        time = np.array(dset['time'])
+        #status_all = dset.variables['status'][:]
+        time = np.array(dset['ocean_time'])
+        #time = np.array(dset['time'])
         # Exposure variables 
-        O2_all = dset.variables['oxygen'][:]
-        pH_all = dset.variables['pH'][:]
-        temp_all = dset.variables['sea_water_temperature'][:]
+        #O2_all = dset.variables['oxygen'][:]
+        #pH_all = dset.variables['pH'][:]
+        #temp_all = dset.variables['sea_water_temperature'][:]
 
         dset.close()
 
-        O2_all *= conversion_factor
-
-
-        # Prepare the list of possible seed months for the run
-        run_seed_months_list = []
-        for t in time:
-            run_seed_months_list.append(datetime.datetime.strptime(str(base_datetime+datetime.timedelta(seconds=t)), '%Y-%m-%d %H:%M:%S').month)
+        #O2_all *= conversion_factor
 
 
         # Store the total number of particles
-        num_particles = len(particle_labels)
-          
-        # Determine the output frequency, n per day.
-        # Determine the timestep at which the settlement window opens
-        trajectory_status = status_all[0,:]
-        trajectory_mask = trajectory_status == 0
-
-
-
+        num_particles = np.shape(lon)[1]
+        #num_particles = len(particle_labels)
+         
 
         # Create array to store all trajectory locations of all particles during their settlement window
         drift_lons = np.zeros((num_particles,timesteps_settlement_window))
         drift_lats = np.zeros((num_particles,timesteps_settlement_window))
 
-        drift_O2 = np.zeros((num_particles,timesteps_full_run))
-        drift_pH = np.zeros((num_particles,timesteps_full_run))
-        drift_T = np.zeros((num_particles,timesteps_full_run))
-        #drift_O2 = np.zeros((num_particles,timesteps_settlement_window))
-        #drift_pH = np.zeros((num_particles,timesteps_settlement_window))
-        #drift_T = np.zeros((num_particles,timesteps_settlement_window))
+        #drift_O2 = np.zeros((num_particles,timesteps_full_run))
+        #drift_pH = np.zeros((num_particles,timesteps_full_run))
+        #drift_T = np.zeros((num_particles,timesteps_full_run))
 
         starting_lons = []
         starting_lats = []
-        seed_months = []
 
-        #for particle_label in particle_labels:
-        for particle_id in range(len(particle_labels)):
+        num_empty = 0
+        num_premature = 0
+        num_zero = 0
+
+        for particle_id in range(num_particles):
+        #for particle_id in range(len(particle_labels)):
             #---------------------------------------------------------------------
             # indent here
             
-            trajectory_status = status_all[particle_id,:]
-
-            # Store month of first timestep of trajectory (ie seeding/starting month)
-            seed_months.append(run_seed_months_list[np.where(trajectory_status == 0)[0][0]])
-
-            trajectory_mask = trajectory_status == 0
-
                
             # Trim the trajectories to prepare for processing!
-            particle_lon = lon_all[particle_id,trajectory_mask]
-            particle_lat = lat_all[particle_id,trajectory_mask]
-            particle_O2 = O2_all[particle_id,trajectory_mask]
-            particle_pH = pH_all[particle_id,trajectory_mask]
-            particle_T = temp_all[particle_id,trajectory_mask]
+            #particle_lon = lon_all[particle_id,trajectory_mask]
+            #particle_lat = lat_all[particle_id,trajectory_mask]
+            #particle_O2 = O2_all[particle_id,trajectory_mask]
+            #particle_pH = pH_all[particle_id,trajectory_mask]
+            #particle_T = temp_all[particle_id,trajectory_mask]
 
-            # Get the STARTING coordinates of each particle
-            starting_lons.append(particle_lon[0]) 
-            starting_lats.append(particle_lat[0]) 
+            particle_lon = lon_all[:,particle_id]
+            particle_lat = lat_all[:,particle_id]
+
+            particle_lon = particle_lon[~particle_lon.mask].data
+            particle_lat = particle_lat[~particle_lat.mask].data
+
+
             
             ## Now that initial positions are known, cut out the "drifting window" and add what remains as a row
             ## in the <drift_lons>, <drift_lats> arrays
@@ -355,19 +373,57 @@ for pld_dex in range(len(pld_array)):
 
             #drift_O2[particle_id,:] = particle_O2[settlement_window_start:]
             #drift_T[particle_id,:] = particle_T[settlement_window_start:]
+        
+            # skip trajectories that don't enter the pld
+            #if len(particle_lon[first_settle_dex:last_settle_dex]) == 0:
+            #    print('BAD PARTICLE INDEX: {}'.format(particle_id))
+         
+
+            # remove the row in <drift_lons> and <drift_lats> of particles that don't enter the pld, then skip to next particle
+            if len(particle_lon) < first_settle_dex:
+        #        drift_lons = np.delete(drift_lons,(particle_id_adjusted),axis=0)
+        #        drift_lats = np.delete(drift_lats,(particle_id_adjusted),axis=0)
+                if len(particle_lon) == 0:
+                    starting_lons.append(-9999) 
+                    starting_lats.append(-9999)
+                    print('bad index: {}'.format(particle_id))
+                    num_empty += 1
+                else:
+                    if particle_lon[0] == 0:
+                        num_zero += 1
+                    else:
+                        num_premature += 1
+                    starting_lons.append(particle_lon[0]) 
+                    starting_lats.append(particle_lat[0]) 
+                #continue
+            else:
+                if particle_lon[0] == 0:
+                    num_zero += 1
+                # populate the drift array with whatever's in the PLD, allowing for empty data at the end
+                if len(particle_lon) < last_settle_dex:
+                    drift_lons[particle_id,0:len(particle_lon)-first_settle_dex] = particle_lon[first_settle_dex:]
+                    drift_lats[particle_id,0:len(particle_lat)-first_settle_dex] = particle_lat[first_settle_dex:]
+                else:
+                    drift_lons[particle_id,:] = particle_lon[first_settle_dex:last_settle_dex]
+                    drift_lats[particle_id,:] = particle_lat[first_settle_dex:last_settle_dex]
+
+                starting_lons.append(particle_lon[0]) 
+                starting_lats.append(particle_lat[0]) 
+
+        num_bad = 0
+        for particle_id in range(num_particles):
+            if drift_lons[particle_id,0] == 0:
+                num_bad += 1
+        
+        print('original num empty: {}'.format(num_empty))
+        print('original num zero: {}'.format(num_zero))
+        print('original num premature: {}'.format(num_premature))
+        print('original num bad: {}'.format(num_bad))
+
+            #drift_O2[particle_id,:] = particle_O2[0:last_settle_dex]
+            #drift_pH[particle_id,:] = particle_pH[0:last_settle_dex]
+            #drift_T[particle_id,:] = particle_T[0:last_settle_dex]
             
-            drift_lons[particle_id,:] = particle_lon[first_settle_dex:last_settle_dex]
-            drift_lats[particle_id,:] = particle_lat[first_settle_dex:last_settle_dex]
-            drift_O2[particle_id,:] = particle_O2[0:last_settle_dex]
-            drift_pH[particle_id,:] = particle_pH[0:last_settle_dex]
-            drift_T[particle_id,:] = particle_T[0:last_settle_dex]
-            #drift_O2[particle_id,:] = particle_O2[1:last_settle_dex]
-            #drift_pH[particle_id,:] = particle_pH[1:last_settle_dex]
-            #drift_T[particle_id,:] = particle_T[1:last_settle_dex]
-            
-            #drift_O2[particle_id,:] = particle_O2[settlement_window_start:settlement_window_end]
-            #drift_pH[particle_id,:] = particle_pH[settlement_window_start:settlement_window_end]
-            #drift_T[particle_id,:] = particle_T[settlement_window_start:settlement_window_end]
 
         # prepare lists to hold the starting/ending box numbers for each particle
         initial_boxes = np.zeros(num_particles).astype(int)
@@ -376,12 +432,10 @@ for pld_dex in range(len(pld_array)):
         settlement_times = np.zeros(num_particles).astype(int)
 
         # Exposure statistics
-        particle_arrays_O2 = np.zeros((num_particles,len(O2_limit_list))).astype(int)
-        particle_arrays_pH = np.zeros((num_particles,len(pH_limit_list))).astype(int)
-        #particle_arrays_O2 = np.zeros((len(O2_limit_list),num_particles)).astype(int)
-        #particle_arrays_pH = np.zeros((len(pH_limit_list),num_particles)).astype(int)  
-        particle_array_T = np.zeros(num_particles)
-        particle_array_driftTime = np.zeros(num_particles)
+        #particle_arrays_O2 = np.zeros((num_particles,len(O2_limit_list))).astype(int)
+        #particle_arrays_pH = np.zeros((num_particles,len(pH_limit_list))).astype(int)
+        #particle_array_T = np.zeros(num_particles)
+        #particle_array_driftTime = np.zeros(num_particles)
 
 
         #---------------------------------------------------------------------
@@ -431,7 +485,6 @@ for pld_dex in range(len(pld_array)):
 
         # CONTINENT NEXT!!
         bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_psi_coastline_wc15n_continent.p'
-        #bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
         file = open(bounding_boxes_file_in,'rb')
         boxes_lonlat = pickle.load(file)
         file.close
@@ -442,7 +495,6 @@ for pld_dex in range(len(pld_array)):
                 path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
                 particles_inside_flags = path.contains_points(points_lon_lat).astype(int)
                 initial_boxes = initial_boxes + (box_dex * particles_inside_flags)
-                #box_dex += 1
                 #print(np.sum(particles_inside_flags))    
 
 
@@ -461,111 +513,62 @@ for pld_dex in range(len(pld_array)):
         ## I think this actually belongs out here - mask needs to become more open with time
         #timestep_bio_window_mask=np.full(np.shape(bio_windows)[0],False)
 
-        
-        for time_dex in range(timesteps_full_run):
-        #for time_dex in range(timesteps_settlement_window):
+       
+        # Wait, have I been ignoring the PLD's this whole time???
+        #for time_dex in range(timesteps_full_run):
+        for time_dex in range(timesteps_settlement_window):
 
-            print("file {}/{}, timestep {}/{}".format(file_number+1, num_files, time_dex,timesteps_full_run-1))
-            #print("file {}/{}, timestep {}/{}".format(file_number+1, num_files, time_dex+1,timesteps_full_run))
+            #print("file {}/{}, timestep {}/{}".format(file_number+1, num_files, time_dex,timesteps_full_run-1))
+            print("file {}/{}, timestep {}/{}".format(file_number+1, num_files, time_dex,timesteps_settlement_window-1))
             #print("file {}/{}, timestep {}/{}".format(file_number+1, num_files, time_dex+1,timesteps_settlement_window))
 
-            #------------------------------------------------------
-            # INDENT HERE
 
-            # JUST FOR TESTING
-            #time_dex = 0  # TESTING
-        
-            current_O2 = drift_O2[:,time_dex]
-            current_pH = drift_pH[:,time_dex]
-            current_T = drift_T[:,time_dex]
-
-            # Exposure 
-            for ii in range(len(O2_limit_list)):
-                particle_arrays_O2[:,ii] = particle_arrays_O2[:,ii] + ((current_O2 < O2_limit_list[ii]).astype(int) * settlement_safety_mask)
-                #particle_arrays_O2[ii,:] = particle_arrays_O2[ii,:] + ((current_O2 < O2_limit_list[ii]).astype(int) * settlement_safety_mask)
-            for ii in range(len(pH_limit_list)):
-                particle_arrays_pH[:,ii] = particle_arrays_pH[:,ii] + ((current_pH < pH_limit_list[ii]).astype(int) * settlement_safety_mask)
-                #particle_arrays_pH[ii,:] = particle_arrays_pH[ii,:] + ((current_pH < pH_limit_list[ii]).astype(int) * settlement_safety_mask)
-            particle_array_T = particle_array_T + (current_T * settlement_safety_mask)
-            particle_array_driftTime = particle_array_driftTime + settlement_safety_mask
-            
-            
-
+            # ?????
             #------------------------------------------------------
             #------------------------------------------------------
             # New modification: we want to track exposure for ENTIRE lives of larvae.  Hence the time condition on settlement computation
             #------------------------------------------------------
-            if time_dex >= first_settle_dex:
-                print("settle time dex: {}".format(time_dex))
+            #if time_dex >= first_settle_dex:
+            #    print("settle time dex: {}".format(time_dex))
             #------------------------------------------------------
             #------------------------------------------------------
             #------------------------------------------------------
+        
+
+#            settle_window_dex = time_dex - first_settle_dex
+
+            current_lons = drift_lons[:,time_dex] 
+            current_lats = drift_lats[:,time_dex] 
+            #current_lons = drift_lons[:,settle_window_dex] 
+            #current_lats = drift_lats[:,settle_window_dex] 
             
 
-                settle_window_dex = time_dex - first_settle_dex
+            points_lon_lat = np.zeros((num_particles,2))
+            for ii in range(num_particles):
+                points_lon_lat[ii,0] = current_lons[ii]
+                points_lon_lat[ii,1] = current_lats[ii]
 
-                current_lons = drift_lons[:,settle_window_dex] 
-                current_lats = drift_lats[:,settle_window_dex] 
-                
-                #points_lon_lat = []
-                #for ii in range(num_particles):
-                #    points_lon_lat.append((current_lons[ii],current_lats[ii]))
-                #points_lon_lat = np.array(points_lon_lat)
+            # Need a running "box_dex" index to keep track of box numbers across the calculations
+            # Maybe don't have a "zero" box, so that 0 can mean NULL....
+            box_dex = 0
+            #box_dex = 1
 
-                points_lon_lat = np.zeros((num_particles,2))
-                for ii in range(num_particles):
-                    points_lon_lat[ii,0] = current_lons[ii]
-                    points_lon_lat[ii,1] = current_lats[ii]
-                    #points_lon_lat[ii,0] = starting_lons[ii]
-                    #points_lon_lat[ii,1] = starting_lats[ii]
+            # WAIT... ISLANDS FIST, SO THEY'RE AT THE BOTTOM CORNER OF THE PDF PLOT...?!
+            num_islands = 8
+            num_last_blob_island = 4
 
-                # Need a running "box_dex" index to keep track of box numbers across the calculations
-                # Maybe don't have a "zero" box, so that 0 can mean NULL....
-                box_dex = 0
-                #box_dex = 1
+            for island_dex in range(num_islands,num_last_blob_island-1,-1):
+            #for island_dex in range(num_last_blob_island,num_islands+1):
 
-                # WAIT... ISLANDS FIST, SO THEY'RE AT THE BOTTOM CORNER OF THE PDF PLOT...?!
-                num_islands = 8
-                num_last_blob_island = 4
+                bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}.p'.format(island_dex)
 
-                for island_dex in range(num_islands,num_last_blob_island-1,-1):
-                #for island_dex in range(num_last_blob_island,num_islands+1):
-
-                    bounding_boxes_file_in = bounding_boxes_islands_dir + 'bounding_boxes_lonlat_wc15n_island_number_{}.p'.format(island_dex)
-
-                    # Load the boxes
-                    file = open(bounding_boxes_file_in,'rb')
-                    boxes_lonlat = pickle.load(file)
-                    file.close        
-
-                    #for box_lonlat in boxes_lonlat:
-                    for box_lonlat in reversed(boxes_lonlat):
-                        box_dex += 1
-                        if box_lonlat is not None:
-                            path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
-                            particles_inside_flags = path.contains_points(points_lon_lat)
-                            particles_inside_flags_int = particles_inside_flags.astype(int)
-
-                            settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags_int) * settlement_safety_mask
-                            settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask
-                            
-                            # Update the counter of settled particles.  For checking consistency
-                            counter_array[:,file_number] += particles_inside_flags_int * settlement_safety_mask
-                            
-                        
-                            # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
-                            safety_mask_modifyer = ~particles_inside_flags
-                            settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer.astype(int)
-                            
-
-
-                # CONTINENT NEXT!!
-                bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_psi_coastline_wc15n_continent.p'
-                #bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_{}_coastline_wc15n_continent.p'.format(point_type_line)
+                # Load the boxes
                 file = open(bounding_boxes_file_in,'rb')
                 boxes_lonlat = pickle.load(file)
+                file.close        
 
-                for box_lonlat in boxes_lonlat:
+                #for box_lonlat in boxes_lonlat:
+                for box_lonlat in reversed(boxes_lonlat):
                     box_dex += 1
                     if box_lonlat is not None:
                         path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
@@ -573,83 +576,117 @@ for pld_dex in range(len(pld_array)):
                         particles_inside_flags_int = particles_inside_flags.astype(int)
 
                         settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags_int) * settlement_safety_mask
-                        settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask
-                
+                        settlement_times = settlement_times + ((time_dex+1) * particles_inside_flags_int) * settlement_safety_mask
+                        #settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask
+                        
                         # Update the counter of settled particles.  For checking consistency
                         counter_array[:,file_number] += particles_inside_flags_int * settlement_safety_mask
-                            
+                        
+                    
                         # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
                         safety_mask_modifyer = ~particles_inside_flags
                         settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer.astype(int)
                         
 
 
+            # CONTINENT NEXT!!
+            bounding_boxes_file_in = bounding_boxes_continent_dir + 'bounding_boxes_lonlat_coords_psi_coastline_wc15n_continent.p'
+            file = open(bounding_boxes_file_in,'rb')
+            boxes_lonlat = pickle.load(file)
+
+            for box_lonlat in boxes_lonlat:
+                box_dex += 1
+                if box_lonlat is not None:
+                    path = plt_path.Path(np.transpose(box_lonlat))  # Transpose still needed?
+                    particles_inside_flags = path.contains_points(points_lon_lat)
+                    particles_inside_flags_int = particles_inside_flags.astype(int)
+
+                    settlement_boxes = settlement_boxes + (box_dex * particles_inside_flags_int) * settlement_safety_mask
+                    settlement_times = settlement_times + ((time_dex+1) * particles_inside_flags_int) * settlement_safety_mask
+                    #settlement_times = settlement_times + ((settle_window_dex+1) * particles_inside_flags_int) * settlement_safety_mask
+            
+                    # Update the counter of settled particles.  For checking consistency
+                    counter_array[:,file_number] += particles_inside_flags_int * settlement_safety_mask
+                        
+                    # Update the safety mask, so that settlement prevents further modifications to the stored settlement location
+                    safety_mask_modifyer = ~particles_inside_flags
+                    settlement_safety_mask = settlement_safety_mask * safety_mask_modifyer.astype(int)
+                        
+
+
         # Compute average temperature along trajectories
-        average_T = [int(round(a/b, n_decimals_round) * T_scale_factor) for a,b in zip(particle_array_T, particle_array_driftTime)]
+        #average_T = [int(round(a/b, n_decimals_round) * T_scale_factor) for a,b in zip(particle_array_T, particle_array_driftTime)]
+
+        num_good = 0
+        num_bad = 0
+        num_empty = 0
+        num_outofbounds = 0
 
         # modify the pdf data structure
         for ii in range(num_particles):
 
-            if seed_months[ii] >=3 and seed_months[ii] <=5 : 
-                season_dex = 2 #MAM
-            elif seed_months[ii] >=6 and seed_months[ii] <=8 : 
-                season_dex = 3 #JJA
-            elif seed_months[ii] >=9 and seed_months[ii] <=11 : 
-                season_dex = 4 #SON
-            else:
-                season_dex = 1 #DJF
                 
-            # We always add to the "total" array; and we also add to the seasonal array corresponding to the current timestep
-            array_dex_list = [0, season_dex]
-            
-            release_counts_per_cell[0,int(initial_boxes[ii])-1] += 1
-            release_counts_per_cell[season_dex,int(initial_boxes[ii])-1] += 1
-            
-            
-            #breakpoint()
-            # Exposure 
+            # Patrick only has the annual array
+            array_dex_list = [0]
+           
+            # Need to skip the bad trajectories, which should have 0's in their initial boxes array
+            #if initial_boxes[ii] == 0:
+                #print('bad particle index : {}'.format(ii))
+            #    continue
+            #else:
+
+            #release_counts_per_cell[0,int(initial_boxes[ii])-1] += 1
             
             # wait we have 0's in here, so my logic requires we skip in this case
-            if int(initial_boxes[ii]) == 0 or int(settlement_boxes[ii]) == 0:
+            if initial_boxes[ii] == 0 or settlement_boxes[ii] == 0:
+                if initial_boxes[ii] == 0:
+                    if drift_lons[ii,0] == 0:
+                        num_empty += 1
+                    elif drift_lons[ii,0] < extrema_lon[0] or drift_lons[ii,0] > extrema_lon[1] or drift_lats[ii,0] < extrema_lat[0] or  drift_lats[ii,0] > extrema_lat[1]:
+                        num_outofbounds += 1
+                    #elif drift_lons[ii,-1] == 0:
+                    #    num_empty += 1
+                num_bad += 1
                 continue
             else:
+                
+                num_good += 1
+                
+                release_counts_per_cell[0,int(initial_boxes[ii])-1] += 1
                    
                 for array_dex in array_dex_list:
                     
-                    pdf_arrays_T[array_dex,int(initial_boxes[ii])-1,average_T[ii]] += 1   
-                    
-                    for jj in range(len(O2_limit_list)):
-                        if particle_arrays_O2[ii,jj] > 0:
-                            pdf_arrays_O2[jj,array_dex,int(initial_boxes[ii])-1,int(particle_arrays_O2[ii,jj])-1] += 1   
-                    
-                    for jj in range(len(pH_limit_list)):
-                        if particle_arrays_pH[ii,jj] > 0:
-                            pdf_arrays_pH[jj,array_dex,int(initial_boxes[ii])-1,int(particle_arrays_pH[ii,jj])-1] += 1   
                     
                     #if settlement_times[ii] > 0:  # I actually think this check is redundant, since we already filtered out particles that didn't settle
                     pdf_arrays_settleTime[array_dex,int(initial_boxes[ii])-1,int(settlement_times[ii])-1] += 1   
                     
                     pdf_arrays_connectivity[array_dex,int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
             
+
+        print('num_good: {}'.format(num_good))
+        print('num_empty: {}'.format(num_empty))
+        print('num_outofbounds: {}'.format(num_outofbounds))
+        print('num_bad: {}'.format(num_bad))
+
         file_number += 1
 
 
 
     d = {}
     d['release_counts_per_cell'] = release_counts_per_cell
-    d['pdf_arrays_T'] = pdf_arrays_T
-    d['pdf_arrays_O2'] = pdf_arrays_O2
-    d['pdf_arrays_pH'] = pdf_arrays_pH
+#    d['pdf_arrays_T'] = pdf_arrays_T
+#    d['pdf_arrays_O2'] = pdf_arrays_O2
+#    d['pdf_arrays_pH'] = pdf_arrays_pH
     d['pdf_arrays_connectivity'] = pdf_arrays_connectivity
     d['pdf_arrays_settleTime'] = pdf_arrays_settleTime
     d['counter_array'] = counter_array
-    d['O2_limit_list'] = O2_limit_list
-    d['pH_limit_list'] = pH_limit_list
+#    d['O2_limit_list'] = O2_limit_list
+#    d['pH_limit_list'] = pH_limit_list
 
     save_output_file_name_pre = "binned_data_seasonal_allReleases_baseYear_{}_".format(base_year)
     #save_output_file_name_pre = "pdf_data_seasonal_ranges_O2_pH_baseYear_{}_".format(base_year)
     save_output_file_name = save_output_file_name_pre + tracking_output_dir.split('/')[-2]
-    save_output_full_path = save_output_directory + save_output_file_name + "_pld_{}_{}".format(pld_array[pld_dex,0],pld_array[pld_dex,1])
+    save_output_full_path = save_output_directory + save_output_file_name + "_pld_{}_{}_pdrake".format(pld_array[pld_dex,0],pld_array[pld_dex,1])
     
     np.savez(save_output_full_path, **d)
 

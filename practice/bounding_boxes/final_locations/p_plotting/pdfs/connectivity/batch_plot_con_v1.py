@@ -19,13 +19,13 @@ baseDir="/home/blaughli/tracking_project/practice/bounding_boxes/final_locations
 
 dirArray=($baseDir/*.npz)
    
-#tA=(0)
-
 for f_file in "${dirArray[@]}"; do
 
-    #echo "$settleFile"
-    python plot_con_seasonal_v7.py "$f_file"
+    python plot_con_seasonal_pDrakeCompare_v1.py "$f_file"
+    #python plot_con_seasonal_v9_patrick.py "$f_file"
+    #python plot_con_seasonal_v8.py "$f_file"
+
+    #break
 
 done
-wait # I don't know why I was using "wait" here.  I think the "&" above is required to make the python calls run in parallel
 

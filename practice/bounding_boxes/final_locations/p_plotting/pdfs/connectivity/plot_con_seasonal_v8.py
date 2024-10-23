@@ -25,7 +25,7 @@ fig_mainTitle = "Connectivity: Log fraction of releases settling.  x-axis = rele
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib as mpl
 import matplotlib.ticker as tkr
 import argparse
 import os
@@ -51,13 +51,8 @@ fig_fullTitle = fig_mainTitle + "\n" + fig_paramTitle + "\n" + os.path.splitext(
 
 base_path = '/home/blaughli/tracking_project/'
 pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_pre_swap/z_swapped/'
-#pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/z_swapped/'
-#pdf_raw_directory = base_path + 'practice/bounding_boxes/final_locations/z_output/'
 
 pdf_raw_file = pdf_file_name
-#pdf_raw_file = pdf_raw_directory + pdf_file_name
-#pdf_raw_file = pdf_raw_directory + 'pdf_data_output_releaseLoc_vs_settleTime_test3.p'
-
 
 d = np.load(pdf_raw_file)
 
@@ -66,13 +61,6 @@ pdf_arrays_connectivity = d['pdf_arrays_connectivity']
 tick_positions = d['tick_positions']
 tick_labels = d['tick_labels']
 first_continent_box_dex = d['first_continent_box_num']
-
-#file = open(pdf_raw_file,'rb')
-#hist_list_exposure_T_source_swapped,hist_list_of_lists_O2_source_swapped,pdf_arrays_connectivity,hist_list_settleTime_swapped,settlement_boxes_test_array,settlement_times_test_array,counter_array,box_num_mod,tick_positions,tick_labels,first_continent_box_dex,oxygen_limit_list = pickle.load(file)
-#file.close()
-
-
-
 
 
 # Normalize the histograms along columns (err... rows??) to make connectivity PDFs (for inverse, normalize along rows (err... columns???))
@@ -85,15 +73,9 @@ pdf_min_val = 999999
 for ii in range(len(pdf_arrays_connectivity)):
 #for hist in pdf_arrays_connectivity:
     pdf = np.copy(pdf_arrays_connectivity[ii])
-    #row_sums = pdf.sum(axis=1)
-    
-    #pdf = pdf / row_sums[:, np.newaxis]
     
     pdf = pdf / release_counts_per_cell[ii][:, np.newaxis]
-    #pdf = pdf / release_counts_per_cell[ii]
-    
-    pdf = np.log10(pdf)
-    
+
     pdf_list.append(pdf)
     if np.amax(pdf) > pdf_max_val:
         pdf_max_val = np.amax(pdf)
@@ -101,15 +83,11 @@ for ii in range(len(pdf_arrays_connectivity)):
         pdf_min_val = np.amin(np.ma.masked_invalid(pdf))
 
 # New approach: set min val to log(0.0001), so 0.0001 is our smallest colorbar tick. indicate that in colorbar tick labels
-pdf_min_val = np.log10(0.0001)
+pdf_min_val = 0.0001
 
+# Also set vmax to log(0.1), to match Patricks's 2011 figures
+pdf_max_val = 0.1
 
-print(pdf_max_val)
-print(pdf_min_val)
-
-# Determined elsewhere (see/run "check_box_numbers.py")
-#first_continent_box_dex = 20
-num_dummy_lines = 1
 
 # Handling labels and ticks.  Since the box indices are 0-based, and that's how I saved "tick positions", I need to add 1.  
 
@@ -119,65 +97,30 @@ tick_labels_double_Y = []
 
 for ii in range(len(tick_labels)):
     tick_labels_double_X.append("{}\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
-    #tick_labels_double_X.append("{}\n\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
     if tick_positions[ii]+1 < 10:
         tick_labels_double_Y.append("{}    {}".format(tick_labels[ii],tick_positions[ii]+1))
-        #tick_labels_double_Y.append("{}         {}".format(tick_labels[ii],tick_positions[ii]+1))
     else:
         tick_labels_double_Y.append("{}  {}".format(tick_labels[ii],tick_positions[ii]+1))
-        #tick_labels_double_Y.append("{}       {}".format(tick_labels[ii],tick_positions[ii]+1))
     if tick_positions[ii]+1 >= first_continent_box_dex:
         tick_positions[ii] = tick_positions[ii] + 1
 
-#stagger_dex = 0
-#tick_labels_double_X = []
-#for ii in range(len(tick_labels)):
-#    stagger_dex += 1
-#    if (tick_positions[ii]+1 < first_continent_box_dex) and (stagger_dex % 2 == 0):
-#        tick_labels_double_X.append("{}\n\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
-#    else:
-#        tick_labels_double_X.append("{}\n{}".format(tick_positions[ii]+1,tick_labels[ii]))
-#    
-#
-##AND, for everything above "first_continent_box_dex", where I'm adding and empty row/col, I need to add 2!!! - where do I handle that??
-#stagger_dex = 0
-#tick_labels_double_Y = []
-#for ii in range(len(tick_labels)):
-#    stagger_dex += 1
-#    if (tick_positions[ii]+1 < first_continent_box_dex) and (stagger_dex % 2 == 0):
-#        tick_labels_double_Y.append("{}       {}".format(tick_labels[ii],tick_positions[ii]+1))
-#    else:
-#        tick_labels_double_Y.append("{} {}".format(tick_labels[ii],tick_positions[ii]+1))
-#        #tick_positions[ii] = tick_positions[ii] + 1
-#    if tick_positions[ii]+1 >= first_continent_box_dex:
-#        tick_positions[ii] = tick_positions[ii] + 1
-#    
-
-bruce_min = -4
-bruce_max = -1
-
-### hidden plot of overall pdf (not seasonal) for the overall colorbar)
-fig_hide,axs_hide = plt.subplots(1,1)
-mesh_hide = axs_hide.pcolormesh(pdf_list[0].T,cmap='jet',vmin=bruce_min,vmax=bruce_max)
-#mesh_hide = axs_hide.pcolormesh(pdf_list[0].T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
-fig_hide.set_visible(False)
-plt.close()
-
-
 
 label_fontsize=6
-
 fig_size = (16,9)
 
-fig,axs = plt.subplots(2,2, figsize = fig_size, subplot_kw = {'aspect':1})
-#fig,axs = plt.subplots(2,2, figsize = fig_size)
-#fig,axs = plt.subplots(2,2)
+#fig,axs = plt.subplots(2,2, figsize = fig_size, subplot_kw = {'aspect':1})
+fig,axs = plt.subplots(2,2, figsize = fig_size)
 #plt.setp(axs,xticks=tick_positions,xticklabels=tick_labels_double_X,yticks=tick_positions,yticklabels=tick_labels_double_Y)
 
+
+
+num_dummy_lines = 1
 
 ii = 0
 
 # Wait, there are 5 pdfs in the list - the first (index 0) is the overall pdf (non-seasonal).  So, do I have a 1-off error here?
+
+pcs = []
 
 for pdf_plot in pdf_list[1:]:
 #for pdf_plot in pdf_list:
@@ -199,83 +142,39 @@ for pdf_plot in pdf_list[1:]:
 
 
     if ii == 1:
-        axes_obj = axs[0,0]
+        ax = axs[0,0]
         axes_title = "Winter (DJF)"
     elif ii == 2:
-        axes_obj = axs[0,1]
+        ax = axs[0,1]
         axes_title = "Spring (MAM)"
     elif ii == 3:
-        axes_obj = axs[1,0]
+        ax = axs[1,0]
         axes_title = "Summer (JJA)"
     else:
-        axes_obj = axs[1,1]
+        ax = axs[1,1]
         axes_title = "Fall (SON)"
 
-    mesh1 = axes_obj.pcolormesh(X,Y,pdf_separated.T,cmap='jet',vmin=pdf_min_val,vmax=pdf_max_val)
-    axes_obj.plot([0,np.shape(pdf_separated)[1]-1],[0,np.shape(pdf_separated)[0]-1],color="black")
-    axes_obj.title.set_text(axes_title)
-    axes_obj.set_xticks(tick_positions)
-    #axes_obj.set_xticklabels(tick_labels_double,fontsize=label_fontsize)
-    axes_obj.set_xticklabels(tick_labels_double_X,fontsize=label_fontsize)
-    axes_obj.set_yticks(tick_positions)
-    #axes_obj.set_yticklabels(tick_labels_double,fontsize=label_fontsize)
-    axes_obj.set_yticklabels(tick_labels_double_Y,fontsize=label_fontsize)
+    pcs.append(ax.pcolormesh(X,Y,np.maximum(pdf_separated.T,pdf_min_val),cmap='jet',norm=mpl.colors.LogNorm(vmin=pdf_min_val,vmax=pdf_max_val)))
+    ax.plot([0,np.shape(pdf_separated)[1]-1],[0,np.shape(pdf_separated)[0]-1],color="black")
+    ax.set_title(axes_title)
+    ax.set_xticks(tick_positions)
+    ax.set_xticklabels(tick_labels_double_X,fontsize=label_fontsize)
+    ax.set_yticks(tick_positions)
+    ax.set_yticklabels(tick_labels_double_Y,fontsize=label_fontsize)
 
 
 
 
 
-
-cbar_fontSize = 20
-
-#cbar_nBins_2 = 50
-cbar_nBins_2 = 20
-#cbar_nBins_2 = 10
-
-last_tick_keep = 10
 
 cbar_label = "probability"
 
-def logP_to_P(x,pos):
-    val = round(10**(float(np.ma.masked_invalid(x))),4)
-    #val = round(10**(float(np.ma.masked_invalid(x))),3)
-    return val
-
-fmt = matplotlib.ticker.FuncFormatter(logP_to_P)
-cbar = plt.colorbar(mesh_hide, ax=axs.ravel().tolist(), format=fmt)
-#cbar = plt.colorbar(mesh1, ax=axs.ravel().tolist(), format=fmt)
-cbar.ax.set_ylabel(cbar_label, fontsize = cbar_fontSize)
-cbar.ax.locator_params(nbins=cbar_nBins_2)
-#cbar.ax.yaxis.set_label_position('left')
-
-#plt.setp(cbar.ax.get_yticklabels()[0:last_tick_keep], visible=False)
-
-# for some reason there's an "extra" tick for "0" (which becomes 1), which doesn't plot on the cbar initially but shows up
-# when I use custom labels 
-cbar_ticks = list(cbar.get_ticks())
-#cbar_ticks = cbar.get_ticks()
-cbar_ticks = cbar_ticks[0:-1]
-
-cbar_ticks.append(pdf_max_val)
-#cbar_ticks.append(round(10**(float(np.ma.masked_invalid(pdf_max_val))),4))
-
-# change the last label by adding "<=" in front of it
-cbar_tick_labels_pre = cbar.ax.get_yticklabels()
-cbar_tick_labels = [label.get_text() for label in cbar_tick_labels_pre]
-cbar_tick_labels[0] = "<= {}".format(cbar_tick_labels[0])
-cbar_tick_labels = cbar_tick_labels[0:-1]
-cbar_tick_labels.append(round(10**(float(np.ma.masked_invalid(pdf_max_val))),4))
-
-cbar.ax.set_yticklabels(cbar_tick_labels)
-
-cbar.set_ticks(cbar_ticks,labels = cbar_tick_labels)
+cbar = plt.colorbar(pcs[0], ax=axs.ravel(),label=cbar_label,extend="both")
 
 fig.suptitle(fig_fullTitle)
 
 # Create the output directory "figures" if it doesn't exist already
-
 base = os.path.splitext(pdf_raw_file)[0]
-
 figures_directory = base.rsplit('/', 1)[0] + '/figures/'
 Path(figures_directory).mkdir(parents=True, exist_ok=True)
 

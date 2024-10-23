@@ -1,3 +1,5 @@
+# v2: now we're dividing by the total number of released particles, rather than total number of settlers, so columns should NOT sum to 1
+
 # just check that columns do actually add to 1
 
 import pickle
@@ -11,7 +13,8 @@ from pathlib import Path
 
 base_path = "/home/blaughli/tracking_project/practice/bounding_boxes/final_locations/z_output/z_pre_swap/z_swapped/"
 
-pdf_raw_file = base_path + "pdf_data_seasonal_ranges_O2_pH_baseYear_1988_WC15N_1988-2010_nRunsPerNode_15_nSeed_020_physicsOnly_pld_20_29_swapped.npz"
+#pdf_raw_file = base_path + "pdf_data_seasonal_ranges_O2_pH_baseYear_1988_WC15N_1988-2010_nRunsPerNode_15_nSeed_020_physicsOnly_pld_20_29_swapped.npz"
+pdf_raw_file = base_path + "pdf_data_seasonal_ranges_O2_pH_baseYear_1988_WC15N_1988-2010_nRunsPerNode_15_nSeed_020_physicsOnly_pld_30_59_swapped.npz"
 
 d = np.load(pdf_raw_file)
 
@@ -50,6 +53,12 @@ for ii in range(len(pdf_list)):
     
     print("real data row sums:")
     print(np.sum(pdf_list[ii],axis=1))
+
+    print("sums over 1:")
+    sums = np.sum(pdf_list[ii],axis=1)
+    for a in sums:
+        if a >=1:
+            print(a)
 
     break
 

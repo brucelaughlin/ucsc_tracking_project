@@ -28,9 +28,8 @@
 
 baseYear=$1
 
-runBaseDir="/data/blaughli/tracking_output/baseYear_$baseYear"
-#runBaseDir="/data/blaughli/tracking_output/$baseYearDir"
-#baseYear=$2
+runBaseDir="/data/blaughli/tracking_output/sanityTests/baseYear_$baseYear"
+#runBaseDir="/data/blaughli/tracking_output/baseYear_$baseYear"
 
 echo "$runBaseDir"
 echo "$baseYear"
@@ -39,9 +38,9 @@ echo "$baseYear"
 runDirArray=($runBaseDir/*)
    
 for ii in "${!runDirArray[@]}"; do
-    screen -dmS "run_$ii" python catch_settled_points_rememberAllReleases_v2.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
-    #python catch_settled_points_rememberAllReleases_v2.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
     echo "${runDirArray[$ii]}"
+    #screen -dmS "run_$ii" python catch_settled_points_rememberAllReleases_v2.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
+    python catch_settled_points_rememberAllReleases_v2.py --trackingdir ${runDirArray[$ii]} --baseyear $baseYear
 done
 wait
 

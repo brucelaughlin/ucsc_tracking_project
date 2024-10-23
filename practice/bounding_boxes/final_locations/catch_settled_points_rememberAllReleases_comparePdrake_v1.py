@@ -47,14 +47,16 @@ from pathlib import Path
 #---------------------------------------------------------------------
 # PARAMETERS and CONSTANTS
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--trackingdir", type=str)
-parser.add_argument("--baseyear", type=int)
-args = parser.parse_args()
-tracking_output_dir = args.trackingdir
-#tracking_output_dir = args.trackingdir + "/"
-#tracking_output_dir_pre = args.trackingdir + "/"
-base_year = args.baseyear
+#parser = argparse.ArgumentParser()
+#parser.add_argument("--trackingdir", type=str)
+#parser.add_argument("--baseyear", type=int)
+#args = parser.parse_args()
+#tracking_output_dir = args.trackingdir
+#base_year = args.baseyear
+
+base_year = 1990
+tracking_output_dir = '/data/blaughli/tracking_output/baseYear_1990/WC15N_GFDLTV_nRunsPerNode_15_nSeed_020_physicsOnly'
+
 
 #---------------------------------------------------------------------
 # Need to know the number of DAYS of each particle's life (fixed unless I change the 
@@ -102,7 +104,12 @@ pld_blue_black_rockfish = [90, 149]
 
 #pld_array=np.array([pld_kelp_bass,pld_ca_sheephead,pld_kelp_rockfish,pld_blue_black_rockfish])
 
-pld_array=np.array([pld_kelp_rockfish])
+#pld_array=np.array([pld_kelp_rockfish])
+
+pld_array = np.array([[5,6],[10,11],[15,17],[20,22],[30,33],[45,49],[60,65],[90,98],[120,131],[150,164],[180,197]])
+
+# choose one pld to compare, for now
+pld_chosen_dex = 5
 
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
@@ -182,7 +189,8 @@ for island_dex in range(num_last_blob_island,num_islands+1):
 # Also set up constants used throughout the runtime.
 
 # number of pdfs per feild (4 seasonal and 1 overall = 5)
-n_pdfs = 5
+#n_pdfs = 5
+n_pdfs = 1
 
 
 # Need to have a way to see if I'm doing this right... without double counting errors, etc
@@ -209,6 +217,19 @@ n_T_steps = len(np.arange(T_min,T_max+1,T_step))
 
 
 #---------------------------------------------------------------------
+#---------------------------------------------------------------------
+# hack for testing against patrick
+# 1990 = nudges 3320 through 36400
+
+tracking_output_files = []
+for ii in range(3320,3680,40):
+    tracking_output_files.append(tracking_output_dir + '/tracking_output_calcDT_060_saveDT_1440_buffer_100_nSeed_020_startNudge_{:06d}.nc'.format(ii))
+num_files = len(tracking_output_files)
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
 # START THE MAIN LOOP!!!
 #---------------------------------------------------------------------
 
@@ -216,8 +237,10 @@ n_T_steps = len(np.arange(T_min,T_max+1,T_step))
 for pld_dex in range(len(pld_array)):
         
     ###TESTING
-    #if pld_dex > 0:
-    #    break
+    # test the 45-49 day pld
+    if pld_dex != pld_chosen_dex:
+        continue
+        #break
 
     first_settlement_day = pld_array[pld_dex,0]
     last_settlement_day = pld_array[pld_dex,1]
@@ -264,7 +287,8 @@ for pld_dex in range(len(pld_array)):
 
     file_number = 0
 
-    for tracking_output_file_pre in tracking_output_files:
+    for tracking_output_file in tracking_output_files:
+    #for tracking_output_file_pre in tracking_output_files:
        
         ###TESTING
         #if file_number > 9:
@@ -272,7 +296,7 @@ for pld_dex in range(len(pld_array)):
         
 
             
-        tracking_output_file = tracking_output_dir + tracking_output_file_pre
+        #tracking_output_file = tracking_output_dir + tracking_output_file_pre
 
         dset = netCDF4.Dataset(tracking_output_file, 'r')
 
@@ -587,52 +611,45 @@ for pld_dex in range(len(pld_array)):
         # Compute average temperature along trajectories
         average_T = [int(round(a/b, n_decimals_round) * T_scale_factor) for a,b in zip(particle_array_T, particle_array_driftTime)]
 
+
+
         # modify the pdf data structure
         for ii in range(num_particles):
 
-            if seed_months[ii] >=3 and seed_months[ii] <=5 : 
-                season_dex = 2 #MAM
-            elif seed_months[ii] >=6 and seed_months[ii] <=8 : 
-                season_dex = 3 #JJA
-            elif seed_months[ii] >=9 and seed_months[ii] <=11 : 
-                season_dex = 4 #SON
-            else:
-                season_dex = 1 #DJF
-                
-            # We always add to the "total" array; and we also add to the seasonal array corresponding to the current timestep
-            array_dex_list = [0, season_dex]
-            
-            release_counts_per_cell[0,int(initial_boxes[ii])-1] += 1
-            release_counts_per_cell[season_dex,int(initial_boxes[ii])-1] += 1
-            
-            
-            #breakpoint()
-            # Exposure 
-            
-            # wait we have 0's in here, so my logic requires we skip in this case
-            if int(initial_boxes[ii]) == 0 or int(settlement_boxes[ii]) == 0:
+
+            # Patrick only has the annual array
+            array_dex_list = [0]
+
+            # Need to skip the bad trajectories, which should have 0's in their initial boxes array
+            if initial_boxes[ii] == 0:
+                print('bad particle index : {}'.format(ii))
                 continue
             else:
-                   
-                for array_dex in array_dex_list:
-                    
-                    pdf_arrays_T[array_dex,int(initial_boxes[ii])-1,average_T[ii]] += 1   
-                    
-                    for jj in range(len(O2_limit_list)):
-                        if particle_arrays_O2[ii,jj] > 0:
-                            pdf_arrays_O2[jj,array_dex,int(initial_boxes[ii])-1,int(particle_arrays_O2[ii,jj])-1] += 1   
-                    
-                    for jj in range(len(pH_limit_list)):
-                        if particle_arrays_pH[ii,jj] > 0:
-                            pdf_arrays_pH[jj,array_dex,int(initial_boxes[ii])-1,int(particle_arrays_pH[ii,jj])-1] += 1   
-                    
-                    #if settlement_times[ii] > 0:  # I actually think this check is redundant, since we already filtered out particles that didn't settle
-                    pdf_arrays_settleTime[array_dex,int(initial_boxes[ii])-1,int(settlement_times[ii])-1] += 1   
-                    
-                    pdf_arrays_connectivity[array_dex,int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1   
-            
-        file_number += 1
 
+            #release_counts_per_cell[0,int(initial_boxes[ii])-1] += 1
+
+            # wait we have 0's in here, so my logic requires we skip in this case
+            #if initial_boxes[ii] == 0 or settlement_boxes[ii] == 0:
+            #    if initial_boxes[ii] == 0:
+            #        if drift_lons[ii,0] == 0:
+            #            num_empty += 1
+            #        elif drift_lons[ii,0] < extrema_lon[0] or drift_lons[ii,0] > extrema_lon[1] or drift_lats[ii,0] < extrema_lat[0] or  drift_lats[ii,0] > extrema_lat[1]:
+            #            num_outofbounds += 1
+            #        #elif drift_lons[ii,-1] == 0:
+            #        #    num_empty += 1
+            #    num_bad += 1
+            #    continue
+            #else:
+
+            #    num_good += 1
+
+                release_counts_per_cell[0,int(initial_boxes[ii])-1] += 1
+
+                for array_dex in array_dex_list:
+                    pdf_arrays_settleTime[array_dex,int(initial_boxes[ii])-1,int(settlement_times[ii])-1] += 1
+                    pdf_arrays_connectivity[array_dex,int(initial_boxes[ii])-1,int(settlement_boxes[ii])-1] += 1
+
+        file_number += 1
 
 
     d = {}
@@ -649,7 +666,7 @@ for pld_dex in range(len(pld_array)):
     save_output_file_name_pre = "binned_data_seasonal_allReleases_baseYear_{}_".format(base_year)
     #save_output_file_name_pre = "pdf_data_seasonal_ranges_O2_pH_baseYear_{}_".format(base_year)
     save_output_file_name = save_output_file_name_pre + tracking_output_dir.split('/')[-2]
-    save_output_full_path = save_output_directory + save_output_file_name + "_pld_{}_{}".format(pld_array[pld_dex,0],pld_array[pld_dex,1])
+    save_output_full_path = save_output_directory + save_output_file_name + "_pld_{}_{}_forComparisonToPdrake".format(pld_array[pld_dex,0],pld_array[pld_dex,1])
     
     np.savez(save_output_full_path, **d)
 
