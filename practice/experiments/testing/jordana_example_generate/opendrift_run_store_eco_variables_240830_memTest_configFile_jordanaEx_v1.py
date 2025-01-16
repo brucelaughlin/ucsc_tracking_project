@@ -1,4 +1,4 @@
-#v2: reader has a way to specify new variables, so don't need custom reader!
+# v1: Make a minimal example for Jordana - just release one particle from each box
 
 #particle_lifetime = 10
 #particle_lifetime = 150
@@ -28,8 +28,8 @@ from pathlib import Path
 import argparse
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
-from larvaldispersal_track_eco_variables_dielMigration import LarvalDispersal
-#from larvaldispersal_track_eco_variables import LarvalDispersal
+#from larvaldispersal_track_eco_variables_noVertical import LarvalDispersal
+from larvaldispersal_track_eco_variables import LarvalDispersal
 from reader_ROMS_native_h5netcdf_mod import Reader
 
 
@@ -116,7 +116,7 @@ seed_window_length = (number_of_seeds - 1) * days_between_seeds + 1
 save_dt = run_save * 60;
 run_dt = run_calc * 60
 
-# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES
+# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES 
 #base_datetime = datetime.datetime(1990,1,1,12,0,0)
 base_datetime = datetime.datetime(1988,1,1,12,0,0)
 # -----------------------------------------------------------------------------
@@ -191,14 +191,16 @@ times = []
 
 for run_day in range(0,seed_window_length,days_between_seeds): 
     for ii in range(len(points_in_boxes_lon_lat)):
-        for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+        #for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+        for jj in range(1):
             bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
             depth_min = np.floor(min(min_float_depth,bottom_depth))
-            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
-                zs.append(-kk*depth_step)
-                lons.append(points_in_boxes_lon_lat[ii][0,jj])
-                lats.append(points_in_boxes_lon_lat[ii][1,jj])
-                times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+            #for kk in range(int(np.floor(depth_min / depth_step)) + 1):
+            kk = 1
+            zs.append(-kk*depth_step)
+            lons.append(points_in_boxes_lon_lat[ii][0,jj])
+            lats.append(points_in_boxes_lon_lat[ii][1,jj])
+            times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
 
 
 

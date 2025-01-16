@@ -15,8 +15,11 @@ import numpy as np
 
 # -----------------------------
 # -----------------------------
-numRunsPerJob=15
-nSeed=20
+#numRunsPerJob=15
+#nSeed=20
+
+numRunsPerJob=1
+nSeed=1
 # -----------------------------
 # -----------------------------
 
@@ -24,8 +27,8 @@ nSeed=20
 cwd = os.getcwd() 
 
 
-experiment_description = "dielMigration_v1"
-#experiment_description = "physicsOnly"
+#experiment_description = "dielMigration_v1"
+experiment_description = "physicsOnly"
 
 
 
@@ -33,8 +36,7 @@ experiment_description = "dielMigration_v1"
 config_template_file = cwd + "/config_template.config.yaml"
 
 
-#baseOutputDir="/data/blaughli/tracking_project_output_projections/production_n{}_s{}/".format(numRunsPerJob,nSeed)
-baseOutputDir="/home/blaughli/tracking_project/zz_output/tracking_project_output_projections/production_n{}_s{}/".format(numRunsPerJob,nSeed)
+baseOutputDir="/home/blaughli/tracking_project/zz_output/tracking_project_output_projections/v_jordana_example_output_small/"
 
 
 #projectionDirectories=["WC15N_HADTV", "WC15N_IPSLTV"]
@@ -149,8 +151,8 @@ for projectionNumber in range(len(projectionDirectories)):
 
     #nodesIdle=0
 
-    for ii in range(numJobs):
-    #for ii in range(1):  # FOR TESTING - JUST RUN ONCE
+    #for ii in range(numJobs):
+    for ii in range(1):  # FOR TESTING - JUST RUN ONCE
 
         #-------------------------------------
         # INDENT HERE ------------------------

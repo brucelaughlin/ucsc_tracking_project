@@ -2,6 +2,8 @@
 # are not "in order" - in other words, the pdf won't look intuitive, since, for instance, boxes 13 and 20 represent
 # the same island, but will appear far apart
 
+# v12: just adding the "release_counts_per_cell" key
+
 # v11: add argparse - time to mature
 
 #v8: switched to np.savez saving
@@ -25,7 +27,7 @@ import pickle
 import numpy as np
 import os
 import argparse
-
+from pathlib import Path
 
 
 parser = argparse.ArgumentParser()
@@ -45,6 +47,8 @@ pdf_raw_file = pdf_file_name
 base = os.path.splitext(pdf_raw_file)[0]
 
 swapped_directory = base.rsplit('/', 1)[0] + '/z_swapped/'
+Path(swapped_directory).mkdir(parents=True, exist_ok=True)
+
 
 pdf_file_swapped_name = swapped_directory + base.split('/')[-1] + "_swapped"
 #pdf_file_swapped_name = swapped_directory + base.split('/')[-1] 
@@ -70,118 +74,47 @@ input_dir_continent = box_dir + continent_dir + 'z_output/'
 
 d = np.load(pdf_raw_file)
 
-#settlers_timestep_settled = d['settlers_timestep_settled']
-#settlers_assigned_bio_windows = d['settlers_assigned_bio_windows']
-#bio_window_opening_distribution = d['bio_window_opening_distribution'] 
-pdf_arrays_T = d['pdf_arrays_T']
-pdf_arrays_O2 = d['pdf_arrays_O2']
-pdf_arrays_pH = d['pdf_arrays_pH']
-pdf_arrays_connectivity = d['pdf_arrays_connectivity'] 
+pdf_arrays_connectivity = d['pdf_arrays_connectivity']
+release_counts_per_cell  = d['release_counts_per_cell']
 pdf_arrays_settleTime = d['pdf_arrays_settleTime']
 counter_array = d['counter_array']
-O2_limit_list = d['O2_limit_list']
-pH_limit_list = d['pH_limit_list']
 
+release_counts_per_cell_swapped = np.zeros_like(release_counts_per_cell)
 pdf_arrays_connectivity_swapped = np.zeros_like(pdf_arrays_connectivity)
 pdf_arrays_settleTime_swapped = np.zeros_like(pdf_arrays_settleTime)
-pdf_arrays_T_swapped = np.zeros_like(pdf_arrays_T)
-pdf_arrays_O2_swapped = np.zeros_like(pdf_arrays_O2)
-pdf_arrays_pH_swapped = np.zeros_like(pdf_arrays_pH)
-#pdf_list_connectivity_swapped = []
-#pdf_list_settleTime_swapped = []
-#pdf_arrays_T_swapped = []
-#pdf_arrays_O2_swapped = []
 
-#for ii in range(len(pdf_arrays_O2)):
-#    pdf_arrays_O2_swapped.append([])
-#pdf_arrays_pH_swapped = []
-#for ii in range(len(pdf_arrays_pH)):
-#    pdf_arrays_pH_swapped.append([])
+#print(np.shape(pdf_arrays_O2))
 
-print(np.shape(pdf_arrays_O2))
-
+print(np.shape(release_counts_per_cell))
 
 # -------------------------------------------------------
-## ISLAND 1
-#dx1 = [0,1,2,3]
-#swap_dst1 = [0,1]
-#swap_src1 = [1,2]
-
 # ISLANDS 4-8
 dx2_og =  [8,9,10,11,12,13,14,15]
-#dx2_og =  [9,10,11,12,13,14,15,16]
 dx2_new = [8,15,9,14,10,13,11,12]
-#dx2_new = [9,16,10,15,11,14,12,13]
 
 unchanged_boxes = [0,1,2,3,4,5,6,7]
-#unchanged_boxes = [0,1,2,3,4,5,6,7,8]
 # -------------------------------------------------------
 
 # Re-do with np arrays.  Still this feels a bit hacky
 
+# release counts array is one-dimensional
+prc = np.copy(release_counts_per_cell)
+prc[0,dx2_og] = prc[0,dx2_new]
+release_counts_per_cell_swapped[0,:] = prc
 
-for ii in range(np.shape(pdf_arrays_O2)[0]):
-    for jj in range(np.shape(pdf_arrays_O2)[1]):
-        if ii == 0:
-            pf = np.copy(pdf_arrays_connectivity[jj,:,:])
-            pfTimes = np.copy(pdf_arrays_settleTime[jj,:,:])
-            pfT = np.copy(pdf_arrays_T[jj,:,:])
-        pfO2 = np.copy(pdf_arrays_O2[ii,jj,:,:])
+pf = np.copy(pdf_arrays_connectivity)
+pf2 = np.copy(pdf_arrays_connectivity)
+pfTimes = np.copy(pdf_arrays_settleTime)
 
-        # Rows
-        if ii == 0:
-            pf[dx2_og] = pf[dx2_new]
-            pfTimes[dx2_og] = pfTimes[dx2_new]
-            pfT[dx2_og] = pfT[dx2_new]
-        pfO2[dx2_og] = pfO2[dx2_new]
-        
-        # Columns
-        if ii == 0:
-            pf[:,dx2_og] = pf[:,dx2_new]
+# Rows
+pf[0,dx2_og,:] = pf[0,dx2_new,:]
+pfTimes[0,dx2_og] = pfTimes[0,dx2_new]
 
-        if ii == 0:
-            pdf_arrays_connectivity_swapped[jj,:,:] = pf
-            pdf_arrays_settleTime_swapped[jj,:,:] = pfTimes
-            pdf_arrays_T_swapped[jj,:,:] = pfT
-        pdf_arrays_O2_swapped[ii,jj,:,:] = pfO2
-    
-for ii in range(np.shape(pdf_arrays_pH)[0]):
-    for jj in range(np.shape(pdf_arrays_pH)[1]):
-        pfpH = np.copy(pdf_arrays_pH[ii,jj,:,:])
-        pfpH[dx2_og] = pfpH[dx2_new]
-        pdf_arrays_pH_swapped[ii,jj,:,:] = pfpH
+# Columns
+pf[0,:,dx2_og] = pf[0:,dx2_new]
 
-
-#for ii in range(len(pdf_arrays_O2)):
-#    for jj in range(len(pdf_list_connectivity)):
-#        if ii == 0:
-#            pf = np.copy(pdf_list_connectivity[jj])
-#            pfTimes = np.copy(pdf_list_settleTime[jj])
-#            pfT = np.copy(pdf_arrays_T[jj])
-#        pfO2 = np.copy(pdf_arrays_O2[ii][jj])
-#
-#        # Rows
-#        if ii == 0:
-#            pf[dx2_og] = pf[dx2_new]
-#            pfTimes[dx2_og] = pfTimes[dx2_new]
-#            pfT[dx2_og] = pfT[dx2_new]
-#        pfO2[dx2_og] = pfO2[dx2_new]
-#        
-#        # Columns
-#        if ii == 0:
-#            pf[:,dx2_og] = pf[:,dx2_new]
-#
-#        if ii == 0:
-#            pdf_list_connectivity_swapped.append(pf)
-#            pdf_list_settleTime_swapped.append(pfTimes)
-#            pdf_arrays_T_swapped.append(pfT)
-#        pdf_arrays_O2_swapped[ii].append(pfO2)
-#    
-#for ii in range(len(pdf_arrays_pH)):
-#    for jj in range(len(pdf_list_connectivity)):
-#        pfpH = np.copy(pdf_arrays_pH[ii][jj])
-#        pfpH[dx2_og] = pfpH[dx2_new]
-#        pdf_arrays_pH_swapped[ii].append(pfpH)
+pdf_arrays_connectivity_swapped[0,:,:] = pf
+pdf_arrays_settleTime_swapped[0,:,:] = pfTimes
 
 
 
@@ -239,53 +172,28 @@ box_num_mod = box_num_islands_mod + list(range(max(box_num_islands_mod) + 1, box
 # 1 FROM WHAT YOU SEE ON THE DOMAIN PLOT!!!
 
 # May as well save the box numbers to use for labels here
-#dx2_new = [9,16,10,15,11,14,12,13]
 box_num_labels_islands_print = [0,2,4,6,8,10,12,14]
-#box_num_labels_islands_print = [1,3,5,7,9,11,13,15] # one off? (one too large)
-###box_num_labels_islands_print = [2,6,9,11,13,15,17,20] # Old island boxes
-
-
 box_num_labels_continent_print = [19,25,30,33,37,42,52,56,63,73,77] # fixed the one off?
-#box_num_labels_continent_print = [19,25,30,33,37,43,52,56,63,73] # fixed the one off?
-#box_num_labels_continent_print = [20,26,31,34,38,44,53,57,64,74] # one off?
-###box_num_labels_continent_print = [24,30,33,38,42,48,57,61,68,78] # old island boxes
-
 box_num_labels_print = box_num_labels_islands_print + box_num_labels_continent_print
 
 
 
 tick_labels_continent = ['TJ','PV','PM','PC','PB','PS','PR','PA','CM','CB','HB']
-#tick_labels_continent = ['TJ','PV','PM','PC','PB','CB','PR','PA','CM','CBl']
-
 tick_labels_islands = ['SCl','Ca','SB','SN','SM','SR','SC','An']
-
 tick_labels = tick_labels_islands + tick_labels_continent
 
 # Wait, maybe this is what I want
 tick_positions = box_num_labels_print
-#tick_positions = [x -1 for x in box_num_labels_print]
 
 # -------------------------------------------------------
 # -------------------------------------------------------
 
 d = {}
-#d['settlers_timestep_settled'] = settlers_timestep_settled
-#d['settlers_assigned_bio_windows'] = settlers_assigned_bio_windows
-#d['bio_window_opening_distribution'] = bio_window_opening_distribution
-d['pdf_arrays_T'] = pdf_arrays_T_swapped
-d['pdf_arrays_O2'] = pdf_arrays_O2_swapped
-d['pdf_arrays_pH'] = pdf_arrays_pH_swapped
 d['pdf_arrays_connectivity'] = pdf_arrays_connectivity_swapped
 d['pdf_arrays_settleTime'] = pdf_arrays_settleTime_swapped
-
-#d['pdf_arrays_T_swapped'] = pdf_arrays_T_swapped
-#d['pdf_arrays_O2_swapped'] = pdf_arrays_O2_swapped
-#d['pdf_list_connectivity_swapped'] = pdf_list_connectivity_swapped
-#d['pdf_list_settleTime_swapped'] = pdf_list_settleTime_swapped
+d['release_counts_per_cell'] = release_counts_per_cell_swapped
 
 d['counter_array'] = counter_array
-d['O2_limit_list'] = O2_limit_list
-d['pH_limit_list'] = pH_limit_list
 d['box_num_mod'] = box_num_mod
 d['tick_positions'] = tick_positions
 d['tick_labels'] = tick_labels
@@ -296,7 +204,7 @@ np.savez(pdf_swapped_file_out, **d)
 
 #print(pdf_swapped_file_out)
 
-print(np.shape(pdf_arrays_O2_swapped))
+#print(np.shape(pdf_arrays_O2_swapped))
 
 
 

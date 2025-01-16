@@ -28,8 +28,6 @@ from pathlib import Path
 import argparse
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
-from larvaldispersal_track_eco_variables_dielMigration import LarvalDispersal
-#from larvaldispersal_track_eco_variables import LarvalDispersal
 from reader_ROMS_native_h5netcdf_mod import Reader
 
 
@@ -75,12 +73,28 @@ job_run_number = args.jobrunnumber
 stream = open(config_file,'r')
 config_dict = yaml.safe_load(stream)    
 
+# Import the correct Opendrift model
+behavior = config_dict["behavior"]
+if behavior == "physicsOnly": 
+    model_file = "larvaldispersal_track_eco_variables"
+    from larvaldispersal_track_eco_variables import LarvalDispersal
+elif behavior == "dvm":
+    model_file =  "larvaldispersal_track_eco_variables_dielMigration"
+    from larvaldispersal_track_eco_variables_dielMigration import LarvalDispersal
+
+
+
+print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
+print('USER PRINT STATEMENT: Model file: {}'.format(model_file),flush=True)
+print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
+
 run_calc = config_dict["runCalc"]
 run_save = config_dict["runSave"]
 buffer_length = config_dict["bufferLength"]
 number_of_seeds = config_dict["numberOfSeeds"]
 days_between_seeds = config_dict["seedSpacing"]
 particle_lifetime = config_dict["particleLifetime"]
+
 
 his_dir_1 = config_dict["jobDirList"][job_run_number]
 
@@ -116,7 +130,7 @@ seed_window_length = (number_of_seeds - 1) * days_between_seeds + 1
 save_dt = run_save * 60;
 run_dt = run_calc * 60
 
-# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES
+# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES 
 #base_datetime = datetime.datetime(1990,1,1,12,0,0)
 base_datetime = datetime.datetime(1988,1,1,12,0,0)
 # -----------------------------------------------------------------------------

@@ -11,15 +11,21 @@ callingDir="$(pwd)"
 # Set the number of nodes to use for the job (8 seems ok.. everyone else uses 8!)
 #numNodes=9 # just works out that we have 18 jobs for now, so 9 splits them evenly between current and queued jobs
 
-numNodes=7
+#numNodes=7
 #numNodes=10
 #numNodes=12
+#numNodes=9
+#numNodes=18
+numNodes=1
 
-#runBaseDir="/data/blaughli/tracking_project_output_projections/production_n15_s20"
-runBaseDir="/home/blaughli/tracking_project/zz_output/tracking_project_output_projections/production_n15_s20"
+runBaseDir="/data/blaughli/tracking_output/swim_tests"
+#runBaseDir="/data/blaughli/tracking_output/baseYear_2071"
 
 # This directory is populated by running the python script that generates the config files
-runDirs=($runBaseDir/*)
+runDirs=($runBaseDir/dummy_dir_onshoreSwim_test)
+#runDirs=($runBaseDir/WC15N_1988-2010_onshoreSwim_test)
+##runDirs=($runBaseDir/WC15N_GFDLTV_onshoreSwim_test)
+#runDirs=($runBaseDir/*)
     
 extraArgs=""
 

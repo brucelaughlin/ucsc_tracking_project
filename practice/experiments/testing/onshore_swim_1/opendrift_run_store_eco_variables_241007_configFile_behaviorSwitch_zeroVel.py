@@ -28,8 +28,6 @@ from pathlib import Path
 import argparse
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/models"))
 sys.path.append(os.path.abspath("/home/blaughli/tracking_project/opendrift_custom/readers"))
-from larvaldispersal_track_eco_variables_dielMigration import LarvalDispersal
-#from larvaldispersal_track_eco_variables import LarvalDispersal
 from reader_ROMS_native_h5netcdf_mod import Reader
 
 
@@ -75,6 +73,24 @@ job_run_number = args.jobrunnumber
 stream = open(config_file,'r')
 config_dict = yaml.safe_load(stream)    
 
+# Import the correct Opendrift model
+behavior = config_dict["behavior"]
+if behavior == "physicsOnly": 
+    model_file = "larvaldispersal_track_eco_variables"
+    from larvaldispersal_track_eco_variables import LarvalDispersal
+elif behavior == "dvm":
+    model_file =  "larvaldispersal_track_eco_variables_dielMigration"
+    from larvaldispersal_track_eco_variables_dielMigration import LarvalDispersal
+elif behavior == "onshoreSwim":
+    model_file =  "larvaldispersal_track_eco_variables_onshoreSwim"
+    from larvaldispersal_track_eco_variables_onshoreSwim import LarvalDispersal
+
+
+
+print('USER PRINT STATEMENT: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',flush=True)
+print('USER PRINT STATEMENT: Model file: {}'.format(model_file),flush=True)
+print('USER PRINT STATEMENT: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',flush=True)
+
 run_calc = config_dict["runCalc"]
 run_save = config_dict["runSave"]
 buffer_length = config_dict["bufferLength"]
@@ -82,12 +98,9 @@ number_of_seeds = config_dict["numberOfSeeds"]
 days_between_seeds = config_dict["seedSpacing"]
 particle_lifetime = config_dict["particleLifetime"]
 
-his_dir_1 = config_dict["jobDirList"][job_run_number]
 
-if (config_dict["dirListTotal"].index(his_dir_1) == len(config_dict["dirListTotal"])):
-    his_dir_2 = his_dir_1
-else:
-    his_dir_2 = config_dict["dirListTotal"][config_dict["dirListTotal"].index(his_dir_1)+1]
+his_dir_1 = config_dict["jobDirList"][job_run_number]
+his_dir_2 = his_dir_1
 
 start_nudge = config_dict["startNudgeList"][job_run_number]
 output_dir = config_dict["outputDir"]
@@ -116,7 +129,7 @@ seed_window_length = (number_of_seeds - 1) * days_between_seeds + 1
 save_dt = run_save * 60;
 run_dt = run_calc * 60
 
-# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES
+# CHANGE BASE TIME DEPENDING ON WHETHER YOU'RE USING THE 1988-2010 FILES OR THE 1990-2100 FILES 
 #base_datetime = datetime.datetime(1990,1,1,12,0,0)
 base_datetime = datetime.datetime(1988,1,1,12,0,0)
 # -----------------------------------------------------------------------------
@@ -132,6 +145,8 @@ grid_file_in = 'wc15n_grd.nc'
 grid_path_in = base_path + grid_directory + grid_file_in
 dset = netCDF4.Dataset(grid_path_in, 'r')
 h = np.array(dset['h'])
+lon_grid = np.array(dset['lon_rho'])
+lat_grid = np.array(dset['lat_rho'])
 dset.close
 
 #-------- Box Files -----------------
@@ -187,32 +202,52 @@ lats = []
 zs = []
 times = []
 
+#for run_day in range(0,seed_window_length,days_between_seeds):
+#    kk = 0
+#    #kk = 1
+#    zs.append(-kk*depth_step)
+#    lons.append(-123)
+#    lats.append(34)
+#    times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
 
 
-for run_day in range(0,seed_window_length,days_between_seeds): 
-    for ii in range(len(points_in_boxes_lon_lat)):
-        for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
-            bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
-            depth_min = np.floor(min(min_float_depth,bottom_depth))
-            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
-                zs.append(-kk*depth_step)
-                lons.append(points_in_boxes_lon_lat[ii][0,jj])
-                lats.append(points_in_boxes_lon_lat[ii][1,jj])
-                times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
-
-
-
-# Test, make sure things work.  Just run one particle per run.
-#for run_day in range(1):
-#    for ii in range(1):
-#        for jj in range(1):
+#for run_day in range(0,seed_window_length,days_between_seeds): 
+#    for ii in range(len(points_in_boxes_lon_lat)):
+#        for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
 #            bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
 #            depth_min = np.floor(min(min_float_depth,bottom_depth))
-#            for kk in range(1):
+#            for kk in range(int(np.floor(depth_min / depth_step)) + 1):
 #                zs.append(-kk*depth_step)
 #                lons.append(points_in_boxes_lon_lat[ii][0,jj])
 #                lats.append(points_in_boxes_lon_lat[ii][1,jj])
 #                times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+#
+
+#for run_day in range(0,seed_window_length,days_between_seeds):
+#    for ii in range(len(points_in_boxes_lon_lat)):
+#        #for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]):
+#        for jj in range(0,np.shape(points_in_boxes_lon_lat[ii])[1],10):
+#        #for jj in range(np.shape(points_in_boxes_lon_lat[ii])[1]-1, np.shape(points_in_boxes_lon_lat[ii])[1]):
+#        #for jj in range(1):
+#            bottom_depth = h[points_in_boxes_i_j[ii][0,jj],points_in_boxes_i_j[ii][1,jj]]
+#            depth_min = np.floor(min(min_float_depth,bottom_depth))
+#            kk = 0
+#            #kk = 1
+#            zs.append(-kk*depth_step)
+#            lons.append(points_in_boxes_lon_lat[ii][0,jj])
+#            lats.append(points_in_boxes_lon_lat[ii][1,jj])
+#            times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+#
+
+for run_day in range(0,seed_window_length,days_between_seeds):
+    for ii in range(0,np.shape(lon_grid)[0],10):
+        for jj in range(0,np.shape(lon_grid)[1],10):
+            kk = 0
+            zs.append(-kk*depth_step)
+            lons.append(lon_grid[ii,jj])
+            lats.append(lat_grid[ii,jj])
+            times.append(datetime.datetime.strptime(str(start_seed_time+datetime.timedelta(days=run_day)), '%Y-%m-%d %H:%M:%S'))
+
 
 
 

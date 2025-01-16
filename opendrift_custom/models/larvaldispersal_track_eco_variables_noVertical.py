@@ -25,26 +25,10 @@ from opendrift.config import CONFIG_LEVEL_ESSENTIAL, CONFIG_LEVEL_BASIC, CONFIG_
 
 # Define the particle deactivation time (seconds).
 #drift_days = 30
-#drift_days = 10
+drift_days = 10
 #drift_days = 5
 #drift_days = 150
-drift_days = 180
 drift_seconds = (drift_days) * 24 * 60 * 60 
-
-# Copied from "larvalfish.py" in opendrift models
-class LarvalFishElement(Lagrangian3DArray):
-    """
-    Extending Lagrangian3DArray with specific properties for larval and juvenile stages of fish
-    """
-
-    variables = Lagrangian3DArray.add_variables([
-        ('length', {'dtype': np.float32,
-                    'units': 'mm',
-                    'default': 0}),
-        ('weight', {'dtype': np.float32,
-                    'units': 'mg',
-                    'default': 0.08})])
-
 
 
 class LarvalDispersal(OceanDrift):
@@ -52,8 +36,8 @@ class LarvalDispersal(OceanDrift):
 
     """
     # Again, may want to implement and then use your own class of element, a-la:
-    ElementType = LarvalFishElement
-    #ElementType = Lagrangian3DArray
+    #ElementType = LarvalElement
+    ElementType = Lagrangian3DArray
 
     #max_speed = 1  # m/s     # Why was this here??? Did I have a specific reason, or did I copy it from OceanDrift???
 
@@ -107,13 +91,13 @@ class LarvalDispersal(OceanDrift):
         super(LarvalDispersal, self).__init__(*args, **kwargs)
 
         ## IBM configuration options
-        self._add_config({
-            'IBM:fraction_of_timestep_swimming':
-                {'type': 'float', 'default': 0.15,
-                 'min': 0.0, 'max': 1.0, 'units': 'fraction',
-                 'description': 'Fraction of timestep swimming',
-                 'level': CONFIG_LEVEL_ADVANCED},
-            })
+        #self._add_config({
+        #    'IBM:fraction_of_timestep_swimming':
+        #        {'type': 'float', 'default': 0.15,
+        #         'min': 0.0, 'max': 1.0, 'units': 'fraction',
+        #         'description': 'Fraction of timestep swimming',
+        #         'level': CONFIG_LEVEL_ADVANCED},
+        #    })
         
         self._set_config_default('drift:vertical_advection', True)
         self._set_config_default('drift:vertical_mixing', True)
@@ -122,67 +106,47 @@ class LarvalDispersal(OceanDrift):
         #self._set_config_default('drift:profile_depth', 50)  # The depth range (in m) which profiles should cover
         ###self._set_config_default('drift:profile_depth', [0, -50])  # The depth range (in m) which profiles should cover
 
+    # ---------------------------------------------------------------------------------------------
+    # Will we want to update properties of the larvae?  See LarvalFish for what was here
 
-    def fish_growth(self, weight, temperature):
-        # Weight in milligrams, temperature in celcius
-        # Daily growth rate in percent according to
-        # Folkvord, A. 2005. "Comparison of Size-at-Age of Larval Atlantic Cod (Gadus Morhua)
-        # from Different Populations Based on Size- and Temperature-Dependent Growth
-        # Models." Canadian Journal of Fisheries and Aquatic Sciences.
-        # Journal Canadien Des Sciences Halieutiques # et Aquatiques 62(5): 1037-52.
-        GR = 1.08 + 1.79 * temperature - 0.074 * temperature * np.log(weight) \
-             - 0.0965 * temperature * np.log(weight) ** 2 \
-             + 0.0112 * temperature * np.log(weight) ** 3
+    #def update_terminal_velocity(self, Tprofiles=None,
+    #                             Sprofiles=None, z_index=None):
+    #    """Calculate terminal velocity for Pelagic Egg
 
-        # Growth rate(g) converted to milligram weight (gr_mg) per timestep:
-        g = (np.log(GR / 100. + 1)) * self.time_step.total_seconds()/86400
-        return weight * (np.exp(g) - 1.)
+    #    according to
+    #    S. Sundby (1983): A one-dimensional model for the vertical
+    #    distribution of pelagic fish eggs in the mixed layer
+    #    Deep Sea Research (30) pp. 645-661
 
+    #    Method copied from ibm.f90 module of LADIM:
+    #    Vikebo, F., S. Sundby, B. Aadlandsvik and O. Otteraa (2007),
+    #    Fish. Oceanogr. (16) pp. 216-228
+    #    """
 
-    def update_fish_larvae(self):
-
-        # Increasing weight of larvae
-        avg_weight_before = self.elements.weight.mean()
-        growth = self.fish_growth(self.elements.weight,
-                                  self.environment.sea_water_temperature)
-        self.elements.weight += growth
-        avg_weight_after = self.elements.weight.mean()
-        logger.debug('Growing larvae from average size %s to %s' %
-              (avg_weight_before, avg_weight_after))
-
-        # Increasing length of larvae, according to Folkvord (2005)
-        w = self.elements.weight
-        self.elements.length = np.exp(2.296 + 0.277 * np.log(w) - 0.005128 *np.log10(w)**2)
-
-
-
+    
+    #def update_larvae(self):
+    # ---------------------------------------------------------------------------------------------
 
     # Copied from LarvalFish 
     def larvae_vertical_migration(self):
 
+        # Note: hardcoding a guessed average length (1mm) of the larvae; is this how we want to do things?
+        larvae_length = 1
         # Note: length is in mm:
         # https://opendrift.github.io/_modules/opendrift/models/larvalfish.html#LarvalFish.larvae_vertical_migration
 
 
         # Vertical migration of Larvae
         # Swim function from Peck et al. 2006
-        # Note: is "fraction of timestep swimming" ever changed?  Or stuck at 15, or whatever we set above?
 
-        ## INIITIALLY, let's try this without growth - just set size to 15mm (average size based on Kashef 2014)
-        #avg_length = 15.  # (mm)
-        #L = np.ones_like(self.elements.z) * avg_length
+        #L = self.elements.length[larvae] # I don't have this implemented, so I hack it:
+        L = np.ones(len(self.elements))*larvae_length
+       
 
+        # Below, with fraction_of_timestep_swimming = 0.15 (see above), this means
+        # that max_migration_per_timestep = 1.75cm... is that too small?
 
-        # Wait... units of speed can't be m/s !!!!  tiny larvae swimming 3 meters in a second????
-        ##### This function doesn't make sense - it changes sign around length = 5 (so 1mm swims at -3m/s, 5mm at 0, 10mm at 3...)
-        #swim_speed = (0.261*(L**(1.552*L**(-0.08))) - 5.289/L) / 1000
-        
-        # So, for initial tests, just use 3m/s, since that seems like a roughly average (?) value 
-
-        avg_speed = 0.003  #????  mm/s ? # Cursory tests show that this yields ~26m of vertical movement  in 12 hours
-
-        swim_speed = np.ones_like(self.elements.z) * avg_speed  
-        
+        swim_speed = (0.261*(L**(1.552*L**(-0.08))) - 5.289/L) / 1000
         f = self.get_config('IBM:fraction_of_timestep_swimming')
         max_migration_per_timestep = f*swim_speed*self.time_step.total_seconds()
 
@@ -193,6 +157,7 @@ class LarvalDispersal(OceanDrift):
         else:
             direction = 1  # Swimming up when light is decreasing
 
+        #self.elements.z[larvae] = np.minimum(0, self.elements.z[larvae] + direction*max_migration_per_timestep)
         self.elements.z = np.minimum(0, self.elements.z + direction*max_migration_per_timestep)
 
 
@@ -200,11 +165,6 @@ class LarvalDispersal(OceanDrift):
     def update(self):
         """Update positions and properties of elements."""
         # copied from "OceanDrift", with the addition of the deactivation
-
-        # Update the larvae size with the copied growth model - need to verify that this is working!  Do weight and length get saved,
-        # and do they compare well with literature for west coast rock fish (model is for Atlantic cod)?
-        ##### FOR NOW, don't do growth.  Just use an average length
-        #self.update_fish_larvae()
 
         # Simply move particles with ambient current
         self.advect_ocean_current()
@@ -223,12 +183,9 @@ class LarvalDispersal(OceanDrift):
         else:  # Buoyancy
             self.vertical_buoyancy()
 
-        # Vertical advection
-        if self.get_config('drift:vertical_advection') is True:
-            self.vertical_advection()
-
-        # Vertical migration
-        self.larvae_vertical_migration()
+#        # Vertical advection
+#        if self.get_config('drift:vertical_advection') is True:
+#            self.vertical_advection()
 
         # Deactivate floats after "drift_days" has passed
         self.deactivate_elements(self.elements.age_seconds > drift_seconds, reason='age > {} days'.format(drift_days))
